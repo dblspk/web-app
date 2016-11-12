@@ -51,12 +51,7 @@ def decode_text_message(text):
     return text
 
 def find_message_in_str(string):
-    return "".join(list(
-        map(
-            lambda c: c if c in encoding_chars else "",
-            string
-        )
-    ))
+    return "".join([c for c in string if c in encoding_chars])
 
 def message_type(msg):
     m = re.match(r'(?P<msg_type>(STR|FIL))\0(?P<msg_body>.+)', msg)
