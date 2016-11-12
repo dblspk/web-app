@@ -64,6 +64,35 @@ def message_type(msg):
         raise ValueError("Unable to parse message type")
     return m.group("msg_type"), m.group("msg_body")
 
+def hide_message(decoy_text, msg_type, msg):
+    if msg_type == "text":
+        encoded_text = encode_text_message(msg)
+        insertion_points = math.ceil(len(encoded_text) / 10)
+        if len(decoy_text) <= insertion_points:
+            raise ValueError("error: decoy text must be longer! (at least " + str(insertion_points + 1) + " characters long)")
+        output_string = io.StringIO()
+        i = 0
+        for j in range(0, len(encoded_text), 10):
+            output_string.write(decoy_text[i])
+            i += 1
+            output_string.write(encoded_text[j : j + 10])
+        output_string.write(decoy_text[i:])
+        return output_string.getvalue()
+
+    else:
+        raise ValueError("unknown message type: " + msg_type)
+
+def reveal_message(decoyed_message):
+    encoded_message = find_message_in_str(decoyed_message)
+    if not encoded_message:
+        raise ValueError("This message doesn't contain a hidden message")
+    decoded_message = decode_string(encoded_message)
+    msg_type, msg = message_type(decoded_message)
+    if msg_type == "STR":
+        return msg
+    else:
+        raise ValueError("Message has unknown type: " + msg_type)
+
 root_parser = argparse.ArgumentParser(description="A utility for hiding and revealing messages in plain text")
 sub_parsers = root_parser.add_subparsers(dest="mode")
 hide_parser = sub_parsers.add_parser("hide")
@@ -79,25 +108,12 @@ if len(cmdline_options) == 0:
 options = root_parser.parse_args(cmdline_options)
 
 if options.mode == "hide":
-    encoded_text = encode_text_message(options.message_str)
-    insertion_points = math.ceil(len(encoded_text) / 10)
-    if len(options.decoy_text) <= insertion_points:
-        exit("error: decoy text must be longer! (at least " + str(insertion_points + 1) + " characters long)")
-    output_string = io.StringIO()
-    i = 0
-    for j in range(0, len(encoded_text), 10):
-        output_string.write(options.decoy_text[i])
-        i += 1
-        output_string.write(encoded_text[j : j + 10])
-    output_string.write(options.decoy_text[i:])
-    print(output_string.getvalue())
+    try:
+        print(hide_message(options.decoy_text, "text", options.message_str))
+    except BaseException as e:
+        exit("Error generating message: " + str(e))
 else: # options.mode == "reveal"
-    encoded_message = find_message_in_str(options.combined_text)
-    if not encoded_message:
-        exit("It seems that there really isn't anything to see here...")
-    decoded_message = decode_string(encoded_message)
-    msg_type, msg = message_type(decoded_message)
-    if msg_type == "STR":
-        print(msg)
-    else:
-        exit("unknown message type: " + msg_type)
+    try:
+        print(reveal_message(options.combined_text))
+    except BaseException as e:
+        exit("Error finding and decoding message: " + str(e))
