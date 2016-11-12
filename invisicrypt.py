@@ -12,12 +12,12 @@ def encode_string(string):
         "\u200D", # ZERO WIDTH JOINER
         "\uFEFF", # ZERO WIDTH NON-BREAKING SPACE
     ]
-    string_sink = io.StringIO()
-    enc_bytes = bytes(string, encoding="utf-8")
-    for i in range(0, len(enc_bytes)):
+    output_string = io.StringIO()
+    string_bytes = bytes(string, encoding="utf-8")
+    for i in range(0, len(string_bytes)):
         for j in range(0, 8, 2):
-            string_sink.write(encoding_chars[(enc_bytes[i] >> j) & 0x3])
-    return string_sink.getvalue()
+            output_string.write(encoding_chars[(string_bytes[i] >> j) & 0x3])
+    return output_string.getvalue()
 
 # complete dummies for now, use real code later
 def encode_text_message(text):
@@ -33,9 +33,9 @@ root_parser = argparse.ArgumentParser(description="A utility for hiding and reve
 sub_parsers = root_parser.add_subparsers(dest="mode")
 hide_parser = sub_parsers.add_parser("hide")
 reveal_parser = sub_parsers.add_parser("reveal")
-hide_parser.add_argument("decoytext", type=str, help="Hide the message in this string")
-hide_parser.add_argument("hidetext", type=str, help="Text to be hidden in plain sight")
-reveal_parser.add_argument("revealtext", type=str, help="Find and decode hidden messages in this text")
+hide_parser.add_argument("decoy_text", type=str, help="Hide the message in this string")
+hide_parser.add_argument("message_str", type=str, help="Message to be hidden")
+reveal_parser.add_argument("combined_text", type=str, help="Find and decode hidden messages in this text")
 
 cmdline_options = sys.argv[1:]
 if len(cmdline_options) == 0:
@@ -44,13 +44,13 @@ if len(cmdline_options) == 0:
 options = root_parser.parse_args(cmdline_options)
 
 if options.mode == "hide":
-    if len(options.decoytext) < 2:
+    if len(options.decoy_text) < 2:
         exit("error: decoy text must be longer must be at least 2 characters long")
-    encoded_text = encode_text_message(options.hidetext)
-    insert_after = random.randint(1, len(options.decoytext)-1)
-    print(options.decoytext[:insert_after] + encoded_text + options.decoytext[insert_after:])
+    encoded_text = encode_text_message(options.message_str)
+    insert_position = random.randint(1, len(options.decoy_text)-1)
+    print(options.decoy_text[:insert_position] + encoded_text + options.decoy_text[insert_position:])
 else: # options.mode == "reveal"
-    encoded_message = find_message_in_str(options.revealtext)
+    encoded_message = find_message_in_str(options.combined_text)
     if not encoded_message:
         exit("It seems that there really isn't anything to see here...")
     decoded_text = decode_text_message(encoded_message)
