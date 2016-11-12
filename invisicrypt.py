@@ -23,7 +23,7 @@ def encode_string(string):
     return output_string.getvalue()
 
 def encode_text_message(text):
-    return encode_string("STR:" + text)
+    return encode_string("STR\0" + text)
 
 def decode_string(string):
     back_to_tokens = [zero_char_to_token(ord(char)) for char in string]
@@ -59,7 +59,7 @@ def find_message_in_str(string):
     ))
 
 def message_type(msg):
-    m = re.match(r'(?P<msg_type>(STR|FIL)):(?P<msg_body>.+)', msg)
+    m = re.match(r'(?P<msg_type>(STR|FIL))\0(?P<msg_body>.+)', msg)
     if not m:
         raise ValueError("Unable to parse message type")
     return m.group("msg_type"), m.group("msg_body")
