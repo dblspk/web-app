@@ -14,9 +14,9 @@ def encode_string(string):
     ]
     output_string = io.StringIO()
     string_bytes = bytes(string, encoding="utf-8")
-    for i in range(0, len(string_bytes)):
-        for j in range(0, 8, 2):
-            output_string.write(encoding_chars[(string_bytes[i] >> j) & 0x3])
+    for char in string_bytes:
+        for j in range(6, -2, -2):
+            output_string.write(encoding_chars[(char >> j) & 0x3])
     return output_string.getvalue()
 
 # complete dummies for now, use real code later
