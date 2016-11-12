@@ -80,8 +80,9 @@ options = root_parser.parse_args(cmdline_options)
 
 if options.mode == "hide":
     encoded_text = encode_text_message(options.message_str)
-    if len(options.decoy_text) <= math.ceil(len(encoded_text) / 10):
-        exit("error: decoy text must be longer must be at least 2 characters long")
+    insertion_points = math.ceil(len(encoded_text) / 10)
+    if len(options.decoy_text) <= insertion_points:
+        exit("error: decoy text must be longer! (at least " + str(insertion_points + 1) + " characters long)")
     output_string = io.StringIO()
     i = 0
     for j in range(0, len(encoded_text), 10):
