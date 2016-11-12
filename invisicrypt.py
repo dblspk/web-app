@@ -53,5 +53,43 @@ else: # options.mode == "reveal"
     encoded_message = find_message_in_str(options.combined_text)
     if not encoded_message:
         exit("It seems that there really isn't anything to see here...")
-    decoded_text = decode_text_message(encoded_message)
+    decoded_text = decrypt_message(encoded_message)
     print(decoded_text)
+
+
+def decrypt_message(msg):
+    return decrypt(msg)
+
+
+def decrypt(received_message):
+    ZW = [8203, 8204, 8205, 65279]
+    index_begin, index_end, index = 0, 0, 0
+    found_begin = False
+
+
+    #Finds beginning and end of ZW chars
+    for char in received_message:
+        if not found_begin and ord(char) in ZW: #found first hidden char
+            index_begin = index
+            found_begin = True
+        elif found_begin and not ord(char) in ZW: #found first non hidden char
+            index_end = index
+            break
+        index += 1
+    if index_end == 0: #hidden chars reach end of message
+        index_end = index
+
+
+    message_to_decrypt = received_message[index_begin : index_end]
+    back_to_tokens = [zero_char_to_token(ord(char)) for char in message_to_decrypt]
+    return two_bit_list_to_string(back_to_tokens)
+
+
+    #Helper function
+def zero_char_to_token(zero_char_val):
+    return {
+        8203: '00',
+        8204: '01',
+        8205: '10',
+        65279:'11',
+    }[zero_char_val]
