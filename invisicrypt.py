@@ -1,13 +1,27 @@
 #!/usr/bin/env python3
 
+import io
 import sys
 import argparse
 import random
 
+def encode_string(string):
+    encoding_chars = [
+        "\u200B", # ZERO WIDTH SPACE
+        "\u200C", # ZERO WIDTH NON-JOINER
+        "\u200D", # ZERO WIDTH JOINER
+        "\uFEFF", # ZERO WIDTH NON-BREAKING SPACE
+    ]
+    string_sink = io.StringIO()
+    enc_bytes = bytes(string, encoding="utf-8")
+    for i in range(0, len(enc_bytes)):
+        for j in range(0, 8, 2):
+            string_sink.write(encoding_chars[(enc_bytes[i] >> j) & 0x3])
+    return string_sink.getvalue()
 
 # complete dummies for now, use real code later
 def encode_text_message(text):
-    return "[" + text + "]"
+    return encode_string("STR:" + text)
 
 def decode_text_message(text):
     return text
