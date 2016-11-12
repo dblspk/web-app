@@ -4,6 +4,8 @@ import io
 import sys
 import argparse
 import random
+import math
+import re
 
 encoding_chars = [
     "\u200B", # ZERO WIDTH SPACE
@@ -49,22 +51,18 @@ def decode_text_message(text):
     return text
 
 def find_message_in_str(string):
-    index_begin, index_end, index = 0, 0, 0
-    found_begin = False
+    return "".join(list(
+        map(
+            lambda c: c if c in encoding_chars else "",
+            string
+        )
+    ))
 
-    #Finds beginning and end of ZW chars
-    for char in string:
-        if not found_begin and char in encoding_chars: #found first hidden char
-            index_begin = index
-            found_begin = True
-        elif found_begin and not char in encoding_chars: #found first non hidden char
-            index_end = index
-            break
-        index += 1
-    if found_begin and index_end == 0: #hidden chars reach end of message
-        index_end = index
-
-    return string[index_begin : index_end]
+def message_type(msg):
+    m = re.match(r'(?P<msg_type>(STR|FIL)):(?P<msg_body>.+)', msg)
+    if not m:
+        raise ValueError("Unable to parse message type")
+    return m.group("msg_type"), m.group("msg_body")
 
 root_parser = argparse.ArgumentParser(description="A utility for hiding and revealing messages in plain text")
 sub_parsers = root_parser.add_subparsers(dest="mode")
@@ -81,15 +79,24 @@ if len(cmdline_options) == 0:
 options = root_parser.parse_args(cmdline_options)
 
 if options.mode == "hide":
-    if len(options.decoy_text) < 2:
-        exit("error: decoy text must be longer must be at least 2 characters long")
     encoded_text = encode_text_message(options.message_str)
-    insert_position = random.randint(1, len(options.decoy_text)-1)
-    print(options.decoy_text[:insert_position] + encoded_text + options.decoy_text[insert_position:])
+    if len(options.decoy_text) <= math.ceil(len(encoded_text) / 10):
+        exit("error: decoy text must be longer must be at least 2 characters long")
+    output_string = io.StringIO()
+    i = 0
+    for j in range(0, len(encoded_text), 10):
+        output_string.write(options.decoy_text[i])
+        i += 1
+        output_string.write(encoded_text[j : j + 10])
+    output_string.write(options.decoy_text[i:])
+    print(output_string.getvalue())
 else: # options.mode == "reveal"
     encoded_message = find_message_in_str(options.combined_text)
     if not encoded_message:
         exit("It seems that there really isn't anything to see here...")
-    print("<" + encoded_message + ">")
-    decoded_text = decode_string(encoded_message)
-    print(decoded_text)
+    decoded_message = decode_string(encoded_message)
+    msg_type, msg = message_type(decoded_message)
+    if msg_type == "STR":
+        print(msg)
+    else:
+        exit("unknown message type: " + msg_type)
