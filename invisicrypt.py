@@ -6,6 +6,8 @@ import argparse
 import random
 import math
 import re
+import os
+import os.path
 
 encoding_chars = [
     "\u200B", # ZERO WIDTH SPACE
@@ -85,6 +87,14 @@ def reveal_message(decoyed_message):
     msg_type, msg = message_type(decoded_message)
     if msg_type == "STR":
         return msg
+    elif msg_type == "FIL":
+        file_name = str[1 : str[1:].index('\0')]
+        file_data = str[str[1:].index('\0') : ]
+        if not os.path.isfile(file_name):
+            fil = open(file_name, "wb")
+            fil.write(file_data)
+
+
     else:
         raise ValueError("Message has unknown type: " + msg_type)
 
@@ -112,3 +122,42 @@ else: # options.mode == "reveal"
         print(reveal_message(options.combined_text))
     except BaseException as e:
         exit("Error finding and decoding message: " + str(e))
+
+
+def openFile(file_path):
+
+    filename, file_extension = os.path.splitext(file_path)
+
+    file_contents = []
+    try:
+        with open(filename, "rb") as f:
+            byte = f.read(1)
+            while byte:
+                file_contents.append(byte[0]) #return integers
+                byte = f.read(1)
+
+    except OSError as e:
+        return "File Cannot be Opened"
+
+    return file_contents, file_extension
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
