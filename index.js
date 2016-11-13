@@ -1,8 +1,19 @@
 function embedString() {
     var decoyStr = document.getElementById('decoy-text').value,
-        messageStr = document.getElementById('message-text').value;
-    var insertPosition = Math.floor(Math.random() * (decoyStr.length - 1) + 1);
-    document.getElementById('combined-text').value = decoyStr.slice(0, insertPosition) + encodeString('STR\0' + messageStr) + decoyStr.slice(insertPosition);
+        encodedStr = encodeString('STR\0' + document.getElementById('message-text').value),
+        outputStr = '';
+    var i = 0, j = 0;
+    while (i < decoyStr.length-1) {
+        outputStr += decoyStr[i++];
+        for (; j < i * 10; j++)
+            if (encodedStr[j])
+                outputStr += encodedStr[j];
+    }
+    if (j < encodedStr.length) {
+        outputStr += encodedStr.slice(j);
+    }
+    outputStr += decoyStr[i];
+    document.getElementById('combined-text').value = outputStr;
 }
 
 function encodeString(str) {
