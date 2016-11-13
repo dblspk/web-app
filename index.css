@@ -43,6 +43,12 @@ span {
     background-color: #777;
 }
 
+#warn {
+    opacity: 0;
+    text-align: center;
+    background-color: red;
+}
+
 .encode {
     background-color: #622;
 }

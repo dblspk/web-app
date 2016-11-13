@@ -22,12 +22,17 @@
         </div>
         <textarea id='message-text' onfocus='this.select()'></textarea>
         <table>
-            <td class='button encode'>
-                <div onclick='embedString()'>ENCODE</div>
-            </td>
-            <td class='button decode'>
-                <div onclick='decodeString()'>DECODE</div>
-            </td>
+            <tr>
+                <td colspan='2' id='warn'></td>
+            </tr>
+            <tr>
+                <td class='button encode'>
+                    <div onclick='embedString()'>ENCODE</div>
+                </td>
+                <td class='button decode'>
+                    <div onclick='decodeString()'>DECODE</div>
+                </td>
+            </tr>
         </table>
         <div class='title'>
             <span>COMBINED TEXT</span>

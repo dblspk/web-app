@@ -10,7 +10,11 @@ function embedString() {
                 outputStr += encodedStr[j];
     }
     if (j < encodedStr.length) {
-        outputStr += encodedStr.slice(j);
+        var warn = document.getElementById('warn');
+        warn.style.opacity = 1;
+        warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of decoy text to store entire message.';
+    } else {
+        document.getElementById('warn').style.opacity = 0;
     }
     outputStr += decoyStr[i];
     document.getElementById('combined-text').value = outputStr;
