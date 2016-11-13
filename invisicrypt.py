@@ -188,15 +188,22 @@ elif options.mode == "reveal":
 else: # options.mode == "gui":
     root = Tk()
 
-    main_frame = Frame(root)
+    main_frame = Frame(root, padding="14 10 10 10")
+    main_frame.master.minsize(width=500, height=500)
     main_frame.pack(expand=1, fill="both")
 
+    decoy_input_label = Label(main_frame, text="Decoy Message:")
+    decoy_input_label.pack()
+
     decoy_input_box_contents = StringVar()
-    decoy_input_box = Entry(main_frame, width=50, textvariable=decoy_input_box_contents)
+    decoy_input_box = Entry(main_frame, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=decoy_input_box_contents)
     decoy_input_box.pack(expand=1, fill="both")
 
+    message_input_label = Label(main_frame, text="Real Message:")
+    message_input_label.pack()
+
     message_input_box_contents = StringVar()
-    message_input_box = Entry(main_frame, width=50, textvariable=message_input_box_contents)
+    message_input_box = Entry(main_frame, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=message_input_box_contents)
     message_input_box.pack(expand=1, fill="both")
 
     def do_hiding():
@@ -214,8 +221,11 @@ else: # options.mode == "gui":
     hide_button = Button(main_frame, text="Hide!", command=do_hiding)
     hide_button.pack()
 
+    decoyed_output_label = Label(main_frame, text="Output:")
+    decoyed_output_label.pack()
+
     decoyed_output_box_contents = StringVar()
-    decoyed_output_box = Entry(main_frame, width=50, textvariable=decoyed_output_box_contents)
+    decoyed_output_box = Entry(main_frame, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=decoyed_output_box_contents)
     decoyed_output_box.pack(expand=1, fill="both")
 
     root.mainloop()
