@@ -188,22 +188,26 @@ elif options.mode == "reveal":
 else: # options.mode == "gui":
     root = Tk()
 
-    main_frame = Frame(root, padding="14 10 10 10")
-    main_frame.master.minsize(width=500, height=500)
-    main_frame.pack(expand=1, fill="both")
+    root.minsize(width=500, height=500)
 
-    decoy_input_label = Label(main_frame, text="Decoy Message:")
+    tabset = Notebook(root)
+
+    # HIDE tab
+    hide_tab = Frame(tabset, padding="10 10 10 10")
+    hide_tab.pack(expand=1, fill="both")
+
+    decoy_input_label = Label(hide_tab, text="Decoy Message:")
     decoy_input_label.pack()
 
     decoy_input_box_contents = StringVar()
-    decoy_input_box = Entry(main_frame, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=decoy_input_box_contents)
+    decoy_input_box = Entry(hide_tab, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=decoy_input_box_contents)
     decoy_input_box.pack(expand=1, fill="both")
 
-    message_input_label = Label(main_frame, text="Real Message:")
+    message_input_label = Label(hide_tab, text="Real Message:")
     message_input_label.pack()
 
     message_input_box_contents = StringVar()
-    message_input_box = Entry(main_frame, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=message_input_box_contents)
+    message_input_box = Entry(hide_tab, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=message_input_box_contents)
     message_input_box.pack(expand=1, fill="both")
 
     def do_hiding():
@@ -218,14 +222,47 @@ else: # options.mode == "gui":
         except BaseException as e:
             exit("Error generating message: " + str(e))
 
-    hide_button = Button(main_frame, text="Hide!", command=do_hiding)
+    hide_button = Button(hide_tab, text="Hide!", command=do_hiding)
     hide_button.pack()
 
-    decoyed_output_label = Label(main_frame, text="Output:")
+    decoyed_output_label = Label(hide_tab, text="Output:")
     decoyed_output_label.pack()
 
     decoyed_output_box_contents = StringVar()
-    decoyed_output_box = Entry(main_frame, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=decoyed_output_box_contents)
+    decoyed_output_box = Entry(hide_tab, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=decoyed_output_box_contents)
     decoyed_output_box.pack(expand=1, fill="both")
+
+    tabset.add(hide_tab, text="Hide")
+
+    # REVEAL tab
+    reveal_tab = Frame(tabset, padding="10 10 10 10")
+    reveal_tab.pack(expand=1, fill="both")
+
+    decoyed_input_label = Label(reveal_tab, text="Input Message:")
+    decoyed_input_label.pack()
+
+    decoyed_input_box_contents = StringVar()
+    decoyed_input_box = Entry(reveal_tab, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=decoyed_input_box_contents)
+    decoyed_input_box.pack(expand=1, fill="both")
+
+    def do_reveal():
+        try:
+            recovered_message_box_contents.set(reveal_message(decoyed_input_box_contents.get()))
+        except BaseException as e:
+            exit("Error extracting message from message: " + str(e))
+
+    reveal_button = Button(reveal_tab, text="Reveal!", command=do_reveal)
+    reveal_button.pack()
+
+    recoved_message_label = Label(reveal_tab, text="Hidden Message:")
+    recoved_message_label.pack()
+
+    recovered_message_box_contents = StringVar()
+    recovered_message_box = Entry(reveal_tab, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=recovered_message_box_contents)
+    recovered_message_box.pack(expand=1, fill="both")
+
+    tabset.add(reveal_tab, text="Reveal")
+
+    tabset.pack(expand=1, fill="both")
 
     root.mainloop()
