@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='description' content=''>
+    <meta name='keywords' content=''>
+    <title>InvisiCrypt</title>
+    <link rel='stylesheet' type='text/css' href='invisicrypt.css'>
+    <script src='invisicrypt.js' defer></script>
+</head>
+<body onresize='scale()'>
+    <table>
+        <tr>
+            <td><h2>InvisiCrypt</h2></td>
+        </tr>
+        <tr>
+            <td>
+                <span>Decoy text</span><br>
+                <textarea id='decoy-text'></textarea>
+            </td>
+            <td>
+                <span>Combined text</span><br>
+                <textarea id='combined-text'></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span>Message text</span><br>
+                <textarea id='message-text'></textarea>
+            </td>
+        </tr>
+    </table>
+    <button id='encode' onclick='embedString()'>Encode</button>
+</body>
+</html>

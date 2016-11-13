@@ -1,0 +1,28 @@
+body {
+    font-family: sans-serif;
+    color: white;
+    background-color: #111;
+}
+
+h2 {
+    margin: 0.5em;
+}
+
+table {
+    position: relative;
+    margin: 0 auto;
+}
+
+span {
+    margin: 0.5em 1em 0.5em 1em;
+}
+
+textarea {
+    width: 20em;
+    height: 8em;
+    margin: 0.2em 1em 0.5em 1em;
+    font-family: sans-serif;
+    color: white;
+    background-color: #222;
+    font-size: 1em;
+}
