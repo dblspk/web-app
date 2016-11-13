@@ -9,28 +9,31 @@
     <script src='index.js' defer></script>
 </head>
 <body onresize='scale()'>
-    <table>
-        <tr>
-            <td><h2>InvisiCrypt</h2></td>
-        </tr>
-        <tr>
-            <td>
-                <span>Decoy text</span><br>
-                <textarea id='decoy-text'></textarea>
+    <div id='container'>
+        <h2>InvisiCrypt</h2>
+        <div class='title'>
+            <span>DECOY TEXT</span>
+            <span class='button clear' onclick='document.getElementById("decoy-text").value = ""'>CLEAR</span>
+        </div>
+        <textarea id='decoy-text' onfocus='this.select()'></textarea>
+        <div class='title'>
+            <span>MESSAGE TEXT</span>
+            <span class='button clear' onclick='document.getElementById("message-text").value = ""'>CLEAR</span>
+        </div>
+        <textarea id='message-text' onfocus='this.select()'></textarea>
+        <table>
+            <td class='button encode'>
+                <div onclick='embedString()'>ENCODE</div>
             </td>
-            <td>
-                <span>Combined text</span><br>
-                <textarea id='combined-text'></textarea>
+            <td class='button decode'>
+                <div onclick='decodeString()'>DECODE</div>
             </td>
-        </tr>
-        <tr>
-            <td>
-                <span>Message text</span><br>
-                <textarea id='message-text'></textarea>
-            </td>
-        </tr>
-    </table>
-    <button id='encode' onclick='embedString()'>Encode</button>
-    <button id='decode' onclick='decodeString()'>Decode</button>
+        </table>
+        <div class='title'>
+            <span>COMBINED TEXT</span>
+            <span class='button clear' onclick='document.getElementById("combined-text").value = ""'>CLEAR</span>
+        </div>
+        <textarea id='combined-text' onfocus='this.select()'></textarea>
+    </div>
 </body>
 </html>

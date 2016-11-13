@@ -31,6 +31,9 @@ function encodeString(str) {
     return outputStr;
 }
 
+document.getElementById('decoy-text').addEventListener('keyup', embedString, false);
+document.getElementById('message-text').addEventListener('keyup', embedString, false);
+
 function decodeString() {
     var extractedStr = extractString(document.getElementById('combined-text').value),
         outputStr = '',

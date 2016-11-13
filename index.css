@@ -4,25 +4,86 @@ body {
     background-color: #111;
 }
 
-h2 {
-    margin: 0.5em;
+#container {
+    position: relative;
+    margin: 0 1em;
 }
 
-table {
-    position: relative;
-    margin: 0 auto;
+h2 {
+    margin: 0.5em auto 0.3em;
+    text-align: center;
+}
+
+.title {
+    margin: 0.4em 0;
 }
 
 span {
-    margin: 0.5em 1em 0.5em 1em;
+    font-weight: bold;
+}
+
+.button {
+    -webkit-user-select: none;      
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.clear {
+    float: right;
+    padding: 0 0.15em;
+    background-color: #333;
+}
+
+.clear:hover {
+    background-color: #555;
+}
+
+.clear:active {
+    background-color: #777;
+}
+
+.encode {
+    background-color: #622;
+}
+
+.encode:hover {
+    background-color: #722;
+}
+
+.encode:active {
+    background-color: #922;
+}
+
+.decode {
+    background-color: #235;
+}
+
+.decode:hover {
+    background-color: #237;
+}
+
+.decode:active {
+    background-color: #239;
 }
 
 textarea {
-    width: 20em;
-    height: 8em;
-    margin: 0.2em 1em 0.5em 1em;
+    width: 100%;
+    height: 4em;
+    margin: 0.2em 0 0.4em;
     font-family: sans-serif;
     color: white;
-    background-color: #222;
+    background-color: #181818;
     font-size: 1em;
+}
+
+table {
+    width: 100%;
+    margin: 0.5em 0;
+}
+
+td {
+    height: 1.5em;
+    border: 0.1em solid #111;
+    text-align: center;
 }
