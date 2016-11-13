@@ -36,6 +36,23 @@ def encode_string(string):
 def encode_text_message(text):
     return encode_string("STR\0" + text)
 
+def openFile(file_path):
+
+    filename, file_extension = os.path.splitext(file_path)
+
+    file_contents = []
+    try:
+        with open(filename, "rb") as f:
+            byte = f.read(1)
+            while byte:
+                file_contents.append(byte[0]) #return integers
+                byte = f.read(1)
+
+    except OSError as e:
+        return "File Cannot be Opened"
+
+    return file_contents, file_extension
+
 def encode_file_message(filename):
     file_contents, file_type = openFile(filename)
 
@@ -165,42 +182,3 @@ else: # options.mode == "reveal"
         print(reveal_message(options.decoyed))
     except BaseException as e:
         exit("Error finding and decoding message: " + str(e))
-
-
-def openFile(file_path):
-
-    filename, file_extension = os.path.splitext(file_path)
-
-    file_contents = []
-    try:
-        with open(filename, "rb") as f:
-            byte = f.read(1)
-            while byte:
-                file_contents.append(byte[0]) #return integers
-                byte = f.read(1)
-
-    except OSError as e:
-        return "File Cannot be Opened"
-
-    return file_contents, file_extension
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
