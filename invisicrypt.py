@@ -189,9 +189,12 @@ else: # options.mode == "gui":
     root = Tk()
 
     root.minsize(width=500, height=500)
+    root.title("InvisiCrypt")
 
     def error_dialog(errmsg):
         popup = Tk()
+
+        popup.title("Error")
 
         popup_frame = Frame(popup, padding="10 10 10 10")
 
