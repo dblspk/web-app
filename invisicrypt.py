@@ -217,14 +217,14 @@ else: # options.mode == "gui":
     hide_tab = Frame(tabset, padding="10 10 10 10")
     hide_tab.pack(expand=1, fill="both")
 
-    decoy_input_label = Label(hide_tab, text="Decoy Message:")
+    decoy_input_label = Label(hide_tab, text="Decoy Message:", padding="0 10 0 0")
     decoy_input_label.pack()
 
     decoy_input_box_contents = StringVar()
     decoy_input_box = Entry(hide_tab, width=50, font="Arial 22 bold", exportselection=1, justify="center", textvariable=decoy_input_box_contents)
     decoy_input_box.pack(expand=1, fill="both")
 
-    message_input_label = Label(hide_tab, text="Real Message:")
+    message_input_label = Label(hide_tab, text="Real Message:", padding="0 20 0 0")
     message_input_label.pack()
 
     message_input_box_contents = StringVar()
@@ -243,10 +243,13 @@ else: # options.mode == "gui":
         except BaseException as e:
             error_dialog("Error generating message: " + str(e))
 
-    hide_button = Button(hide_tab, text="Hide!", command=do_hiding)
+    hide_button_padding = Frame(hide_tab, padding="0 20 0 0")
+    hide_button_padding.pack()
+
+    hide_button = Button(hide_button_padding, text="Hide!", command=do_hiding)
     hide_button.pack()
 
-    decoyed_output_label = Label(hide_tab, text="Output:")
+    decoyed_output_label = Label(hide_tab, text="Output:", padding="0 20 0 0")
     decoyed_output_label.pack()
 
     decoyed_output_box_contents = StringVar()
@@ -259,7 +262,7 @@ else: # options.mode == "gui":
     reveal_tab = Frame(tabset, padding="10 10 10 10")
     reveal_tab.pack(expand=1, fill="both")
 
-    decoyed_input_label = Label(reveal_tab, text="Input Message:")
+    decoyed_input_label = Label(reveal_tab, text="Input Message:", padding="0 20 0 0")
     decoyed_input_label.pack()
 
     decoyed_input_box_contents = StringVar()
@@ -272,10 +275,13 @@ else: # options.mode == "gui":
         except BaseException as e:
             error_dialog("Error extracting message: " + str(e))
 
-    reveal_button = Button(reveal_tab, text="Reveal!", command=do_reveal)
+    reveal_button_padding = Frame(reveal_tab, padding="0 20 0 0")
+    reveal_button_padding.pack()
+
+    reveal_button = Button(reveal_button_padding, text="Reveal!", command=do_reveal)
     reveal_button.pack()
 
-    recoved_message_label = Label(reveal_tab, text="Hidden Message:")
+    recoved_message_label = Label(reveal_tab, text="Hidden Message:", padding="0 20 0 0")
     recoved_message_label.pack()
 
     recovered_message_box_contents = StringVar()
