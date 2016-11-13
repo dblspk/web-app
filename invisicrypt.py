@@ -115,7 +115,7 @@ def hide_message(decoy_text, msg_type, msg):
 
     insertion_points = math.ceil(len(encoded_text) / 10)
     if len(decoy_text) <= insertion_points:
-        raise ValueError("error: decoy text must be longer! (at least " + str(insertion_points + 1) + " characters long)")
+        raise ValueError("decoy text must be longer! (at least " + str(insertion_points + 1) + " characters long)")
     output_string = io.StringIO()
     i = 0
     for j in range(0, len(encoded_text), 10):
@@ -190,6 +190,24 @@ else: # options.mode == "gui":
 
     root.minsize(width=500, height=500)
 
+    def error_dialog(errmsg):
+        popup = Tk()
+
+        popup_frame = Frame(popup, padding="10 10 10 10")
+
+        error_message = Label(popup_frame, text=errmsg)
+        error_message.pack()
+
+        def close_dialog():
+            popup.destroy()
+
+        annoyed_button = Button(popup_frame, text="Yeah, Whatever", command=close_dialog)
+        annoyed_button.pack()
+
+        popup_frame.pack()
+
+        popup.mainloop()
+
     tabset = Notebook(root)
 
     # HIDE tab
@@ -220,7 +238,7 @@ else: # options.mode == "gui":
                 )
             )
         except BaseException as e:
-            exit("Error generating message: " + str(e))
+            error_dialog("Error generating message: " + str(e))
 
     hide_button = Button(hide_tab, text="Hide!", command=do_hiding)
     hide_button.pack()
@@ -249,7 +267,7 @@ else: # options.mode == "gui":
         try:
             recovered_message_box_contents.set(reveal_message(decoyed_input_box_contents.get()))
         except BaseException as e:
-            exit("Error extracting message from message: " + str(e))
+            error_dialog("Error extracting message: " + str(e))
 
     reveal_button = Button(reveal_tab, text="Reveal!", command=do_reveal)
     reveal_button.pack()
