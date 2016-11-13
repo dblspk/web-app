@@ -8,6 +8,8 @@ import math
 import re
 import os
 import os.path
+from tkinter import *
+from tkinter.ttk import *
 
 encoding_chars = [
     "\u200B", # ZERO WIDTH SPACE
@@ -147,6 +149,7 @@ root_parser = argparse.ArgumentParser(description="A utility for hiding and reve
 sub_parsers = root_parser.add_subparsers(dest="mode")
 hide_parser = sub_parsers.add_parser("hide")
 reveal_parser = sub_parsers.add_parser("reveal")
+gui_parser = sub_parsers.add_parser("gui")
 hide_parser.add_argument("--file", action="store_true", help="Hide files instead of messages", dest="hide_file")
 hide_parser.add_argument("--decoy-file", action="store_true", help="Use a file for the decoy", dest="decoy_use_file")
 hide_parser.add_argument("decoy", type=str, help="Hide the message in this string (or file)")
@@ -171,7 +174,7 @@ if options.mode == "hide":
         print(hide_message(options.decoy, "file" if options.hide_file else "text", options.message))
     except BaseException as e:
         exit("Error generating message: " + str(e))
-else: # options.mode == "reveal"
+elif options.mode == "reveal":
     if options.reveal_file:
         try:
             options.decoyed = gulp_file(options.decoyed)
@@ -182,3 +185,37 @@ else: # options.mode == "reveal"
         print(reveal_message(options.decoyed))
     except BaseException as e:
         exit("Error finding and decoding message: " + str(e))
+else: # options.mode == "gui":
+    root = Tk()
+
+    main_frame = Frame(root)
+    main_frame.pack(expand=1, fill="both")
+
+    decoy_input_box_contents = StringVar()
+    decoy_input_box = Entry(main_frame, width=50, textvariable=decoy_input_box_contents)
+    decoy_input_box.pack(expand=1, fill="both")
+
+    message_input_box_contents = StringVar()
+    message_input_box = Entry(main_frame, width=50, textvariable=message_input_box_contents)
+    message_input_box.pack(expand=1, fill="both")
+
+    def do_hiding():
+        try:
+            decoyed_output_box_contents.set(
+                hide_message(
+                    decoy_input_box_contents.get(),
+                    "text",
+                    message_input_box_contents.get()
+                )
+            )
+        except BaseException as e:
+            exit("Error generating message: " + str(e))
+
+    hide_button = Button(main_frame, text="Hide!", command=do_hiding)
+    hide_button.pack()
+
+    decoyed_output_box_contents = StringVar()
+    decoyed_output_box = Entry(main_frame, width=50, textvariable=decoyed_output_box_contents)
+    decoyed_output_box.pack(expand=1, fill="both")
+
+    root.mainloop()
