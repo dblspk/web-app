@@ -36,11 +36,11 @@ span {
 }
 
 .clear:hover {
-    background-color: #555;
+    background-color: #777;
 }
 
 .clear:active {
-    background-color: #777;
+    background-color: #555;
 }
 
 #warn {
@@ -54,11 +54,11 @@ span {
 }
 
 .encode:hover {
-    background-color: #722;
+    background-color: #922;
 }
 
 .encode:active {
-    background-color: #922;
+    background-color: #722;
 }
 
 .decode {
@@ -66,11 +66,11 @@ span {
 }
 
 .decode:hover {
-    background-color: #237;
+    background-color: #239;
 }
 
 .decode:active {
-    background-color: #239;
+    background-color: #237;
 }
 
 textarea {
