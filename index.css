@@ -1,17 +1,12 @@
 body {
     font-family: sans-serif;
     color: white;
-    background-color: #111;
+    background-color: #222;
 }
 
 #container {
     position: relative;
     margin: 0 1em;
-}
-
-h2 {
-    margin: 0.5em auto 0.3em;
-    text-align: center;
 }
 
 .title {
@@ -32,7 +27,7 @@ span {
 .clear {
     float: right;
     padding: 0 0.15em;
-    background-color: #333;
+    background-color: #444;
 }
 
 .clear:hover {
@@ -41,12 +36,6 @@ span {
 
 .clear:active {
     background-color: #555;
-}
-
-#warn {
-    opacity: 0;
-    text-align: center;
-    background-color: red;
 }
 
 .encode {
@@ -76,20 +65,13 @@ span {
 textarea {
     width: 100%;
     height: 4em;
-    margin: 0.2em 0 0.4em;
+    margin: 0 0 0.4em;
     font-family: sans-serif;
     color: white;
-    background-color: #181818;
+    background-color: #111;
     font-size: 1em;
 }
 
-table {
-    width: 100%;
-    margin: 0.5em 0;
-}
-
-td {
-    height: 1.5em;
-    border: 0.1em solid #111;
-    text-align: center;
+textarea.readonly {
+    background-color: #222;
 }

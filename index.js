@@ -1,23 +1,31 @@
+var safe = false; // if true, accomodate X11 clipboard limitations
+
 function embedString() {
-    var decoyStr = document.getElementById('decoy-text').value,
-        encodedStr = encodeString('STR\0' + document.getElementById('message-text').value),
-        outputStr = '';
-    var i = 0, j = 0;
+    var decoyStr = document.getElementById('out-decoy').value,
+        encodedStr = encodeString('STR\0' + document.getElementById('out-secret').value),
+        outputStr = '',
+        i = 0,
+        j = 0;
     while (i < decoyStr.length-1) {
         outputStr += decoyStr[i++];
         for (; j < i * 10; j++)
             if (encodedStr[j])
                 outputStr += encodedStr[j];
     }
-    if (j < encodedStr.length) {
-        var warn = document.getElementById('warn');
-        warn.style.opacity = 1;
-        warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of decoy text to store entire message.';
+    if (!safe) {
+        if (j < encodedStr.length)
+            outputStr += encodedStr.slice(j);
     } else {
-        document.getElementById('warn').style.opacity = 0;
+        var warn = document.getElementById('warn');
+        if (j < encodedStr.length) {
+            warn.style.opacity = 1;
+            warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of decoy text to store entire message.';
+        } else
+            warn.style.opacity = 0;
     }
-    outputStr += decoyStr[i];
-    document.getElementById('combined-text').value = outputStr;
+    if (decoyStr.length > 0)
+        outputStr += decoyStr[i];
+    document.getElementById('out-text').value = outputStr;
 }
 
 function encodeString(str) {
@@ -35,33 +43,30 @@ function encodeString(str) {
     return outputStr;
 }
 
-document.getElementById('decoy-text').addEventListener('keyup', embedString, false);
-document.getElementById('message-text').addEventListener('keyup', embedString, false);
-
 function decodeString() {
-    var extractedStr = extractString(document.getElementById('combined-text').value),
-        outputStr = '',
-        encodingVals = {
-            '\u200B':0,
-            '\u200C':1,
-            '\u200D':2,
-            '\uFEFF':3
-        };
-    for (var i = 0, sLen = extractedStr.length; i < sLen; i += 4) {
-        var charCode = 0;
-        for (var j = 0; j < 4; j++) {
-            charCode += encodingVals[extractedStr[i + j]] << (6 - j * 2);
+    window.setTimeout(function(){
+        var secretStr = document.getElementById('in-text').value.match(/[\u200B\u200C\u200D\uFEFF]/g),
+            outputStr = '',
+            encodingVals = {
+                '\u200B':0,
+                '\u200C':1,
+                '\u200D':2,
+                '\uFEFF':3
+            };
+        if (secretStr != null) {
+            for (var i = 0, sLen = secretStr.length; i < sLen; i += 4) {
+                var charCode = 0;
+                for (var j = 0; j < 4; j++) {
+                    charCode += encodingVals[secretStr[i + j]] << (6 - j * 2);
+                }
+                outputStr += String.fromCharCode(charCode);
+            }
         }
-        outputStr += String.fromCharCode(charCode);
-    }
-    if (outputStr.slice(0, 4) == 'STR\0')
-        document.getElementById('message-text').value = outputStr.slice(4);
-    else
-        console.log('Please run the Python version to extract files.')
-}
-
-function extractString(str) {
-    return str.match(/[\u200B\u200C\u200D\uFEFF]/g);
+        if (outputStr.slice(0, 4) == 'STR\0')
+            document.getElementById('in-secret').value = outputStr.slice(4);
+        else
+            console.log('File extraction is not supported at this time.')
+    }, 1);
 }
 
 // Credit: http://stackoverflow.com/questions/1240408/reading-bytes-from-a-javascript-string
@@ -82,4 +87,19 @@ function scale() {
     document.body.style.fontSize = window.innerWidth * 0.02 + 'px';
 }
 
-window.onreadystatechange = scale();
+function resizeTextarea(el) {
+    el.style.height = '';
+    el.style.height = Math.min(el.scrollHeight, document.body.style.fontSize.slice(0,-2) * 12) + 'px';
+}
+
+document.onreadystatechange = function() {
+    scale();
+    document.getElementById('out-secret').addEventListener('keyup', embedString, false);
+    document.getElementById('out-decoy').addEventListener('keyup', embedString, false);
+    new Clipboard('.copy');
+
+    if (navigator.userAgent.test(/Mac|iP(hone|od|ad)/)) {
+        document.getElementById('in-text').placeholder = 'Paste [Command+V] here';
+        document.getElementById('out-text').placeholder = 'Copy [Command+C] this text';
+    }
+}

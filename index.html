@@ -4,41 +4,38 @@
     <meta charset='UTF-8'>
     <meta name='description' content=''>
     <meta name='keywords' content=''>
-    <title>InvisiCrypt</title>
+    <title>Doublespeak</title>
     <link rel='stylesheet' type='text/css' href='index.css'>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.15/clipboard.min.js' defer></script>
     <script src='index.js' defer></script>
 </head>
 <body onresize='scale()'>
     <div id='container'>
-        <h2>InvisiCrypt</h2>
         <div class='title'>
-            <span>DECOY TEXT</span>
-            <span class='button clear' onclick='document.getElementById("decoy-text").value = ""'>CLEAR</span>
+            <span>IN: TEXT</span>
+            <span class='button clear' onclick='document.getElementById("in-text").value = ""'>CLEAR</span>
         </div>
-        <textarea id='decoy-text' onfocus='this.select()'></textarea>
+        <textarea id='in-text' onpaste='decodeString()' onfocus='this.select()' placeholder='Paste [Ctrl+V] here' oninput='resizeTextarea(this)'></textarea>
         <div class='title'>
-            <span>MESSAGE TEXT</span>
-            <span class='button clear' onclick='document.getElementById("message-text").value = ""'>CLEAR</span>
+            <span>IN: SECRET</span>
+            <span class='button clear copy' data-clipboard-target='#in-secret'>COPY</span>
         </div>
-        <textarea id='message-text' onfocus='this.select()'></textarea>
-        <table>
-            <tr>
-                <td colspan='2' id='warn'></td>
-            </tr>
-            <tr>
-                <td class='button encode'>
-                    <div onclick='embedString()'>ENCODE</div>
-                </td>
-                <td class='button decode'>
-                    <div onclick='decodeString()'>DECODE</div>
-                </td>
-            </tr>
-        </table>
+        <textarea id='in-secret' class='readonly' onfocus='this.select()' readonly></textarea>
         <div class='title'>
-            <span>COMBINED TEXT</span>
-            <span class='button clear' onclick='document.getElementById("combined-text").value = ""'>CLEAR</span>
+            <span>OUT: DECOY</span>
+            <span class='button clear' onclick='document.getElementById("out-decoy").value = ""'>CLEAR</span>
         </div>
-        <textarea id='combined-text' onfocus='this.select()'></textarea>
+        <textarea id='out-decoy' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+        <div class='title'>
+            <span>OUT: SECRET</span>
+            <span class='button clear' onclick='document.getElementById("out-secret").value = ""'>CLEAR</span>
+        </div>
+        <textarea id='out-secret' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+        <div class='title'>
+            <span>OUT: TEXT</span>
+            <span class='button clear copy' data-clipboard-target='#out-text'>COPY</span>
+        </div>
+        <textarea id='out-text' class='readonly' onfocus='this.select()' placeholder='Copy [Ctrl+C] this text' readonly></textarea>
     </div>
 </body>
 </html>
