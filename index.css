@@ -62,7 +62,7 @@ textarea {
     font-family: sans-serif;
     color: white;
     background-color: #111;
-    border-width: 2px;
+    border-width: 0.15em;
     border-color: #444;
     resize: none;
 }
@@ -77,11 +77,11 @@ textarea.readonly {
 }
 
 textarea.decode {
-    border-color: royalblue;
+    border-color: deepskyblue;
 }
 
 textarea.encode {
-    border-color: maroon;
+    border-color: red;
 }
 
 textarea.copy {

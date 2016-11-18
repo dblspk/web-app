@@ -143,8 +143,9 @@ function resizeBody() {
 }
 
 function resizeTextarea(el) {
+    var fontSize = parseFloat(document.body.style.fontSize);
     el.style.height = '';
-    el.style.height = Math.min(el.scrollHeight + 4, document.body.style.fontSize.slice(0,-2) * 12) + 'px';
+    el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
 }
 
 window.addEventListener('keyup', function(e) {
