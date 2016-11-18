@@ -1,8 +1,9 @@
-var safe = false; // if true, accomodate X11 clipboard limitations
+var textarea = [],
+    safe = false; // if true, accomodate X11 clipboard limitations
 
 function embedString() {
-    var decoyStr = document.getElementById('out-decoy').value,
-        encodedStr = encodeString('S\0' + document.getElementById('out-secret').value),
+    var decoyStr = textarea[2].value,
+        encodedStr = encodeString('S\0' + textarea[3].value),
         outputStr = '',
         i = 0,
         j = 0;
@@ -25,12 +26,11 @@ function embedString() {
     }
     if (decoyStr.length > 0)
         outputStr += decoyStr[i];
-    var outPacket = document.getElementById('out-package');
-    outPacket.value = outputStr;
-    resizeTextarea(outPacket);
-    outPacket.classList.add('encode');
+    textarea[4].value = outputStr;
+    resizeTextarea(textarea[4]);
+    textarea[4].classList.add('encode');
     window.setTimeout(function() {
-        outPacket.classList.remove('encode');
+        textarea[4].classList.remove('encode');
     }, 100);
 }
 
@@ -51,7 +51,7 @@ function encodeString(str) {
 
 function decodeString() {
     window.setTimeout(function() {
-        var secretStr = document.getElementById('in-package').value.match(/[\u200B\u200C\u200D\uFEFF]/g),
+        var secretStr = textarea[0].value.match(/[\u200B\u200C\u200D\uFEFF]/g),
             outputStr = '',
             encodingVals = {
                 '\u200B':0,
@@ -68,12 +68,11 @@ function decodeString() {
             }
         }
         if (outputStr.slice(0, 2) == 'S\0') {
-            var inSecret = document.getElementById('in-secret')
-            inSecret.value = outputStr.slice(2);
-            resizeTextarea(inSecret);
-            inSecret.classList.add('decode');
+            textarea[1].value = outputStr.slice(2);
+            resizeTextarea(textarea[1]);
+            textarea[1].classList.add('decode');
             window.setTimeout(function() {
-                inSecret.classList.remove('decode');
+                textarea[1].classList.remove('decode');
             }, 500);
         } else
             console.log('File extraction is not supported at this time.')
@@ -95,51 +94,39 @@ function stringToBytes(str) {
 };
 
 function clearIn() {
-    var inPackage = document.getElementById('in-package'),
-        inSecret = document.getElementById('in-secret');
-    inPackage.value = '';
-    inSecret.value = '';
-    resizeTextarea(inPackage);
-    resizeTextarea(inSecret);
+    textarea[0].value = '';
+    textarea[1].value = '';
+    resizeTextarea(textarea[0]);
+    resizeTextarea(textarea[1]);
 }
 
 function clearOut() {
-    var outDecoy = document.getElementById('out-decoy'),
-        outPackage = document.getElementById('out-package');
-    outDecoy.value = '';
-    outPackage.value = '';
-    resizeTextarea(outDecoy);
-    resizeTextarea(outPackage);
+    textarea[2].value = '';
+    textarea[3].value = '';
+    resizeTextarea(textarea[2]);
+    resizeTextarea(textarea[3]);
 }
 
 function clearOutSecret() {
-    var outSecret = document.getElementById('out-secret');
-    outSecret.value = '';
-    resizeTextarea(outSecret);
+    textarea[3].value = '';
+    resizeTextarea(textarea[3]);
 }
 
-function clickCopy(textarea, copied) {
-    var copyField = document.getElementById(textarea),
-        copiedBanner = document.getElementById(copied);
-    copyField.classList.add('copy');
+function clickCopy(ta, copied) {
+    var copiedBanner = document.getElementById(copied);
+    textarea[ta].classList.add('copy');
     copiedBanner.classList.add('show')
     window.setTimeout(function() {
-        copyField.classList.remove('copy');
+        textarea[ta].classList.remove('copy');
         copiedBanner.classList.remove('show');
-        copyField.select();
+        textarea[ta].select();
     }, 500)
 }
 
 function resizeBody() {
     document.body.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.8) * 0.03 + 'px';
-    var textareas = ['in-package',
-                     'in-secret',
-                     'out-decoy',
-                     'out-secret',
-                     'out-package'
-        ];
     for (var i = 0; i < 5; i++)
-        resizeTextarea(document.getElementById(textareas[i]));
+        resizeTextarea(textarea[i]);
 }
 
 function resizeTextarea(el) {
@@ -152,30 +139,39 @@ window.addEventListener('keyup', function(e) {
     // Select textareas with keys
     if (e.altKey) {
         if (e.keyCode === 65) // Alt+A
-            document.getElementById('in-package').focus();
+            textarea[0].focus();
         else if (e.keyCode === 90) { // Alt+Z
-            document.getElementById('in-secret').focus();
+            textarea[1].focus();
             document.getElementById('in-copy').click();
         }
         else if (e.keyCode === 87) // Alt+W
-            document.getElementById('out-decoy').focus();
+            textarea[2].focus();
         else if (e.keyCode === 83) // Alt+S
-            document.getElementById('out-secret').focus();
+            textarea[3].focus();
         else if (e.keyCode === 88) { // Alt+X
-            document.getElementById('out-package').focus();
+            textarea[4].focus();
             document.getElementById('out-copy').click();
         }
     }
 }, false);
 
 document.onreadystatechange = function() {
+    var textareas = ['in-package',
+                     'in-secret',
+                     'out-decoy',
+                     'out-secret',
+                     'out-package'
+        ];
+    for (var i = 0; i < 5; i++)
+        textarea[i] = document.getElementById(textareas[i]);
+    
     resizeBody();
-    document.getElementById('out-secret').addEventListener('keyup', embedString, false);
-    document.getElementById('out-decoy').addEventListener('keyup', embedString, false);
+    textarea[2].addEventListener('keyup', embedString, false);
+    textarea[3].addEventListener('keyup', embedString, false);
     new Clipboard('.copy');
 
     if (navigator.platform.match(/Mac|iP(hone|od|ad)/)) {
-        document.getElementById('in-package').placeholder = 'Paste [Command+V] input';
-        document.getElementById('out-package').placeholder = 'Copy [Command+C] output';
+        textarea[0].placeholder = 'Paste [Command+V] input';
+        textarea[4].placeholder = 'Copy [Command+C] output';
     }
 }
