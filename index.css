@@ -6,7 +6,7 @@ body {
 
 #container {
     position: relative;
-    width: 48em;
+    width: 30em;
     margin: auto;
 }
 
@@ -23,6 +23,11 @@ span {
     width: 6em;
     height: 1.4em;
     padding-top: 0.4em;
+    cursor: default;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 
 .button {
@@ -47,27 +52,23 @@ span {
     background-color: #555;
 }
 
-.encode {
-    background-color: #622;
-}
-
-.decode {
-    background-color: #235;
-}
-
 textarea {
     display: inline-block;
     box-sizing: border-box;
-    width: 38em;
+    width: 20em;
     height: 1.8em;
     vertical-align: top;
+    font-size: 1em;
     font-family: sans-serif;
     color: white;
     background-color: #111;
-    font-size: 1em;
     border-width: 2px;
     border-color: #444;
     resize: none;
+}
+
+textarea:hover {
+    border-color: #777;
 }
 
 textarea.readonly {
@@ -75,6 +76,33 @@ textarea.readonly {
     background-color: #222;
 }
 
-textarea.change {
+textarea.decode {
+    border-color: royalblue;
+}
+
+textarea.encode {
     border-color: maroon;
+}
+
+textarea.copy {
+    border-color: green;
+}
+
+.copied {
+    display: none;
+    position: absolute;
+    left: 6em;
+    width: 20em;
+    height: 1.1em;
+    text-align: center;
+    background-color: green;
+    cursor: default;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.copied.show {
+    display: inline;
 }

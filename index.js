@@ -28,9 +28,9 @@ function embedString() {
     var outPacket = document.getElementById('out-package');
     outPacket.value = outputStr;
     resizeTextarea(outPacket);
-    outPacket.classList.add('change');
+    outPacket.classList.add('encode');
     window.setTimeout(function() {
-        outPacket.classList.remove('change');
+        outPacket.classList.remove('encode');
     }, 100);
 }
 
@@ -62,19 +62,18 @@ function decodeString() {
         if (secretStr != null) {
             for (var i = 0, sLen = secretStr.length; i < sLen; i += 4) {
                 var charCode = 0;
-                for (var j = 0; j < 4; j++) {
+                for (var j = 0; j < 4; j++)
                     charCode += encodingVals[secretStr[i + j]] << (6 - j * 2);
-                }
                 outputStr += String.fromCharCode(charCode);
             }
         }
-        if (outputStr == '' || outputStr.slice(0, 2) == 'S\0') {
+        if (outputStr.slice(0, 2) == 'S\0') {
             var inSecret = document.getElementById('in-secret')
             inSecret.value = outputStr.slice(2);
             resizeTextarea(inSecret);
-            inSecret.classList.add('change');
+            inSecret.classList.add('decode');
             window.setTimeout(function() {
-                inSecret.classList.remove('change');
+                inSecret.classList.remove('decode');
             }, 500);
         } else
             console.log('File extraction is not supported at this time.')
@@ -95,29 +94,13 @@ function stringToBytes(str) {
     return byteArray;
 };
 
-function resizeBody() {
-    document.body.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 2.8) * 0.02 + 'px';
-    var textareas = ['in-package',
-                     'in-secret',
-                     'out-decoy',
-                     'out-secret',
-                     'out-package'
-        ];
-    for (var i = 0; i < 5; i++) {
-        resizeTextarea(document.getElementById(textareas[i]));
-    }
-}
-
-function resizeTextarea(el) {
-    el.style.height = '';
-    el.style.height = Math.min(el.scrollHeight + 4, document.body.style.fontSize.slice(0,-2) * 12) + 'px';
-}
-
 function clearIn() {
-    var inPackage = document.getElementById('in-package');
+    var inPackage = document.getElementById('in-package'),
+        inSecret = document.getElementById('in-secret');
     inPackage.value = '';
+    inSecret.value = '';
     resizeTextarea(inPackage);
-    decodeString();
+    resizeTextarea(inSecret);
 }
 
 function clearOut() {
@@ -133,6 +116,35 @@ function clearOutSecret() {
     var outSecret = document.getElementById('out-secret');
     outSecret.value = '';
     resizeTextarea(outSecret);
+}
+
+function clickCopy(textarea, copied) {
+    var copyField = document.getElementById(textarea),
+        copiedBanner = document.getElementById(copied);
+    copyField.classList.add('copy');
+    copiedBanner.classList.add('show')
+    window.setTimeout(function() {
+        copyField.classList.remove('copy');
+        copiedBanner.classList.remove('show');
+        copyField.select();
+    }, 500)
+}
+
+function resizeBody() {
+    document.body.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.8) * 0.03 + 'px';
+    var textareas = ['in-package',
+                     'in-secret',
+                     'out-decoy',
+                     'out-secret',
+                     'out-package'
+        ];
+    for (var i = 0; i < 5; i++)
+        resizeTextarea(document.getElementById(textareas[i]));
+}
+
+function resizeTextarea(el) {
+    el.style.height = '';
+    el.style.height = Math.min(el.scrollHeight + 4, document.body.style.fontSize.slice(0,-2) * 12) + 'px';
 }
 
 window.addEventListener('keyup', function(e) {

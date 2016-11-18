@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='UTF-8'>
-    <meta name='description' content=''>
+    <meta name='description' content='Embeds/extracts messages as zero width Unicode characters in text.'>
     <meta name='keywords' content=''>
     <title>Doublespeak</title>
     <link rel='stylesheet' type='text/css' href='index.css'>
@@ -20,7 +20,8 @@
         <div class='section'>
             <span class='label'>SECRET</span>
             <textarea id='in-secret' class='readonly' onfocus='this.select()' readonly></textarea>
-            <span id='in-copy' class='button copy' data-clipboard-target='#in-secret'>COPY</span>
+            <span id='in-copy' class='button copy' data-clipboard-target='#in-secret' onclick='clickCopy("in-secret", "in-copied")'>COPY</span>
+            <span id='in-copied' class='copied'>COPIED</span>
         </div>
         <br><br>
         <div class='section'>
@@ -35,8 +36,9 @@
         </div>
         <div class='section'>
             <span class='label'>PACKAGE</span>
-            <textarea id='out-package' class='readonly' onfocus='document.getElementById("out-copy").click(); this.select()' placeholder='Copy [Ctrl+C] output' readonly></textarea>
-            <span id='out-copy' class='button copy' data-clipboard-target='#out-package'>COPY</span>
+            <textarea id='out-package' class='readonly' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output' readonly></textarea>
+            <span id='out-copy' class='button copy' data-clipboard-target='#out-package' onclick='clickCopy("out-package", "out-copied")'>COPY</span>
+            <span id='out-copied' class='copied'>COPIED</span>
         </div>
     </div>
 </body>
