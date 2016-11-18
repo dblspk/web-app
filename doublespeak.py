@@ -36,7 +36,7 @@ def encode_string(string):
     return encode_bytes(string_bytes)
 
 def encode_text_message(text):
-    return encode_string("STR\0" + text)
+    return encode_string("S\0" + text)
 
 def openFile(file_path):
 
@@ -68,7 +68,7 @@ def encode_file_message(filename):
             file_type = "text/plain"
 
     return \
-        encode_string("FIL\0" + filename + "\0" + file_type + "\0") + \
+        encode_string("F\0" + filename + "\0" + file_type + "\0") + \
         encode_bytes(file_contents)
 
 def decode_string(string):
@@ -100,7 +100,7 @@ def find_message_in_str(string):
     return "".join([c for c in string if c in encoding_chars])
 
 def message_type(msg):
-    m = re.match(r'(?P<msg_type>(STR|FIL))\0(?P<msg_body>.+)', msg)
+    m = re.match(r'(?P<msg_type>(S|F))\0(?P<msg_body>.+)', msg)
     if not m:
         raise ValueError("Unable to parse message type")
     return m.group("msg_type"), m.group("msg_body")
@@ -132,9 +132,9 @@ def reveal_message(decoyed_message):
         raise ValueError("This message doesn't contain a hidden message")
     decoded_message = decode_string(encoded_message)
     msg_type, msg = message_type(decoded_message)
-    if msg_type == "STR":
+    if msg_type == "S":
         return msg
-    elif msg_type == "FIL":
+    elif msg_type == "F":
         file_name = str[1 : str[1:].index('\0')]
         file_data = str[str[1:].index('\0') : ]
         if not os.path.isfile(file_name):

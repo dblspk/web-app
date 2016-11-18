@@ -9,33 +9,35 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.15/clipboard.min.js' defer></script>
     <script src='index.js' defer></script>
 </head>
-<body onresize='scale()'>
+<body onresize='resizeBody()'>
     <div id='container'>
-        <div class='title'>
-            <span>IN: TEXT</span>
-            <span class='button clear' onclick='document.getElementById("in-text").value = ""'>CLEAR</span>
+        <br>
+        <div class='section'>
+            <span class='label'>PACKAGE</span>
+            <textarea id='in-package' onpaste='decodeString()' onfocus='this.select()' placeholder='Paste [Ctrl+V] input' oninput='resizeTextarea(this)' autofocus='autofocus'></textarea>
+            <span class='button' onclick='clearIn()'>CLEAR</span>
         </div>
-        <textarea id='in-text' onpaste='decodeString()' onfocus='this.select()' placeholder='Paste [Ctrl+V] here' oninput='resizeTextarea(this)'></textarea>
-        <div class='title'>
-            <span>IN: SECRET</span>
-            <span class='button clear copy' data-clipboard-target='#in-secret'>COPY</span>
+        <div class='section'>
+            <span class='label'>SECRET</span>
+            <textarea id='in-secret' class='readonly' onfocus='this.select()' readonly></textarea>
+            <span id='in-copy' class='button copy' data-clipboard-target='#in-secret'>COPY</span>
         </div>
-        <textarea id='in-secret' class='readonly' onfocus='this.select()' readonly></textarea>
-        <div class='title'>
-            <span>OUT: DECOY</span>
-            <span class='button clear' onclick='document.getElementById("out-decoy").value = ""'>CLEAR</span>
+        <br><br>
+        <div class='section'>
+            <span class='label'>DECOY</span>
+            <textarea id='out-decoy' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+            <span class='button' onclick='clearOut()'>CLEAR</span>
         </div>
-        <textarea id='out-decoy' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
-        <div class='title'>
-            <span>OUT: SECRET</span>
-            <span class='button clear' onclick='document.getElementById("out-secret").value = ""'>CLEAR</span>
+        <div class='section'>
+            <span class='label'>SECRET</span>
+            <textarea id='out-secret' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+            <span class='button' onclick='clearOutSecret()'>CLEAR</span>
         </div>
-        <textarea id='out-secret' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
-        <div class='title'>
-            <span>OUT: TEXT</span>
-            <span class='button clear copy' data-clipboard-target='#out-text'>COPY</span>
+        <div class='section'>
+            <span class='label'>PACKAGE</span>
+            <textarea id='out-package' class='readonly' onfocus='document.getElementById("out-copy").click(); this.select()' placeholder='Copy [Ctrl+C] output' readonly></textarea>
+            <span id='out-copy' class='button copy' data-clipboard-target='#out-package'>COPY</span>
         </div>
-        <textarea id='out-text' class='readonly' onfocus='this.select()' placeholder='Copy [Ctrl+C] this text' readonly></textarea>
     </div>
 </body>
 </html>

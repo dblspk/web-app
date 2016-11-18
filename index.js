@@ -2,7 +2,7 @@ var safe = false; // if true, accomodate X11 clipboard limitations
 
 function embedString() {
     var decoyStr = document.getElementById('out-decoy').value,
-        encodedStr = encodeString('STR\0' + document.getElementById('out-secret').value),
+        encodedStr = encodeString('S\0' + document.getElementById('out-secret').value),
         outputStr = '',
         i = 0,
         j = 0;
@@ -25,7 +25,13 @@ function embedString() {
     }
     if (decoyStr.length > 0)
         outputStr += decoyStr[i];
-    document.getElementById('out-text').value = outputStr;
+    var outPacket = document.getElementById('out-package');
+    outPacket.value = outputStr;
+    resizeTextarea(outPacket);
+    outPacket.classList.add('change');
+    window.setTimeout(function() {
+        outPacket.classList.remove('change');
+    }, 100);
 }
 
 function encodeString(str) {
@@ -44,8 +50,8 @@ function encodeString(str) {
 }
 
 function decodeString() {
-    window.setTimeout(function(){
-        var secretStr = document.getElementById('in-text').value.match(/[\u200B\u200C\u200D\uFEFF]/g),
+    window.setTimeout(function() {
+        var secretStr = document.getElementById('in-package').value.match(/[\u200B\u200C\u200D\uFEFF]/g),
             outputStr = '',
             encodingVals = {
                 '\u200B':0,
@@ -62,9 +68,15 @@ function decodeString() {
                 outputStr += String.fromCharCode(charCode);
             }
         }
-        if (outputStr.slice(0, 4) == 'STR\0')
-            document.getElementById('in-secret').value = outputStr.slice(4);
-        else
+        if (outputStr == '' || outputStr.slice(0, 2) == 'S\0') {
+            var inSecret = document.getElementById('in-secret')
+            inSecret.value = outputStr.slice(2);
+            resizeTextarea(inSecret);
+            inSecret.classList.add('change');
+            window.setTimeout(function() {
+                inSecret.classList.remove('change');
+            }, 500);
+        } else
             console.log('File extraction is not supported at this time.')
     }, 1);
 }
@@ -83,23 +95,74 @@ function stringToBytes(str) {
     return byteArray;
 };
 
-function scale() {
-    document.body.style.fontSize = window.innerWidth * 0.02 + 'px';
+function resizeBody() {
+    document.body.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 2.8) * 0.02 + 'px';
+    var textareas = ['in-package',
+                     'in-secret',
+                     'out-decoy',
+                     'out-secret',
+                     'out-package'
+        ];
+    for (var i = 0; i < 5; i++) {
+        resizeTextarea(document.getElementById(textareas[i]));
+    }
 }
 
 function resizeTextarea(el) {
     el.style.height = '';
-    el.style.height = Math.min(el.scrollHeight, document.body.style.fontSize.slice(0,-2) * 12) + 'px';
+    el.style.height = Math.min(el.scrollHeight + 4, document.body.style.fontSize.slice(0,-2) * 12) + 'px';
 }
 
+function clearIn() {
+    var inPackage = document.getElementById('in-package');
+    inPackage.value = '';
+    resizeTextarea(inPackage);
+    decodeString();
+}
+
+function clearOut() {
+    var outDecoy = document.getElementById('out-decoy'),
+        outPackage = document.getElementById('out-package');
+    outDecoy.value = '';
+    outPackage.value = '';
+    resizeTextarea(outDecoy);
+    resizeTextarea(outPackage);
+}
+
+function clearOutSecret() {
+    var outSecret = document.getElementById('out-secret');
+    outSecret.value = '';
+    resizeTextarea(outSecret);
+}
+
+window.addEventListener('keyup', function(e) {
+    // Select textareas with keys
+    if (e.altKey) {
+        if (e.keyCode === 65) // Alt+A
+            document.getElementById('in-package').focus();
+        else if (e.keyCode === 90) { // Alt+Z
+            document.getElementById('in-secret').focus();
+            document.getElementById('in-copy').click();
+        }
+        else if (e.keyCode === 87) // Alt+W
+            document.getElementById('out-decoy').focus();
+        else if (e.keyCode === 83) // Alt+S
+            document.getElementById('out-secret').focus();
+        else if (e.keyCode === 88) { // Alt+X
+            document.getElementById('out-package').focus();
+            document.getElementById('out-copy').click();
+        }
+    }
+}, false);
+
 document.onreadystatechange = function() {
-    scale();
+    resizeBody();
     document.getElementById('out-secret').addEventListener('keyup', embedString, false);
     document.getElementById('out-decoy').addEventListener('keyup', embedString, false);
     new Clipboard('.copy');
 
-    if (navigator.userAgent.test(/Mac|iP(hone|od|ad)/)) {
-        document.getElementById('in-text').placeholder = 'Paste [Command+V] here';
-        document.getElementById('out-text').placeholder = 'Copy [Command+C] this text';
+    if (navigator.platform.match(/Mac|iP(hone|od|ad)/)) {
+        document.getElementById('in-package').placeholder = 'Paste [Command+V] input';
+        document.getElementById('out-package').placeholder = 'Copy [Command+C] output';
     }
 }
