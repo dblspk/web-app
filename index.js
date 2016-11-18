@@ -102,9 +102,9 @@ function clearIn() {
 
 function clearOut() {
     textarea[2].value = '';
-    textarea[3].value = '';
+    textarea[4].value = '';
     resizeTextarea(textarea[2]);
-    resizeTextarea(textarea[3]);
+    resizeTextarea(textarea[4]);
 }
 
 function clearOutSecret() {
@@ -170,7 +170,7 @@ document.onreadystatechange = function() {
     textarea[3].addEventListener('keyup', embedString, false);
     new Clipboard('.copy');
 
-    if (navigator.platform.match(/Mac|iP(hone|od|ad)/)) {
+    if (navigator.userAgent.match(/Mac|iP(hone|od|ad)/)) {
         textarea[0].placeholder = 'Paste [Command+V] input';
         textarea[4].placeholder = 'Copy [Command+C] output';
     }
