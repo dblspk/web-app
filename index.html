@@ -19,11 +19,12 @@
         </div>
         <div class='section'>
             <span class='label'>SECRET</span>
-            <textarea id='in-secret' onfocus='this.select()' readonly></textarea>
+            <div style='display: inline-block'>
+                <textarea id='in-secret' onfocus='this.select()' readonly></textarea>
+                <div id='in-copied' class='copied'>COPIED</div>
+            </div>
             <span id='in-copy' class='button copy' data-clipboard-target='#in-secret' onclick='clickCopy(1, "in-copied")'>COPY</span>
-            <span id='in-copied' class='copied'>COPIED</span>
         </div>
-        <br>
         <div class='title'>SEND</div>
         <div class='section'>
             <span class='label'>DECOY</span>
@@ -37,9 +38,11 @@
         </div>
         <div class='section'>
             <span class='label'>CIPHER</span>
-            <textarea id='out-cipher' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+            <div style='display: inline-block'>
+                <textarea id='out-cipher' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+                <div id='out-copied' class='copied'>COPIED</div>
+            </div>
             <span id='out-copy' class='button copy' data-clipboard-target='#out-cipher' onclick='clickCopy(4, "out-copied")'>COPY</span>
-            <span id='out-copied' class='copied'>COPIED</span>
         </div>
     </div>
 </body>

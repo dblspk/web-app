@@ -5,6 +5,7 @@ body {
 }
 
 div, span {
+    font-weight: bold;
     cursor: default;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -21,16 +22,13 @@ div, span {
 .title {
     width: 100%;
     margin: 0.8em 0;
+    font-weight: normal;
     font-size: 150%;
     color: #AAA;
 }
 
 .section {
     margin: 0.4em 0;
-}
-
-span {
-    font-weight: bold;
 }
 
 .label {
@@ -60,7 +58,6 @@ span {
 }
 
 textarea {
-    display: inline-block;
     box-sizing: border-box;
     width: 20em;
     height: 1.8em;
@@ -69,6 +66,7 @@ textarea {
     font-family: sans-serif;
     color: white;
     background-color: #111;
+    border-style: solid;
     border-width: 0.15em;
     border-color: #444;
     resize: none;
@@ -83,8 +81,8 @@ textarea:focus {
     outline: none;
 }
 
-textarea:read-only {
-    border-style: dotted;
+textarea[readonly] {
+    border-style: dashed;
     background-color: #222;
 }
 
@@ -101,15 +99,13 @@ textarea.copy {
 }
 
 .copied {
-    display: none;
-    position: absolute;
-    left: 5em;
     width: 20em;
     height: 1.1em;
+    opacity: 0;
     text-align: center;
     background-color: green;
 }
 
 .copied.show {
-    display: inline;
+    opacity: 1;
 }

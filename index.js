@@ -174,7 +174,7 @@ document.onreadystatechange = function() {
     new Clipboard('.copy');
 
     if (navigator.userAgent.match(/Mac|iP(hone|od|ad)/)) {
-        textarea[0].placeholder = 'Paste [Command+V] input';
-        textarea[4].placeholder = 'Copy [Command+C] output';
+        textarea[0].placeholder = 'Paste [Command+V] input ciphertext';
+        textarea[4].placeholder = 'Copy [Command+C] output ciphertext';
     }
 }
