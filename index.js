@@ -73,9 +73,9 @@ function decodeString() {
             textarea[1].classList.add('decode');
             window.setTimeout(function() {
                 textarea[1].classList.remove('decode');
-            }, 500);
+            }, 1000);
         } else
-            console.log('File extraction is not supported at this time.')
+            console.log('Only string extraction is supported at this time.')
     }, 1);
 }
 
@@ -91,7 +91,7 @@ function stringToBytes(str) {
                 byteArray.push(parseInt(h[j], 16));
         }
     return byteArray;
-};
+}
 
 function clearIn() {
     textarea[0].value = '';
@@ -120,7 +120,7 @@ function clickCopy(ta, copied) {
         textarea[ta].classList.remove('copy');
         copiedBanner.classList.remove('show');
         textarea[ta].select();
-    }, 500)
+    }, 1000)
 }
 
 function resizeBody() {
