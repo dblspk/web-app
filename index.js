@@ -31,7 +31,7 @@ function embedString() {
     textarea[4].classList.add('encode');
     window.setTimeout(function() {
         textarea[4].classList.remove('encode');
-    }, 100);
+    }, 200);
 }
 
 function encodeString(str) {
@@ -50,6 +50,7 @@ function encodeString(str) {
 }
 
 function decodeString() {
+    textarea[0].maxLength = 0x7FFFFFFF;
     window.setTimeout(function() {
         var secretStr = textarea[0].value.match(/[\u200B\u200C\u200D\uFEFF]/g),
             outputStr = '',
@@ -114,17 +115,17 @@ function clearOutSecret() {
 
 function clickCopy(ta, copied) {
     var copiedBanner = document.getElementById(copied);
+    textarea[ta].select();
     textarea[ta].classList.add('copy');
     copiedBanner.classList.add('show')
     window.setTimeout(function() {
         textarea[ta].classList.remove('copy');
         copiedBanner.classList.remove('show');
-        textarea[ta].select();
-    }, 1000)
+    }, 800)
 }
 
 function resizeBody() {
-    document.body.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.8) * 0.03 + 'px';
+    document.body.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.03 + 'px';
     for (var i = 0; i < 5; i++)
         resizeTextarea(textarea[i]);
 }
@@ -137,30 +138,32 @@ function resizeTextarea(el) {
 
 window.addEventListener('keyup', function(e) {
     // Select textareas with keys
-    if (e.altKey) {
-        if (e.keyCode === 65) // Alt+A
-            textarea[0].focus();
-        else if (e.keyCode === 90) { // Alt+Z
-            textarea[1].focus();
-            document.getElementById('in-copy').click();
+    if (e.altKey)
+        switch (e.keyCode) {
+            case 65: // Alt+A
+                textarea[0].focus();
+                break;
+            case 90: // Alt+Z
+                textarea[1].focus();
+                document.getElementById('in-copy').click();
+                break;
+            case 87: // Alt+W
+                textarea[2].focus();
+                break;
+            case 83: // Alt+S
+                textarea[3].focus();
+                break;
+            case 88: // Alt+X
+                textarea[4].focus();
         }
-        else if (e.keyCode === 87) // Alt+W
-            textarea[2].focus();
-        else if (e.keyCode === 83) // Alt+S
-            textarea[3].focus();
-        else if (e.keyCode === 88) { // Alt+X
-            textarea[4].focus();
-            document.getElementById('out-copy').click();
-        }
-    }
 }, false);
 
 document.onreadystatechange = function() {
-    var textareas = ['in-package',
+    var textareas = ['in-cipher',
                      'in-secret',
                      'out-decoy',
                      'out-secret',
-                     'out-package'
+                     'out-cipher'
         ];
     for (var i = 0; i < 5; i++)
         textarea[i] = document.getElementById(textareas[i]);

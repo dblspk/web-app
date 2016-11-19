@@ -11,22 +11,23 @@
 </head>
 <body onresize='resizeBody()'>
     <div id='container'>
-        <br>
+        <div class='title'>RECEIVE</div>
         <div class='section'>
-            <span class='label'>PACKAGE</span>
-            <textarea id='in-package' onpaste='decodeString()' onfocus='this.select()' placeholder='Paste [Ctrl+V] input' oninput='resizeTextarea(this)' autofocus='autofocus'></textarea>
+            <span class='label'>CIPHER</span>
+            <textarea id='in-cipher' onpaste='decodeString()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
             <span class='button' onclick='clearIn()'>CLEAR</span>
         </div>
         <div class='section'>
             <span class='label'>SECRET</span>
-            <textarea id='in-secret' class='readonly' onfocus='this.select()' readonly></textarea>
+            <textarea id='in-secret' onfocus='this.select()' readonly></textarea>
             <span id='in-copy' class='button copy' data-clipboard-target='#in-secret' onclick='clickCopy(1, "in-copied")'>COPY</span>
             <span id='in-copied' class='copied'>COPIED</span>
         </div>
-        <br><br>
+        <br>
+        <div class='title'>SEND</div>
         <div class='section'>
             <span class='label'>DECOY</span>
-            <textarea id='out-decoy' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+            <textarea id='out-decoy' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus='autofocus'></textarea>
             <span class='button' onclick='clearOut()'>CLEAR</span>
         </div>
         <div class='section'>
@@ -35,9 +36,9 @@
             <span class='button' onclick='clearOutSecret()'>CLEAR</span>
         </div>
         <div class='section'>
-            <span class='label'>PACKAGE</span>
-            <textarea id='out-package' class='readonly' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output' readonly></textarea>
-            <span id='out-copy' class='button copy' data-clipboard-target='#out-package' onclick='clickCopy(4, "out-copied")'>COPY</span>
+            <span class='label'>CIPHER</span>
+            <textarea id='out-cipher' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+            <span id='out-copy' class='button copy' data-clipboard-target='#out-cipher' onclick='clickCopy(4, "out-copied")'>COPY</span>
             <span id='out-copied' class='copied'>COPIED</span>
         </div>
     </div>

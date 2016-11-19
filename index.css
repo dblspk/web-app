@@ -4,10 +4,25 @@ body {
     background-color: #222;
 }
 
+div, span {
+    cursor: default;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
 #container {
     position: relative;
     width: 30em;
     margin: auto;
+}
+
+.title {
+    width: 100%;
+    margin: 0.8em 0;
+    font-size: 150%;
+    color: #AAA;
 }
 
 .section {
@@ -20,14 +35,9 @@ span {
 
 .label {
     float: left;
-    width: 6em;
+    width: 5em;
     height: 1.4em;
     padding-top: 0.4em;
-    cursor: default;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
 }
 
 .button {
@@ -36,12 +46,9 @@ span {
     width: 4em;
     height: 1.4em;
     padding-top: 0.4em;
+    margin-left: 1em;
     background-color: #444;
     cursor: pointer;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
 }
 
 .button:hover {
@@ -71,13 +78,18 @@ textarea:hover {
     border-color: #777;
 }
 
-textarea.readonly {
+textarea:focus {
+    border-color: #4286F4;
+    outline: none;
+}
+
+textarea:read-only {
     border-style: dotted;
     background-color: #222;
 }
 
 textarea.decode {
-    border-color: deepskyblue;
+    border-color: cyan;
 }
 
 textarea.encode {
@@ -91,16 +103,11 @@ textarea.copy {
 .copied {
     display: none;
     position: absolute;
-    left: 6em;
+    left: 5em;
     width: 20em;
     height: 1.1em;
     text-align: center;
     background-color: green;
-    cursor: default;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
 }
 
 .copied.show {
