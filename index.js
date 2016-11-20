@@ -20,7 +20,7 @@ function embedString() {
         var warn = document.getElementById('warn');
         if (j < encodedStr.length) {
             warn.style.visibility = 'visible';
-            warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of decoy text to store entire message.';
+            warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of decoy text to store entire message';
         } else
             warn.style.visibility = 'hidden';
     }
