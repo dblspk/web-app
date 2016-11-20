@@ -11,7 +11,13 @@
 </head>
 <body onresize='resizeBody()'>
     <div id='container'>
-        <div class='title'>RECEIVE</div>
+        <div class='title'>RECEIVE
+            <label class='switch'>
+                <input type='checkbox' onclick='toggleSafe()'>
+                <div class='slider'></div>
+                <span class='tooltip'>Limit consecutive hidden characters to 10 for Linux X11 clipboard</span>
+            </label>
+        </div>
         <div class='section'>
             <span class='label'>CIPHER</span>
             <textarea id='in-cipher' onpaste='decodeString()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
@@ -41,6 +47,7 @@
             <div style='display: inline-block'>
                 <textarea id='out-cipher' oncopy='notifyCopy(4, "out-copied")' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
                 <div id='out-copied' class='copied'>COPIED</div>
+                <div id='warn'></div>
             </div>
             <span id='out-copy' class='button copy' data-clipboard-target='#out-cipher'>COPY</span>
         </div>

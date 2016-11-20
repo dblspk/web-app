@@ -1,5 +1,5 @@
 var textarea = [],
-    safe = false; // if true, accomodate X11 clipboard limitations
+    safe = document.cookie.match(/safe=true/) ? true : false; // if true, accomodate X11 clipboard limitation
 
 function embedString() {
     var decoyStr = textarea[2].value,
@@ -19,10 +19,10 @@ function embedString() {
     } else {
         var warn = document.getElementById('warn');
         if (j < encodedStr.length) {
-            warn.style.opacity = 1;
+            warn.style.visibility = 'visible';
             warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of decoy text to store entire message.';
         } else
-            warn.style.opacity = 0;
+            warn.style.visibility = 'hidden';
     }
     if (decoyStr.length > 0)
         outputStr += decoyStr[i];
@@ -106,11 +106,13 @@ function clearOut() {
     textarea[4].value = '';
     resizeTextarea(textarea[2]);
     resizeTextarea(textarea[4]);
+    document.getElementById('warn').style.visibility = 'hidden';
 }
 
 function clearOutSecret() {
     textarea[3].value = '';
     resizeTextarea(textarea[3]);
+    document.getElementById('warn').style.visibility = 'hidden';
 }
 
 function notifyCopy(ta, copied) {
@@ -133,6 +135,14 @@ function resizeTextarea(el) {
     var fontSize = parseFloat(document.body.style.fontSize);
     el.style.height = '';
     el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
+}
+
+function toggleSafe() {
+    safe = !safe;
+    if (safe)
+        document.cookie = 'safe=true';
+    else
+        document.cookie = 'safe=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
 }
 
 window.addEventListener('keyup', function(e) {
@@ -166,7 +176,9 @@ document.onreadystatechange = function() {
         ];
     for (var i = 0; i < 5; i++)
         textarea[i] = document.getElementById(textareas[i]);
-    
+    if (safe)
+        document.getElementsByTagName('input')[0].checked = true;
+
     resizeBody();
     textarea[2].addEventListener('keyup', embedString, false);
     textarea[3].addEventListener('keyup', embedString, false);
