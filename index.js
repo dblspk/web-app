@@ -180,8 +180,6 @@ document.onreadystatechange = function() {
         document.getElementsByTagName('input')[0].checked = true;
 
     resizeBody();
-    textarea[2].addEventListener('keyup', embedString, false);
-    textarea[3].addEventListener('keyup', embedString, false);
     new Clipboard('.copy');
 
     if (navigator.userAgent.match(/Mac|iP(hone|od|ad)/)) {

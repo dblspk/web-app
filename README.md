@@ -8,8 +8,8 @@ Embeds/extracts messages as zero width Unicode characters in text.
 
 [Unicode](https://en.wikipedia.org/wiki/Unicode) contains some zero width, unprintable characters. 4 of these are sufficiently resilient to input sanitation on the web to be useful:
 
-| Character | Description                   |
-| --------- | ----------------------------- |
+| Character | Description |
+| --------- | ----------- |
 | U+200B    | [zero width space](https://en.wikipedia.org/wiki/Zero-width_space) |
 | U+200C    | [zero width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) |
 | U+200D    | [zero width joiner](https://en.wikipedia.org/wiki/Zero-width_joiner) |

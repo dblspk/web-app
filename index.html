@@ -35,12 +35,12 @@
         <div class='title'>SEND TEXT</div>
         <div class='section'>
             <span class='label'>COVER</span>
-            <textarea id='out-cover' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus='autofocus'></textarea>
+            <textarea id='out-cover' onkeyup='embedString()' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus></textarea>
             <span class='button' onclick='clearOut()'>CLEAR</span>
         </div>
         <div class='section'>
             <span class='label'>HIDDEN</span>
-            <textarea id='out-hidden' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+            <textarea id='out-hidden' onkeyup='embedString()' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
             <span class='button' onclick='clearOutSecret()'>CLEAR</span>
         </div>
         <div class='section'>
