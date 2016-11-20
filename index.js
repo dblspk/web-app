@@ -20,7 +20,7 @@ function embedString() {
         var warn = document.getElementById('warn');
         if (j < encodedStr.length) {
             warn.style.visibility = 'visible';
-            warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of decoy text to store entire message';
+            warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of cover text to store entire message';
         } else
             warn.style.visibility = 'hidden';
     }
@@ -169,9 +169,9 @@ window.addEventListener('keyup', function(e) {
 
 document.onreadystatechange = function() {
     var textareas = ['in-cipher',
-                     'in-secret',
-                     'out-decoy',
-                     'out-secret',
+                     'in-hidden',
+                     'out-cover',
+                     'out-hidden',
                      'out-cipher'
         ];
     for (var i = 0; i < 5; i++)

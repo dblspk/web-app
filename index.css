@@ -5,7 +5,6 @@ body {
 }
 
 div, span {
-    font-weight: bold;
     cursor: default;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -22,7 +21,6 @@ div, span {
 .title {
     margin: 0.8em 0;
     font-size: 150%;
-    font-weight: normal;
     color: #AAA;
 }
 
@@ -35,6 +33,7 @@ div, span {
     width: 5em;
     height: 1.4em;
     padding-top: 0.4em;
+    font-weight: bold;
 }
 
 .button {
@@ -44,6 +43,7 @@ div, span {
     height: 1.4em;
     padding-top: 0.4em;
     margin-left: 1em;
+    font-weight: bold;
     background-color: #444;
     cursor: pointer;
 }
@@ -101,6 +101,7 @@ textarea.copy {
     height: 1.1em;
     margin-top: -1px;
     text-align: center;
+    font-weight: bold;
     background-color: green;
 }
 
@@ -111,9 +112,23 @@ textarea.copy {
 #warn {
     visibility: hidden;
     width: 19.6em;
+    height: 2.4em;
     padding: 0.2em;
     text-align: center;
+    font-weight: bold;
     background-color: maroon;
+}
+
+#tip {
+    font-size: 50%;
+    color: #777;
+}
+
+.key {
+    color: #222;
+    background-color: #DDD;
+    border: 0.1em solid #AAA;
+    border-radius: 0.2em;
 }
 
 .switch {
@@ -130,13 +145,13 @@ textarea.copy {
 
 .slider {
     position: absolute;
-    cursor: pointer;
     top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
-    bottom: 0;
     background-color: #111;
     border-radius: 1.1em;
+    cursor: pointer;
 }
 
 .slider:before {
@@ -170,12 +185,11 @@ input:checked + .slider:before {
     width: 8em;
     top: 130%;
     left: 50%;
-    margin-left: -4.3em;
-    padding: 0.3em;
+    margin-left: -4.4em;
+    padding: 0.2em;
     z-index: 1;
     text-align: center;
     font-size: 50%;
-    font-weight: normal;
     color: white;
     background-color: black;
     border-radius: 0.4em;
@@ -186,7 +200,7 @@ input:checked + .slider:before {
     content: '';
     bottom: 100%;
     left: 50%;
-    margin-left: -0.4em;
+    margin-left: -0.2em;
     border-width: 0.4em;
     border-style: solid;
     border-color: transparent transparent black transparent;

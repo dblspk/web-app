@@ -3,7 +3,8 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='description' content='Embeds/extracts messages as zero width Unicode characters in text.'>
-    <meta name='keywords' content=''>
+    <meta name='keywords' content='steganography, zero width, unicode, character'>
+    <meta name='author' content='Joshua Fan'>
     <title>Doublespeak</title>
     <link rel='stylesheet' type='text/css' href='index.css'>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.15/clipboard.min.js' defer></script>
@@ -11,7 +12,7 @@
 </head>
 <body onresize='resizeBody()'>
     <div id='container'>
-        <div class='title'>RECEIVE
+        <div class='title'>RECEIVE TEXT
             <label class='switch'>
                 <input type='checkbox' onclick='toggleSafe()'>
                 <div class='slider'></div>
@@ -24,22 +25,22 @@
             <span class='button' onclick='clearIn()'>CLEAR</span>
         </div>
         <div class='section'>
-            <span class='label'>SECRET</span>
+            <span class='label'>HIDDEN</span>
             <div style='display: inline-block'>
-                <textarea id='in-secret' oncopy='notifyCopy(1, "in-copied")' onfocus='this.select()' readonly></textarea>
+                <textarea id='in-hidden' oncopy='notifyCopy(1, "in-copied")' onfocus='this.select()' readonly></textarea>
                 <div id='in-copied' class='copied'>COPIED</div>
             </div>
-            <span id='in-copy' class='button copy' data-clipboard-target='#in-secret'>COPY</span>
+            <span id='in-copy' class='button copy' data-clipboard-target='#in-hidden'>COPY</span>
         </div>
-        <div class='title'>SEND</div>
+        <div class='title'>SEND TEXT</div>
         <div class='section'>
-            <span class='label'>DECOY</span>
-            <textarea id='out-decoy' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus='autofocus'></textarea>
+            <span class='label'>COVER</span>
+            <textarea id='out-cover' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus='autofocus'></textarea>
             <span class='button' onclick='clearOut()'>CLEAR</span>
         </div>
         <div class='section'>
-            <span class='label'>SECRET</span>
-            <textarea id='out-secret' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+            <span class='label'>HIDDEN</span>
+            <textarea id='out-hidden' onpaste='embedString()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
             <span class='button' onclick='clearOutSecret()'>CLEAR</span>
         </div>
         <div class='section'>
@@ -51,6 +52,7 @@
             </div>
             <span id='out-copy' class='button copy' data-clipboard-target='#out-cipher'>COPY</span>
         </div>
+        <div id='tip'>Tip: Press <span class='key'>Tab</span> to cycle through fields.</div>
     </div>
 </body>
 </html>
