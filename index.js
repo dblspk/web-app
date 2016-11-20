@@ -113,9 +113,8 @@ function clearOutSecret() {
     resizeTextarea(textarea[3]);
 }
 
-function clickCopy(ta, copied) {
+function notifyCopy(ta, copied) {
     var copiedBanner = document.getElementById(copied);
-    textarea[ta].select();
     textarea[ta].classList.add('copy');
     copiedBanner.classList.add('show')
     window.setTimeout(function() {
