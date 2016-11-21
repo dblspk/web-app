@@ -64,8 +64,8 @@ Each invisible character represents 2 bits, while taking 1 byte (8 bits) to stor
 
 ## Credits
 
-Joshua Fan - web interface
+Joshua Fan — web interface
 
-Samuel Arnold - algorithm and Python interface
+Samuel Arnold — encoding algorithm and Python interface
 
-Nitzan Orr
+Nitzan Orr — decoding algorithm
