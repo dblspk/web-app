@@ -188,7 +188,7 @@ document.onreadystatechange = function() {
     for (var i = 0; i < 5; i++)
         textarea[i] = document.getElementById(textareas[i]);
     if (safe)
-        document.getElementsByTagName('input')[0].checked = true;
+        document.getElementById('toggle-safe').checked = true;
 
     resizeBody();
     new Clipboard('.copy');

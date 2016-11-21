@@ -133,51 +133,54 @@ textarea.copy {
     border-radius: 0.2em;
 }
 
+#tab-loop {
+    height: 0;
+    overflow: hidden;
+}
+
 .switch {
+    display: none;
+}
+
+.switch + label {
     position: relative;
     float: right;
-    display: inline-block;
     width: 1.8em;
     height: 1.1em;
-}
-
-.switch input {
-    display:none;
-}
-
-.slider {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #111;
-    border-radius: 1.1em;
     cursor: pointer;
 }
 
-.slider:before {
+.switch + label:before,
+.switch + label:after {
     position: absolute;
+    display: block;
     content: '';
-    height: 0.9em;
-    width: 0.9em;
-    left: 0.1em;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1.8em;
+    background-color: #111;
+    border-radius: 0.55em;
+}
+
+.switch + label:after {
     top: 0.1em;
+    bottom: 0.1em;
+    width: 0.9em;
+    margin-left: 0.1em;
     background-color: #222;
     border-radius: 50%;
 }
 
-input:checked + .slider {
+.switch:checked + label:before {
     background-color: #F70;
 }
 
-input:checked + .slider:before {
-    -webkit-transform: translateX(0.7em);
-        -ms-transform: translateX(0.7em);
-            transform: translateX(0.7em);
+.switch:checked + label:after {
+    margin-left: 0.8em;
 }
 
-.switch:hover .tooltip {
+.switch + label:hover > .tooltip {
     visibility: visible;
 }
 

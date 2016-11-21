@@ -22,7 +22,7 @@ __Alt+W__ — focus outgoing cover text
 
 __Alt+S__ — focus outgoing hidden text
 
-__Alt+X__ — focus output ciphertext
+__Alt+X__ — focus and copy output ciphertext
 
 ## How it works
 

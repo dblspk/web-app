@@ -13,9 +13,8 @@
 <body onresize='resizeBody()'>
     <div id='container'>
         <div class='title'>RECEIVE TEXT
-            <label class='switch'>
-                <input type='checkbox'>
-                <div class='slider' onclick='toggleSafe()'></div>
+            <input type='checkbox' class='switch' id='toggle-safe' onclick='toggleSafe()'>
+            <label for='toggle-safe'>
                 <span class='tooltip'>Accommodate Linux X11 clipboard limitation</span>
             </label>
         </div>
@@ -53,6 +52,9 @@
             <span id='out-copy' class='button copy' data-clipboard-target='#out-cipher'>COPY</span>
         </div>
         <div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
+        <div id='tab-loop'>
+            <button onfocus='textarea[0].select()'></button>
+        </div>
     </div>
 </body>
 </html>
