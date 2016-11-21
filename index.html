@@ -6,6 +6,7 @@
     <meta name='keywords' content='steganography, zero width, unicode, character'>
     <meta name='author' content='Joshua Fan'>
     <title>Doublespeak</title>
+    <link rel='icon' type='image/icon' href='favicon.ico'>
     <link rel='stylesheet' type='text/css' href='index.css'>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.15/clipboard.min.js' defer></script>
     <script src='index.js' defer></script>
@@ -14,9 +15,9 @@
     <div id='container'>
         <div class='title'>RECEIVE TEXT
             <label class='switch'>
-                <input type='checkbox' onclick='toggleSafe()'>
-                <div class='slider'></div>
-                <span class='tooltip'>Limit consecutive hidden characters to 10 for Linux X11 clipboard</span>
+                <input type='checkbox'>
+                <div class='slider' onclick='toggleSafe()'></div>
+                <span class='tooltip'>Accommodate Linux X11 clipboard limitation</span>
             </label>
         </div>
         <div class='section'>
@@ -52,7 +53,7 @@
             </div>
             <span id='out-copy' class='button copy' data-clipboard-target='#out-cipher'>COPY</span>
         </div>
-        <div id='tip'>Tip: Press <span class='key'>Tab</span> to cycle through fields.</div>
+        <div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
     </div>
 </body>
 </html>

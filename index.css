@@ -13,7 +13,6 @@ div, span {
 }
 
 #container {
-    position: relative;
     width: 30em;
     margin: auto;
 }
@@ -25,6 +24,7 @@ div, span {
 }
 
 .section {
+    position: relative;
     margin: 0.4em 0;
 }
 
@@ -37,12 +37,12 @@ div, span {
 }
 
 .button {
-    float: right;
-    text-align: center;
+    position: absolute;
+    right: 0;
     width: 4em;
     height: 1.4em;
     padding-top: 0.4em;
-    margin-left: 0.9em;
+    text-align: center;
     font-weight: bold;
     background-color: #444;
     cursor: pointer;
@@ -81,10 +81,11 @@ textarea:focus {
 textarea[readonly] {
     border-style: dashed;
     background-color: #222;
+    cursor: text;
 }
 
 textarea.decode {
-    border-color: aqua;
+    border-color: yellow;
 }
 
 textarea.encode {
@@ -120,6 +121,7 @@ textarea.copy {
 }
 
 #tip {
+    text-align: center;
     font-size: 50%;
     color: #777;
 }
@@ -182,11 +184,10 @@ input:checked + .slider:before {
 .tooltip {
     position: absolute;
     visibility: hidden;
-    width: 8em;
-    top: 130%;
-    left: 50%;
-    margin-left: -4.4em;
-    padding: 0.2em;
+    width: 11.4em;
+    top: -15%;
+    right: 120%;
+    padding: 0.3em;
     z-index: 1;
     text-align: center;
     font-size: 50%;
@@ -198,10 +199,10 @@ input:checked + .slider:before {
 .tooltip::after {
     position: absolute;
     content: '';
-    bottom: 100%;
-    left: 50%;
-    margin-left: -0.2em;
+    top: 50%;
+    left: 100%;
+    margin-top: -0.4em;
     border-width: 0.4em;
     border-style: solid;
-    border-color: transparent transparent black transparent;
+    border-color: transparent transparent transparent black;
 }

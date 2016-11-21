@@ -26,7 +26,7 @@ With 4 characters, we can encode any data in [quaternary](https://en.wikipedia.o
 
 The resulting string of invisible characters is then interspersed throughout the cover text.
 
-We discovered during testing that the Linux [X11](https://en.wikipedia.org/wiki/X_Window_System) clipboard drops consecutive invisible characters past 10. We accomodate this by distributing the encoded characters throughout the cover text in groups of 10, and, optionally, prompting the user to provide more characters of cover text as needed. If neither participant in a conversation is using X11, the default mode of operation is to pack the end of the encoded string between the last and second-to-last characters of cover text.
+We discovered during testing that the Linux [X11](https://en.wikipedia.org/wiki/X_Window_System) clipboard truncates consecutive invisible characters past 10. We accomodate this by distributing the encoded characters throughout the cover text in groups of 10, and, optionally, prompting the user to provide more characters of cover text as needed. If no participants in a conversation are using X11, the default mode of operation is to pack the end of the encoded string between the last and second-to-last characters of cover text.
 
 ## Efficiency
 

@@ -1,20 +1,22 @@
 var textarea = [],
-    safe = document.cookie.match(/safe=true/) ? true : false; // if true, accomodate X11 clipboard limitation
+    safe = document.cookie.match(/safe=true/) ? true : false; // if true, limit consecutive hidden characters to 10 for Linux X11 clipboard
 
 function embedString() {
-    var decoyStr = textarea[2].value,
+    var coverStr = textarea[2].value,
         encodedStr = encodeString('S\0' + textarea[3].value),
         outputStr = '',
         i = 0,
         j = 0;
-    while (i < decoyStr.length-1) {
-        outputStr += decoyStr[i++];
+    // Distribute 10 encoded characters between each cover character
+    while (i < coverStr.length-1) {
+        outputStr += coverStr[i++];
         for (; j < i * 10; j++)
             if (encodedStr[j])
                 outputStr += encodedStr[j];
     }
     if (!safe) {
         if (j < encodedStr.length)
+            // Pack in remaining encoded characters
             outputStr += encodedStr.slice(j);
     } else {
         var warn = document.getElementById('warn');
@@ -24,8 +26,10 @@ function embedString() {
         } else
             warn.style.visibility = 'hidden';
     }
-    if (decoyStr.length > 0)
-        outputStr += decoyStr[i];
+    if (coverStr.length > 0)
+        outputStr += coverStr[i];
+    else if (!encodedStr[9])
+        outputStr = '';
     textarea[4].value = outputStr;
     resizeTextarea(textarea[4]);
     textarea[4].classList.add('encode');
@@ -52,7 +56,8 @@ function encodeString(str) {
 function decodeString() {
     textarea[0].maxLength = 0x7FFFFFFF;
     window.setTimeout(function() {
-        var secretStr = textarea[0].value.match(/[\u200B\u200C\u200D\uFEFF]/g),
+        // Discard cover text
+        var hiddenStr = textarea[0].value.match(/[\u200B\u200C\u200D\uFEFF]/g),
             outputStr = '',
             encodingVals = {
                 '\u200B':0,
@@ -60,11 +65,11 @@ function decodeString() {
                 '\u200D':2,
                 '\uFEFF':3
             };
-        if (secretStr != null) {
-            for (var i = 0, sLen = secretStr.length; i < sLen; i += 4) {
+        if (hiddenStr != null) {
+            for (var i = 0, sLen = hiddenStr.length; i < sLen; i += 4) {
                 var charCode = 0;
                 for (var j = 0; j < 4; j++)
-                    charCode += encodingVals[secretStr[i + j]] << (6 - j * 2);
+                    charCode += encodingVals[hiddenStr[i + j]] << (6 - j * 2);
                 outputStr += String.fromCharCode(charCode);
             }
         }
@@ -99,6 +104,7 @@ function clearIn() {
     textarea[1].value = '';
     resizeTextarea(textarea[0]);
     resizeTextarea(textarea[1]);
+    textarea[0].focus();
 }
 
 function clearOut() {
@@ -107,12 +113,14 @@ function clearOut() {
     resizeTextarea(textarea[2]);
     resizeTextarea(textarea[4]);
     document.getElementById('warn').style.visibility = 'hidden';
+    textarea[2].focus();
 }
 
 function clearOutSecret() {
     textarea[3].value = '';
     resizeTextarea(textarea[3]);
     document.getElementById('warn').style.visibility = 'hidden';
+    textarea[3].focus();
 }
 
 function notifyCopy(ta, copied) {
@@ -139,10 +147,13 @@ function resizeTextarea(el) {
 
 function toggleSafe() {
     safe = !safe;
-    if (safe)
+    if (safe) {
         document.cookie = 'safe=true';
-    else
+        embedString();
+    } else {
         document.cookie = 'safe=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+        document.getElementById('warn').style.visibility = 'hidden';
+    }
 }
 
 window.addEventListener('keyup', function(e) {
