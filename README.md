@@ -2,7 +2,37 @@
 
 __https://joshuaptfan.github.io/Doublespeak/__
 
-Embeds/extracts messages as zero width Unicode characters in text.
+Embeds/extracts messages as zero width Unicode characters in text, as a form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI has been optimized for real time chat.
+
+## Usage
+
+###### Web interface
+
+__Tab__ — cycle through fields
+
+Output ciphertext is automatically copied by tabbing to or clicking on field.
+
+Fields automatically highlight on focus, type/paste to replace text. Clear buttons should not be needed, even on mobile.
+
+__Alt+A__ — focus input ciphertext
+
+__Alt+Z__ — focus and copy input hidden text
+
+__Alt+W__ — focus outgoing cover text
+
+__Alt+S__ — focus outgoing hidden text
+
+__Alt+X__ — focus output ciphertext
+
+###### Relevant OS keyboard shortcuts
+
+__Ctrl+C__ — copy
+
+__Ctrl+V__ — paste
+
+__Alt+Tab__ — switch between applications
+
+__Ctrl+Tab__ / __Ctrl+Shift+Tab__ — switch between browser tabs
 
 ## How it works
 
@@ -26,8 +56,16 @@ With 4 characters, we can encode any data in [quaternary](https://en.wikipedia.o
 
 The resulting string of invisible characters is then interspersed throughout the cover text.
 
-We discovered during testing that the Linux [X11](https://en.wikipedia.org/wiki/X_Window_System) clipboard truncates consecutive invisible characters past 10. We accomodate this by distributing the encoded characters throughout the cover text in groups of 10, and, optionally, prompting the user to provide more characters of cover text as needed. If no participants in a conversation are using X11, the default mode of operation is to pack the end of the encoded string between the last and second-to-last characters of cover text.
+We discovered during testing that the Linux [X11](https://en.wikipedia.org/wiki/X_Window_System) clipboard truncates consecutive invisible characters past 10. We accommodate this by distributing the encoded characters throughout the cover text in groups of 10, and, optionally, prompting the user to provide more characters of cover text as needed. If no participants in a conversation are using X11, the default mode of operation is to pack the end of the encoded string between the last and second-to-last characters of cover text.
 
 ## Efficiency
 
 Each invisible character represents 2 bits, while taking 1 byte (8 bits) to store. Thus, the hidden data takes up 4 times as much memory as the original data, not including cover text.
+
+## Credits
+
+Joshua Fan - web interface
+
+Samuel Arnold - algorithm and Python interface
+
+Nitzan Orr
