@@ -2,7 +2,7 @@
 
 __https://joshuaptfan.github.io/Doublespeak/__
 
-Embeds/extracts messages as zero width Unicode characters in text, as a form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI has been optimized for real time chat.
+Embeds/extracts messages as zero width Unicode characters in text, as a form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI is optimized for real time chat.
 
 ## Usage
 
@@ -10,7 +10,7 @@ Embeds/extracts messages as zero width Unicode characters in text, as a form of 
 
 __Tab__ — cycle through fields
 
-Output ciphertext is automatically copied by tabbing to or clicking on field.
+Output ciphertext is automatically copied by tabbing to or clicking on the field.
 
 Fields automatically highlight on focus, type/paste to replace text. Clear buttons should not be needed, even on mobile.
 
@@ -23,16 +23,6 @@ __Alt+W__ — focus outgoing cover text
 __Alt+S__ — focus outgoing hidden text
 
 __Alt+X__ — focus output ciphertext
-
-###### Relevant OS keyboard shortcuts
-
-__Ctrl+C__ — copy
-
-__Ctrl+V__ — paste
-
-__Alt+Tab__ — switch between applications
-
-__Ctrl+Tab__ / __Ctrl+Shift+Tab__ — switch between browser tabs
 
 ## How it works
 
@@ -60,7 +50,7 @@ We discovered during testing that the Linux [X11](https://en.wikipedia.org/wiki/
 
 ## Efficiency
 
-Each invisible character represents 2 bits, while taking 1 byte (8 bits) to store. Thus, the hidden data takes up 4 times as much memory as the original data, not including cover text.
+Each invisible character represents 2 bits, while taking 1 byte (8 bits) to store. Thus, the hidden data consumes 4 times as much memory as the original data, not including cover text.
 
 ## Credits
 
