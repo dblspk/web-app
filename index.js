@@ -1,9 +1,9 @@
 var textarea = [],
     safe = document.cookie.match(/safe=true/) ? true : false; // if true, limit consecutive hidden characters to 10 for Linux X11 clipboard
 
-function embedString() {
+function embedText() {
     var coverStr = textarea[2].value,
-        encodedStr = encodeString('S\0' + textarea[3].value),
+        encodedStr = encodeText('T\0' + textarea[3].value),
         outputStr = '',
         i = 0,
         j = 0;
@@ -41,7 +41,7 @@ function embedString() {
     }, 200);
 }
 
-function encodeString(str) {
+function encodeText(str) {
     var strBytes = stringToBytes(str),
         outputStr = '',
         encodingChars = [
@@ -56,7 +56,7 @@ function encodeString(str) {
     return outputStr;
 }
 
-function decodeString() {
+function decodeText() {
     textarea[0].maxLength = 0x7FFFFFFF;
     window.setTimeout(function() {
         // Discard cover text
@@ -76,7 +76,7 @@ function decodeString() {
                 outputStr += String.fromCharCode(charCode);
             }
         }
-        if (outputStr.slice(0, 2) == 'S\0') {
+        if (outputStr.slice(0, 2) == 'T\0') {
             textarea[1].value = outputStr.slice(2);
             resizeTextarea(textarea[1]);
             textarea[1].classList.add('decode');
@@ -84,7 +84,7 @@ function decodeString() {
                 textarea[1].classList.remove('decode');
             }, 1000);
         } else
-            console.log('Only string extraction is supported at this time.')
+            console.log('Only text extraction is supported at this time.')
     }, 1);
 }
 
@@ -113,14 +113,14 @@ function clearIn() {
 function clearOut() {
     textarea[2].value = '';
     resizeTextarea(textarea[2]);
-    embedString();
+    embedText();
     textarea[2].focus();
 }
 
 function clearOutSecret() {
     textarea[3].value = '';
     resizeTextarea(textarea[3]);
-    embedString();
+    embedText();
     textarea[3].focus();
 }
 
@@ -150,7 +150,7 @@ function toggleSafe() {
     safe = !safe;
     if (safe) {
         document.cookie = 'safe=true';
-        embedString();
+        embedText();
     } else {
         document.cookie = 'safe=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
         document.getElementById('warn').style.visibility = 'hidden';
