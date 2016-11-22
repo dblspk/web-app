@@ -1,8 +1,8 @@
 # Doublespeak
 
-__https://joshuaptfan.github.io/Doublespeak/__
-
 Embeds/extracts messages as zero width Unicode characters in text, as a form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI is optimized for real time chat.
+
+__https://joshuaptfan.github.io/Doublespeak/__
 
 ## Usage
 
@@ -54,8 +54,8 @@ Each invisible character represents 2 bits, while taking 1 byte (8 bits) to stor
 
 ## Credits
 
-Joshua Fan — web interface
+* [Joshua Fan](https://github.com/joshuaptfan) — web interface
 
-Samuel Arnold — encoding algorithm and Python interface
+* [Samuel Arnold](https://github.com/Grond66) — encoding algorithm and Python interface
 
-Nitzan Orr — decoding algorithm
+* [Nitzan Orr](https://github.com/orrblue) — decoding algorithm
