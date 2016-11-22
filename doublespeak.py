@@ -36,7 +36,7 @@ def encode_string(string):
     return encode_bytes(string_bytes)
 
 def encode_text_message(text):
-    return encode_string("S\0" + text)
+    return encode_string("T\0" + text)
 
 def openFile(file_path):
 
@@ -51,7 +51,7 @@ def openFile(file_path):
                 byte = f.read(1)
 
     except OSError as e:
-        return "File Cannot be Opened"
+        return "File cannot be opened"
 
     return file_contents, file_extension
 
@@ -100,7 +100,7 @@ def find_message_in_str(string):
     return "".join([c for c in string if c in encoding_chars])
 
 def message_type(msg):
-    m = re.match(r'(?P<msg_type>(S|F))\0(?P<msg_body>.+)', msg)
+    m = re.match(r'(?P<msg_type>(T|F))\0(?P<msg_body>.+)', msg)
     if not m:
         raise ValueError("Unable to parse message type")
     return m.group("msg_type"), m.group("msg_body")
@@ -115,7 +115,7 @@ def hide_message(decoy_text, msg_type, msg):
 
     insertion_points = math.ceil(len(encoded_text) / 10)
     if len(decoy_text) <= insertion_points:
-        raise ValueError("decoy text must be longer! (at least " + str(insertion_points + 1) + " characters long)")
+        raise ValueError("cover text must be longer! (at least " + str(insertion_points + 1) + " characters long)")
     output_string = io.StringIO()
     i = 0
     for j in range(0, len(encoded_text), 10):
@@ -129,10 +129,10 @@ def hide_message(decoy_text, msg_type, msg):
 def reveal_message(decoyed_message):
     encoded_message = find_message_in_str(decoyed_message)
     if not encoded_message:
-        raise ValueError("This message doesn't contain a hidden message")
+        raise ValueError("This text doesn't contain a hidden message")
     decoded_message = decode_string(encoded_message)
     msg_type, msg = message_type(decoded_message)
-    if msg_type == "S":
+    if msg_type == "T":
         return msg
     elif msg_type == "F":
         file_name = str[1 : str[1:].index('\0')]
@@ -151,10 +151,10 @@ hide_parser = sub_parsers.add_parser("hide")
 reveal_parser = sub_parsers.add_parser("reveal")
 gui_parser = sub_parsers.add_parser("gui")
 hide_parser.add_argument("--file", action="store_true", help="Hide files instead of messages", dest="hide_file")
-hide_parser.add_argument("--decoy-file", action="store_true", help="Use a file for the decoy", dest="decoy_use_file")
-hide_parser.add_argument("decoy", type=str, help="Hide the message in this string (or file)")
+hide_parser.add_argument("--cover-file", action="store_true", help="Use a file for the cover", dest="decoy_use_file")
+hide_parser.add_argument("cover", type=str, help="Hide the message in this string (or file)")
 hide_parser.add_argument("message", type=str, help="Message or file to be hidden")
-reveal_parser.add_argument("decoyed", type=str, help="Find and decode hidden messages in this text")
+reveal_parser.add_argument("covered", type=str, help="Find and decode hidden messages in this text")
 reveal_parser.add_argument("--file", action="store_true", help="Reveal the contents of a file, rather than a string", dest="reveal_file")
 
 cmdline_options = sys.argv[1:]
@@ -166,30 +166,30 @@ options = root_parser.parse_args(cmdline_options)
 if options.mode == "hide":
     if options.decoy_use_file:
         try:
-            options.decoy = gulp_file(options.decoy)
+            options.cover = gulp_file(options.cover)
         except BaseException as e:
-            exit("Error reading decoy data from file: " + str(e))
+            exit("Error reading cover data from file: " + str(e))
 
     try:
-        print(hide_message(options.decoy, "file" if options.hide_file else "text", options.message))
+        print(hide_message(options.cover, "file" if options.hide_file else "text", options.message))
     except BaseException as e:
         exit("Error generating message: " + str(e))
 elif options.mode == "reveal":
     if options.reveal_file:
         try:
-            options.decoyed = gulp_file(options.decoyed)
+            options.covered = gulp_file(options.covered)
         except BaseException as e:
-            exit("Error reading decoyed data from file: " + str(e))
+            exit("Error reading covered data from file: " + str(e))
 
     try:
-        print(reveal_message(options.decoyed))
+        print(reveal_message(options.covered))
     except BaseException as e:
         exit("Error finding and decoding message: " + str(e))
 else: # options.mode == "gui":
     root = Tk()
 
     root.minsize(width=500, height=500)
-    root.title("InvisiCrypt")
+    root.title("Doublespeak")
 
     def error_dialog(errmsg):
         popup = Tk()
@@ -217,7 +217,7 @@ else: # options.mode == "gui":
     hide_tab = Frame(tabset, padding="10 10 10 10")
     hide_tab.pack(expand=1, fill="both")
 
-    decoy_input_label = Label(hide_tab, text="Decoy Message:", padding="0 10 0 0")
+    decoy_input_label = Label(hide_tab, text="Cover Message:", padding="0 10 0 0")
     decoy_input_label.pack()
 
     decoy_input_box_contents = StringVar()
