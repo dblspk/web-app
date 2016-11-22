@@ -26,10 +26,13 @@ function embedString() {
         } else
             warn.style.visibility = 'hidden';
     }
-    if (coverStr.length > 0)
+    if (coverStr.length > 0) {
         outputStr += coverStr[i];
-    else if (!encodedStr[9])
+        textarea[3].readOnly = false;
+    } else if (!encodedStr[9]) {
         outputStr = '';
+        textarea[3].readOnly = true;
+    }
     textarea[4].value = outputStr;
     resizeTextarea(textarea[4]);
     textarea[4].classList.add('encode');
@@ -109,17 +112,15 @@ function clearIn() {
 
 function clearOut() {
     textarea[2].value = '';
-    textarea[4].value = '';
     resizeTextarea(textarea[2]);
-    resizeTextarea(textarea[4]);
-    document.getElementById('warn').style.visibility = 'hidden';
+    embedString();
     textarea[2].focus();
 }
 
 function clearOutSecret() {
     textarea[3].value = '';
     resizeTextarea(textarea[3]);
-    document.getElementById('warn').style.visibility = 'hidden';
+    embedString();
     textarea[3].focus();
 }
 
