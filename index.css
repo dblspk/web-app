@@ -110,17 +110,8 @@ textarea.copy {
     visibility: visible;
 }
 
-#warn {
-    visibility: hidden;
-    width: 19.6em;
-    height: 2.4em;
-    padding: 0.2em;
-    text-align: center;
-    font-weight: bold;
-    background-color: maroon;
-}
-
 #tip {
+    margin-top: 6.3em;
     text-align: center;
     font-size: 50%;
     color: #777;
@@ -136,76 +127,4 @@ textarea.copy {
 #tab-loop {
     height: 0;
     overflow: hidden;
-}
-
-.switch {
-    display: none;
-}
-
-.switch + label {
-    position: relative;
-    float: right;
-    width: 1.8em;
-    height: 1.1em;
-    cursor: pointer;
-}
-
-.switch + label:before,
-.switch + label:after {
-    position: absolute;
-    display: block;
-    content: '';
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 1.8em;
-    background-color: #111;
-    border-radius: 0.55em;
-}
-
-.switch + label:after {
-    top: 0.1em;
-    bottom: 0.1em;
-    width: 0.9em;
-    margin-left: 0.1em;
-    background-color: #222;
-    border-radius: 50%;
-}
-
-.switch:checked + label:before {
-    background-color: #F70;
-}
-
-.switch:checked + label:after {
-    margin-left: 0.8em;
-}
-
-.switch + label:hover > .tooltip {
-    visibility: visible;
-}
-
-.tooltip {
-    position: absolute;
-    visibility: hidden;
-    width: 11.4em;
-    top: -15%;
-    right: 120%;
-    padding: 0.3em;
-    z-index: 1;
-    text-align: center;
-    font-size: 50%;
-    color: white;
-    background-color: black;
-    border-radius: 0.4em;
-}
-
-.tooltip::after {
-    position: absolute;
-    content: '';
-    top: 50%;
-    left: 100%;
-    margin-top: -0.4em;
-    border-width: 0.4em;
-    border-style: solid;
-    border-color: transparent transparent transparent black;
 }

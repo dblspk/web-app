@@ -1,39 +1,14 @@
-var textarea = [],
-    safe = document.cookie.match(/safe=true/) ? true : false; // if true, limit consecutive hidden characters to 10 for Linux X11 clipboard
+var textarea = [];
 
 function embedText() {
     var coverStr = textarea[2].value,
-        encodedStr = encodeText('T\0' + textarea[3].value),
-        outputStr = '',
-        i = 0,
-        j = 0;
-    // Distribute 10 encoded characters between each cover character
-    while (i < coverStr.length-1) {
-        outputStr += coverStr[i++];
-        for (; j < i * 10; j++)
-            if (encodedStr[j])
-                outputStr += encodedStr[j];
-    }
-    if (!safe) {
-        if (j < encodedStr.length)
-            // Pack in remaining encoded characters
-            outputStr += encodedStr.slice(j);
-    } else {
-        var warn = document.getElementById('warn');
-        if (j < encodedStr.length) {
-            warn.style.visibility = 'visible';
-            warn.innerHTML = 'Please provide ' + Math.ceil(encodedStr.slice(j).length / 10) + ' more characters of cover text to store entire message';
-        } else
-            warn.style.visibility = 'hidden';
-    }
-    if (coverStr.length > 0) {
-        outputStr += coverStr[i];
+        encodedStr = textarea[3].value != '' ? encodeText('T\0' + textarea[3].value) : '',
+        insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
+    if (coverStr.length > 0)
         textarea[3].readOnly = false;
-    } else if (!encodedStr[9]) {
-        outputStr = '';
+    else if (!encodedStr)
         textarea[3].readOnly = true;
-    }
-    textarea[4].value = outputStr;
+    textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
     resizeTextarea(textarea[4]);
     textarea[4].classList.add('encode');
     window.setTimeout(function() {
@@ -146,17 +121,6 @@ function resizeTextarea(el) {
     el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
 }
 
-function toggleSafe() {
-    safe = !safe;
-    if (safe) {
-        document.cookie = 'safe=true';
-        embedText();
-    } else {
-        document.cookie = 'safe=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
-        document.getElementById('warn').style.visibility = 'hidden';
-    }
-}
-
 window.addEventListener('keyup', function(e) {
     // Select textareas with keys
     if (e.altKey)
@@ -188,8 +152,6 @@ document.onreadystatechange = function() {
         ];
     for (var i = 0; i < 5; i++)
         textarea[i] = document.getElementById(textareas[i]);
-    if (safe)
-        document.getElementById('toggle-safe').checked = true;
 
     resizeBody();
     new Clipboard('.copy');

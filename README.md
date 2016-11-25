@@ -8,7 +8,7 @@ __https://joshuaptfan.github.io/Doublespeak/__
 
 ###### Web interface
 
-__Tab__ — cycle through fields
+__Tab__ / __Shift+Tab__ — cycle through fields
 
 Output ciphertext is automatically copied by tabbing to or clicking on the field.
 
@@ -44,9 +44,7 @@ With 4 characters, we can encode any data in [quaternary](https://en.wikipedia.o
 | 10   | U+200D    |
 | 11   | U+FEFF    |
 
-The resulting string of invisible characters is then interspersed throughout the cover text.
-
-We discovered during testing that the Linux [X11](https://en.wikipedia.org/wiki/X_Window_System) clipboard truncates consecutive invisible characters past 10. We accommodate this by distributing the encoded characters throughout the cover text in groups of 10, and, optionally, prompting the user to provide more characters of cover text as needed. If no participants in a conversation are using X11, the default mode of operation is to pack the end of the encoded string between the last and second-to-last characters of cover text.
+The resulting string of invisible characters is then inserted at a random location in the cover text.‌‌‌​​​​​‌​‍‌‌‍﻿‍‌‍‌​‌﻿‌‌‌‍​‍‌‍‍‌‌﻿‌​‌‍​‌‌‍​‍‌‍﻿​‌﻿‍‌​‍﻿‍
 
 ## Efficiency
 
@@ -55,7 +53,5 @@ Each invisible character represents 2 bits, while taking 1 byte (8 bits) to stor
 ## Credits
 
 * [Joshua Fan](https://github.com/joshuaptfan) — web interface
-
 * [Samuel Arnold](https://github.com/Grond66) — encoding algorithm and Python interface
-
 * [Nitzan Orr](https://github.com/orrblue) — decoding algorithm
