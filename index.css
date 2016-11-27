@@ -23,6 +23,16 @@ div, span {
     color: #AAA;
 }
 
+#send-text-button {
+    padding: 0 0.2em;
+    text-decoration: underline;
+}
+
+#send-file-button {
+    padding: 0 0.2em;
+    color: #111;
+}
+
 .section {
     position: relative;
     margin: 0.4em 0;

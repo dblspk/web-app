@@ -4,10 +4,6 @@ function embedText() {
     var coverStr = textarea[2].value,
         encodedStr = textarea[3].value != '' ? encodeText('T\0' + textarea[3].value) : '',
         insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
-    if (coverStr.length > 0)
-        textarea[3].readOnly = false;
-    else if (!encodedStr)
-        textarea[3].readOnly = true;
     textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
     resizeTextarea(textarea[4]);
     textarea[4].classList.add('encode');
@@ -61,6 +57,24 @@ function decodeText() {
         } else
             console.log('Only text extraction is supported at this time.')
     }, 1);
+}
+
+function dragOverFile(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+}
+
+function dropFile(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    var file = e.dataTransfer.files[0],
+        reader = new FileReader();
+    reader.onload = function() {
+        console.log(new Uint8Array(reader.result));
+    };
+    reader.readAsArrayBuffer(file);
 }
 
 // Credit: http://stackoverflow.com/questions/1240408/reading-bytes-from-a-javascript-string
@@ -155,6 +169,8 @@ document.onreadystatechange = function() {
 
     resizeBody();
     new Clipboard('.copy');
+    document.addEventListener('dragover', dragOverFile, false);
+    document.addEventListener('drop', dropFile, false);
 
     if (navigator.userAgent.match(/Mac|iP(hone|od|ad)/)) {
         textarea[0].placeholder = 'Paste [Command+V] input ciphertext';
