@@ -13,8 +13,7 @@ function embedText() {
 }
 
 function encodeText(str) {
-    var strBytes = stringToBytes(str),
-        outputStr = '',
+    var outputStr = '',
         encodingChars = [
             '\u200B', // zero width space
             '\u200C', // zero width non-joiner
@@ -23,7 +22,7 @@ function encodeText(str) {
         ];
     for (var i = 0, sLen = str.length; i < sLen; i++)
         for (var j = 6; j >= 0; j -= 2)
-            outputStr += encodingChars[(strBytes[i] >> j) & 0x3];
+            outputStr += encodingChars[(str.charCodeAt(i) >> j) & 0x3];
     return outputStr;
 }
 
@@ -75,20 +74,6 @@ function dropFile(e) {
         console.log(new Uint8Array(reader.result));
     };
     reader.readAsArrayBuffer(file);
-}
-
-// Credit: http://stackoverflow.com/questions/1240408/reading-bytes-from-a-javascript-string
-function stringToBytes(str) {
-    var byteArray = [];
-    for (var i = 0; i < str.length; i++)
-        if (str.charCodeAt(i) <= 0x7F)
-            byteArray.push(str.charCodeAt(i));
-        else {
-            var h = encodeURIComponent(str.charAt(i)).substr(1).split('%');
-            for (var j = 0; j < h.length; j++)
-                byteArray.push(parseInt(h[j], 16));
-        }
-    return byteArray;
 }
 
 function clearIn() {

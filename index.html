@@ -21,7 +21,7 @@
         <div class='section'>
             <span class='label'>HIDDEN</span>
             <div style='display: inline-block'>
-                <textarea id='in-hidden' oncopy='notifyCopy(1, "in-copied")' onfocus='this.select()' readonly></textarea>
+                <textarea id='in-hidden' oncopy='notifyCopy(1, "in-copied")' onfocus='this.select()' tabindex='-1' readonly></textarea>
                 <div id='in-copied' class='copied'>COPIED</div>
             </div>
             <span id='in-copy' class='button copy' data-clipboard-target='#in-hidden'>COPY</span>
