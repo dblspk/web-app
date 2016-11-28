@@ -21,21 +21,21 @@
         <div class='section'>
             <span class='label'>HIDDEN</span>
             <div style='display: inline-block'>
-                <textarea id='in-hidden' oncopy='notifyCopy(1, "in-copied")' onfocus='this.select()' readonly></textarea>
+                <textarea id='in-hidden' oncopy='notifyCopy(1, "in-copied")' onfocus='this.select()' tabindex='-1' readonly></textarea>
                 <div id='in-copied' class='copied'>COPIED</div>
             </div>
             <span id='in-copy' class='button copy' data-clipboard-target='#in-hidden'>COPY</span>
         </div>
         <div class='title'>SEND TEXT</div>
         <div class='section'>
-            <span class='label'>COVER</span>
-            <textarea id='out-cover' onkeyup='embedText()' onpaste='embedText()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus></textarea>
-            <span class='button' onclick='clearOut()'>CLEAR</span>
+            <span class='label'>HIDDEN</span>
+            <textarea id='out-hidden' onkeyup='embedText()' onpaste='embedText()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus></textarea>
+            <span class='button' onclick='clearOutSecret()'>CLEAR</span>
         </div>
         <div class='section'>
-            <span class='label'>HIDDEN</span>
-            <textarea id='out-hidden' onkeyup='embedText()' onpaste='embedText()' onfocus='this.select()' oninput='resizeTextarea(this)' readonly></textarea>
-            <span class='button' onclick='clearOutSecret()'>CLEAR</span>
+            <span class='label'>COVER</span>
+            <textarea id='out-cover' onkeyup='embedText()' onpaste='embedText()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+            <span class='button' onclick='clearOut()'>CLEAR</span>
         </div>
         <div class='section'>
             <span class='label'>CIPHER</span>
