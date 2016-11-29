@@ -1,8 +1,8 @@
 var textarea = [];
 
-function embedText() {
-    var coverStr = textarea[2].value,
-        encodedStr = textarea[3].value != '' ? encodeText('T\0' + textarea[3].value) : '',
+function embedData() {
+    var coverStr = textarea[3].value,
+        encodedStr = textarea[2].value ? encodeData('T' + encodeLength(textarea[2].value.length) + textarea[2].value) : '',
         insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
     textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
     resizeTextarea(textarea[4]);
@@ -12,7 +12,18 @@ function embedText() {
     }, 200);
 }
 
-function encodeText(str) {
+function encodeLength(n) {
+    //console.log(n);
+    var outputStr = '';
+    while (n > 127) {
+        outputStr += String.fromCharCode(n & 0x7F || 0x80);
+        n >>= 7;
+    }
+    outputStr += String.fromCharCode(n & 0x7F);
+    return outputStr;
+}
+
+function encodeData(str) {
     var outputStr = '',
         encodingChars = [
             '\u200B', // zero width space
@@ -26,7 +37,7 @@ function encodeText(str) {
     return outputStr;
 }
 
-function decodeText() {
+function extractData() {
     textarea[0].maxLength = 0x7FFFFFFF;
     window.setTimeout(function() {
         // Discard cover text
@@ -38,24 +49,41 @@ function decodeText() {
                 '\u200D':2,
                 '\uFEFF':3
             };
-        if (hiddenStr != null) {
-            for (var i = 0, sLen = hiddenStr.length; i < sLen; i += 4) {
-                var charCode = 0;
-                for (var j = 0; j < 4; j++)
-                    charCode += encodingVals[hiddenStr[i + j]] << (6 - j * 2);
-                outputStr += String.fromCharCode(charCode);
-            }
+        if (hiddenStr) {
+            if (decodeText(hiddenStr.slice(0, 4)) == 'T') {
+                for (var i = 0, sLen = hiddenStr.length; i < sLen; i += 4) {
+                    var charCode = 0;
+                    for (var j = 0; j < 4; j++)
+                        charCode += encodingVals[hiddenStr[i + j]] << (6 - j * 2);
+                    outputStr += String.fromCharCode(charCode);
+                }
+                textarea[1].value = outputStr.slice(1);
+                resizeTextarea(textarea[1]);
+                textarea[1].classList.add('decode');
+                window.setTimeout(function() {
+                    textarea[1].classList.remove('decode');
+                }, 1000);
+            } else
+                console.log('Only text extraction is supported at this time.')
         }
-        if (outputStr.slice(0, 2) == 'T\0') {
-            textarea[1].value = outputStr.slice(2);
-            resizeTextarea(textarea[1]);
-            textarea[1].classList.add('decode');
-            window.setTimeout(function() {
-                textarea[1].classList.remove('decode');
-            }, 1000);
-        } else
-            console.log('Only text extraction is supported at this time.')
     }, 1);
+}
+
+function decodeText(str) {
+    var outputStr = '',
+        encodingVals = {
+            '\u200B':0,
+            '\u200C':1,
+            '\u200D':2,
+            '\uFEFF':3
+        };
+    for (var i = 0, sLen = str.length; i < sLen; i += 4) {
+        var charCode = 0;
+        for (var j = 0; j < 4; j++)
+            charCode += encodingVals[str[i + j]] << (6 - j * 2);
+        outputStr += String.fromCharCode(charCode);
+    }
+    return outputStr;
 }
 
 function dragOverFile(e) {
@@ -85,17 +113,17 @@ function clearIn() {
 }
 
 function clearOut() {
-    textarea[2].value = '';
-    resizeTextarea(textarea[2]);
-    embedText();
-    textarea[2].focus();
-}
-
-function clearOutSecret() {
     textarea[3].value = '';
     resizeTextarea(textarea[3]);
-    embedText();
+    embedData();
     textarea[3].focus();
+}
+
+function clearOutHidden() {
+    textarea[2].value = '';
+    resizeTextarea(textarea[2]);
+    embedData();
+    textarea[2].focus();
 }
 
 function notifyCopy(ta, copied) {
@@ -145,8 +173,8 @@ window.addEventListener('keyup', function(e) {
 document.onreadystatechange = function() {
     var textareas = ['in-cipher',
                      'in-hidden',
-                     'out-cover',
                      'out-hidden',
+                     'out-cover',
                      'out-cipher'
         ];
     for (var i = 0; i < 5; i++)

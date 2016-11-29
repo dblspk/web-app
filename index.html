@@ -15,7 +15,7 @@
         <div class='title'>RECEIVE</div>
         <div class='section'>
             <span class='label'>CIPHER</span>
-            <textarea id='in-cipher' onpaste='decodeText()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
+            <textarea id='in-cipher' onpaste='extractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
             <span class='button' onclick='clearIn()'>CLEAR</span>
         </div>
         <div class='section'>
@@ -29,12 +29,12 @@
         <div class='title'>SEND <span id='send-text-button'>TEXT</span> <span id='send-file-button'>FILE</span></div>
         <div class='section'>
             <span class='label'>HIDDEN</span>
-            <textarea id='out-hidden' onkeyup='embedText()' onpaste='embedText()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus></textarea>
-            <span class='button' onclick='clearOutSecret()'>CLEAR</span>
+            <textarea id='out-hidden' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus></textarea>
+            <span class='button' onclick='clearOutHidden()'>CLEAR</span>
         </div>
         <div class='section'>
             <span class='label'>COVER</span>
-            <textarea id='out-cover' onkeyup='embedText()' onpaste='embedText()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+            <textarea id='out-cover' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
             <span class='button' onclick='clearOut()'>CLEAR</span>
         </div>
         <div class='section'>
