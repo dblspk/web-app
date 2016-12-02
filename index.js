@@ -1,14 +1,14 @@
 var textarea = [];
 
 function embedText() {
-    var coverStr = textarea[2].value,
-        encodedStr = textarea[3].value != '' ? encodeText('T\0' + textarea[3].value) : '',
+    var encodedStr = textarea[0].value != '' ? encodeText('T\0' + textarea[0].value) : '',
+        coverStr = textarea[1].value,
         insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
-    textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
-    resizeTextarea(textarea[4]);
-    textarea[4].classList.add('encode');
+    textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+    resizeTextarea(textarea[2]);
+    textarea[2].classList.add('encode');
     window.setTimeout(function() {
-        textarea[4].classList.remove('encode');
+        textarea[2].classList.remove('encode');
     }, 200);
 }
 
@@ -26,57 +26,62 @@ function encodeText(str) {
     return outputStr;
 }
 
-function decodeText() {
-    textarea[0].maxLength = 0x7FFFFFFF;
+function extractText() {
+    textarea[3].maxLength = 0x7FFFFFFF;
     window.setTimeout(function() {
         // Discard cover text
-        var hiddenStr = textarea[0].value.match(/[\u200B\u200C\u200D\uFEFF]/g),
-            outputStr = '',
-            encodingVals = {
-                '\u200B':0,
-                '\u200C':1,
-                '\u200D':2,
-                '\uFEFF':3
-            };
-        if (hiddenStr != null) {
-            for (var i = 0, sLen = hiddenStr.length; i < sLen; i += 4) {
-                var charCode = 0;
-                for (var j = 0; j < 4; j++)
-                    charCode += encodingVals[hiddenStr[i + j]] << (6 - j * 2);
-                outputStr += String.fromCharCode(charCode);
-            }
-        }
+        var hiddenStr = textarea[3].value.match(/[\u200B\u200C\u200D\uFEFF]/g),
+            outputStr = '';
+        if (hiddenStr != null)
+            outputStr = decodeText(hiddenStr);
         if (outputStr.slice(0, 2) == 'T\0') {
-            textarea[1].value = outputStr.slice(2);
-            resizeTextarea(textarea[1]);
-            textarea[1].classList.add('decode');
+            textarea[4].value = outputStr.slice(2);
+            resizeTextarea(textarea[4]);
+            textarea[4].classList.add('decode');
             window.setTimeout(function() {
-                textarea[1].classList.remove('decode');
+                textarea[4].classList.remove('decode');
             }, 1000);
         } else
             console.log('Only text extraction is supported at this time.')
     }, 1);
 }
 
-function clearIn() {
+function decodeText(str) {
+    var outputStr = '',
+        encodingVals = {
+            '\u200B':0,
+            '\u200C':1,
+            '\u200D':2,
+            '\uFEFF':3
+        };
+    for (var i = 0, sLen = str.length; i < sLen; i += 4) {
+        var charCode = 0;
+        for (var j = 0; j < 4; j++)
+            charCode += encodingVals[str[i + j]] << (6 - j * 2);
+        outputStr += String.fromCharCode(charCode);
+    }
+    return outputStr;
+}
+
+function clearOutHidden() {
     textarea[0].value = '';
-    textarea[1].value = '';
     resizeTextarea(textarea[0]);
-    resizeTextarea(textarea[1]);
+    embedText();
     textarea[0].focus();
 }
 
 function clearOut() {
-    textarea[2].value = '';
-    resizeTextarea(textarea[2]);
+    textarea[1].value = '';
+    resizeTextarea(textarea[1]);
     embedText();
-    textarea[2].focus();
+    textarea[1].focus();
 }
 
-function clearOutSecret() {
+function clearIn() {
     textarea[3].value = '';
+    textarea[4].value = '';
     resizeTextarea(textarea[3]);
-    embedText();
+    resizeTextarea(textarea[4]);
     textarea[3].focus();
 }
 
@@ -106,14 +111,13 @@ window.addEventListener('keyup', function(e) {
     // Select textareas with keys
     if (e.altKey)
         switch (e.keyCode) {
-            case 65: // Alt+A
+            case 81: // Alt+Q
                 textarea[0].focus();
                 break;
-            case 90: // Alt+Z
+            case 65: // Alt+A
                 textarea[1].focus();
-                document.getElementById('in-copy').click();
                 break;
-            case 87: // Alt+W
+            case 90: // Alt+Z
                 textarea[2].focus();
                 break;
             case 83: // Alt+S
@@ -121,15 +125,16 @@ window.addEventListener('keyup', function(e) {
                 break;
             case 88: // Alt+X
                 textarea[4].focus();
+                document.getElementById('in-copy').click();
         }
 }, false);
 
 document.onreadystatechange = function() {
-    var textareas = ['in-cipher',
-                     'in-hidden',
+    var textareas = ['out-hidden',
                      'out-cover',
-                     'out-hidden',
-                     'out-cipher'
+                     'out-cipher',
+                     'in-cipher',
+                     'in-hidden',
         ];
     for (var i = 0; i < 5; i++)
         textarea[i] = document.getElementById(textareas[i]);
@@ -138,7 +143,7 @@ document.onreadystatechange = function() {
     new Clipboard('.copy');
 
     if (navigator.userAgent.match(/Mac|iP(hone|od|ad)/)) {
-        textarea[0].placeholder = 'Paste [Command+V] input ciphertext';
-        textarea[4].placeholder = 'Copy [Command+C] output ciphertext';
+        textarea[2].placeholder = 'Copy [Command+C] output ciphertext';
+        textarea[3].placeholder = 'Paste [Command+V] input ciphertext';
     }
 }
