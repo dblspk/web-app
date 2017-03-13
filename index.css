@@ -55,6 +55,7 @@ div, span {
     text-align: center;
     font-weight: bold;
     background-color: #444;
+    border-radius: 0.2em;
     cursor: pointer;
 }
 
@@ -121,9 +122,9 @@ textarea.copy {
 }
 
 #tip {
-    margin-top: 6.3em;
+    margin-top: 5em;
     text-align: center;
-    font-size: 50%;
+    font-size: 60%;
     color: #777;
 }
 

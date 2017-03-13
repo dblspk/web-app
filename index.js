@@ -1,15 +1,32 @@
 var textarea = [];
 
-function embedText() {
-    var coverStr = textarea[2].value,
-        encodedStr = textarea[3].value != '' ? encodeText('T\0' + textarea[3].value) : '',
+function embedData() {
+    var coverStr = textarea[1].value,
+        encodedStr = textarea[0].value != '' ? encodeText('D\u0000\u0000\u0000\u0000\u0000\u0001' + encodeLength(textarea[0].value.length) + textarea[0].value) : '',
         insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
-    textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
-    resizeTextarea(textarea[4]);
-    textarea[4].classList.add('encode');
+    textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+    resizeTextarea(textarea[2]);
+    textarea[2].classList.add('encode');
     window.setTimeout(function() {
-        textarea[4].classList.remove('encode');
+        textarea[2].classList.remove('encode');
     }, 200);
+}
+
+// encode length of data as variable length quantity in binary string form
+function encodeLength(n) {
+    var outputStr = String.fromCharCode(n & 0x7F);
+    while (n > 127) {
+        n >>= 7;
+        outputStr = String.fromCharCode(n & 0x7F | 0x80) + outputStr;
+    }
+    return outputStr;
+}
+
+function decodeLength(str) {
+    var length = 0;
+    for (var i = 0; i < str.length; i++)
+        length = length << 7 | str.codePointAt(i) & 0x7F;
+    return length;
 }
 
 function encodeText(str) {
@@ -26,36 +43,77 @@ function encodeText(str) {
     return outputStr;
 }
 
-function decodeText() {
-    textarea[0].maxLength = 0x7FFFFFFF;
+function initExtractData() {
+    textarea[3].maxLength = 0x7FFFFFFF;
     window.setTimeout(function() {
         // Discard cover text
-        var hiddenStr = textarea[0].value.match(/[\u200B\u200C\u200D\uFEFF]/g),
-            outputStr = '',
-            encodingVals = {
-                '\u200B':0,
-                '\u200C':1,
-                '\u200D':2,
-                '\uFEFF':3
-            };
-        if (hiddenStr != null) {
-            for (var i = 0, sLen = hiddenStr.length; i < sLen; i += 4) {
-                var charCode = 0;
-                for (var j = 0; j < 4; j++)
-                    charCode += encodingVals[hiddenStr[i + j]] << (6 - j * 2);
-                outputStr += String.fromCharCode(charCode);
-            }
-        }
-        if (outputStr.slice(0, 2) == 'T\0') {
-            textarea[1].value = outputStr.slice(2);
-            resizeTextarea(textarea[1]);
-            textarea[1].classList.add('decode');
-            window.setTimeout(function() {
-                textarea[1].classList.remove('decode');
-            }, 1000);
-        } else
-            console.log('Only text extraction is supported at this time.')
+        extractData(textarea[3].value.match(/[\u200B\u200C\u200D\uFEFF]/g));
     }, 1);
+}
+
+function extractData(array) {
+    //console.log(decodeText(array));
+    var t0 = performance.now();
+    // Discard cover text
+    var encodingVals = {
+            '\u200B':0,
+            '\u200C':1,
+            '\u200D':2,
+            '\uFEFF':3
+        };
+    if (!array || decodeText(array.slice(0, 8)) != 'D\u0000') {
+        console.log('Protocol mismatch');
+        return;
+    }
+    var dataType = decodeText(array.slice(24, 28)),
+        VLQLen = 1;
+    while (encodingVals[array[24 + VLQLen * 4]] > 1)
+        VLQLen ++;
+    //console.log('VLQLen', VLQLen);
+    var dataLen = decodeLength(decodeText(array.slice(28, 28 + VLQLen * 4))),
+        dataEnd = 28 + (VLQLen + dataLen) * 4;
+    //console.log('dataEnd', dataEnd, array.length);
+
+    switch (dataType) {
+        case '\u0001':
+            outputText(array.slice(28 + VLQLen * 4, dataEnd));
+            break;
+        case '\u0000':
+        case '\u0002':
+        default:
+            console.log('Only text extraction is supported at this time.')
+    }
+    console.log((performance.now() - t0).toFixed(2) + ' ms');
+
+    if (array.length > dataEnd)
+        extractData(array.slice(dataEnd));
+}
+
+function decodeText(array) {
+    var outputStr = '',
+        encodingVals = {
+            '\u200B':0,
+            '\u200C':1,
+            '\u200D':2,
+            '\uFEFF':3
+        };
+    for (var i = 0, sLen = array.length; i < sLen; i += 4) {
+        var charCode = 0;
+        for (var j = 0; j < 4; j++)
+            charCode += encodingVals[array[i + j]] << (6 - j * 2);
+        outputStr += String.fromCharCode(charCode);
+    }
+    return outputStr;
+}
+
+function outputText(array) {
+    var outputStr = decodeText(array);
+    textarea[4].value = outputStr;
+    resizeTextarea(textarea[4]);
+    textarea[4].classList.add('decode');
+    window.setTimeout(function() {
+        textarea[4].classList.remove('decode');
+    }, 1000);
 }
 
 function dragOverFile(e) {
@@ -76,25 +134,25 @@ function dropFile(e) {
     reader.readAsArrayBuffer(file);
 }
 
-function clearIn() {
+function clearOutHidden() {
     textarea[0].value = '';
-    textarea[1].value = '';
     resizeTextarea(textarea[0]);
-    resizeTextarea(textarea[1]);
+    embedData();
     textarea[0].focus();
 }
 
 function clearOut() {
-    textarea[2].value = '';
-    resizeTextarea(textarea[2]);
-    embedText();
-    textarea[2].focus();
+    textarea[1].value = '';
+    resizeTextarea(textarea[1]);
+    embedData();
+    textarea[1].focus();
 }
 
-function clearOutSecret() {
+function clearIn() {
     textarea[3].value = '';
+    textarea[4].value = '';
     resizeTextarea(textarea[3]);
-    embedText();
+    resizeTextarea(textarea[4]);
     textarea[3].focus();
 }
 
@@ -124,14 +182,13 @@ window.addEventListener('keyup', function(e) {
     // Select textareas with keys
     if (e.altKey)
         switch (e.keyCode) {
-            case 65: // Alt+A
+            case 81: // Alt+Q
                 textarea[0].focus();
                 break;
-            case 90: // Alt+Z
+            case 65: // Alt+A
                 textarea[1].focus();
-                document.getElementById('in-copy').click();
                 break;
-            case 87: // Alt+W
+            case 90: // Alt+Z
                 textarea[2].focus();
                 break;
             case 83: // Alt+S
@@ -139,15 +196,16 @@ window.addEventListener('keyup', function(e) {
                 break;
             case 88: // Alt+X
                 textarea[4].focus();
+                document.getElementById('in-copy').click();
         }
 }, false);
 
 document.onreadystatechange = function() {
-    var textareas = ['in-cipher',
-                     'in-hidden',
+    var textareas = ['out-hidden',
                      'out-cover',
-                     'out-hidden',
-                     'out-cipher'
+                     'out-cipher',
+                     'in-cipher',
+                     'in-hidden'
         ];
     for (var i = 0; i < 5; i++)
         textarea[i] = document.getElementById(textareas[i]);
@@ -158,7 +216,7 @@ document.onreadystatechange = function() {
     document.addEventListener('drop', dropFile, false);
 
     if (navigator.userAgent.match(/Mac|iP(hone|od|ad)/)) {
-        textarea[0].placeholder = 'Paste [Command+V] input ciphertext';
-        textarea[4].placeholder = 'Copy [Command+C] output ciphertext';
+        textarea[2].placeholder = 'Copy [Command+C] output ciphertext';
+        textarea[3].placeholder = 'Paste [Command+V] input ciphertext';
     }
 }

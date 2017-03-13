@@ -12,38 +12,38 @@
 </head>
 <body onresize='resizeBody()'>
     <div id='container'>
-        <div class='title'>RECEIVE</div>
-        <div class='section'>
-            <span class='label'>CIPHER</span>
-            <textarea id='in-cipher' onpaste='decodeText()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
-            <span class='button' onclick='clearIn()'>CLEAR</span>
-        </div>
-        <div class='section'>
-            <span class='label'>HIDDEN</span>
-            <div style='display: inline-block'>
-                <textarea id='in-hidden' oncopy='notifyCopy(1, "in-copied")' onfocus='this.select()' tabindex='-1' readonly></textarea>
-                <div id='in-copied' class='copied'>COPIED</div>
-            </div>
-            <span id='in-copy' class='button copy' data-clipboard-target='#in-hidden'>COPY</span>
-        </div>
         <div class='title'>SEND <span id='send-text-button'>TEXT</span> <span id='send-file-button'>FILE</span></div>
         <div class='section'>
             <span class='label'>HIDDEN</span>
-            <textarea id='out-hidden' onkeyup='embedText()' onpaste='embedText()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus></textarea>
-            <span class='button' onclick='clearOutSecret()'>CLEAR</span>
+            <textarea id='out-hidden' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)' autofocus></textarea>
+            <span class='button' onclick='clearOutHidden()'>CLEAR</span>
         </div>
         <div class='section'>
             <span class='label'>COVER</span>
-            <textarea id='out-cover' onkeyup='embedText()' onpaste='embedText()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
+            <textarea id='out-cover' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)'></textarea>
             <span class='button' onclick='clearOut()'>CLEAR</span>
         </div>
         <div class='section'>
             <span class='label'>CIPHER</span>
             <div style='display: inline-block'>
-                <textarea id='out-cipher' oncopy='notifyCopy(4, "out-copied")' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+                <textarea id='out-cipher' oncopy='notifyCopy(2, "out-copied")' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
                 <div id='out-copied' class='copied'>COPIED</div>
             </div>
             <span id='out-copy' class='button copy' data-clipboard-target='#out-cipher'>COPY</span>
+        </div>
+        <div class='title'>RECEIVE</div>
+        <div class='section'>
+            <span class='label'>CIPHER</span>
+            <textarea id='in-cipher' onpaste='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
+            <span class='button' onclick='clearIn()'>CLEAR</span>
+        </div>
+        <div class='section'>
+            <span class='label'>HIDDEN</span>
+            <div style='display: inline-block'>
+                <textarea id='in-hidden' oncopy='notifyCopy(4, "in-copied")' onfocus='this.select()' tabindex='-1' readonly></textarea>
+                <div id='in-copied' class='copied'>COPIED</div>
+            </div>
+            <span id='in-copy' class='button copy' data-clipboard-target='#in-hidden'>COPY</span>
         </div>
         <div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
         <div id='tab-loop'>
