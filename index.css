@@ -1,141 +1,140 @@
 body {
-    font-family: sans-serif;
-    color: white;
-    background-color: #222;
+	font-family: sans-serif;
+	color: white;
+	background-color: #222;
 }
 
 div, span {
-    cursor: default;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+	cursor: default;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	    -ms-user-select: none;
+	        user-select: none;
 }
 
 #container {
-    width: 30em;
-    margin: auto;
+	width: 30rem;
+	margin: auto;
 }
 
 .title {
-    margin: 0.8em 0;
-    font-size: 150%;
-    color: #AAA;
-}
-
-#send-text-button {
-    padding: 0 0.2em;
-    text-decoration: underline;
-}
-
-#send-file-button {
-    padding: 0 0.2em;
-    color: #111;
+	margin: 1.2rem 0;
+	font-size: 150%;
+	color: #AAA;
 }
 
 .section {
-    position: relative;
-    margin: 0.4em 0;
+	position: relative;
+	margin: 0.4rem 0;
 }
 
 .label {
-    float: left;
-    width: 5em;
-    height: 1.4em;
-    padding-top: 0.4em;
-    font-weight: bold;
+	float: left;
+	width: 5rem;
+	height: 1.4rem;
+	padding-top: 0.4rem;
+	font-weight: bold;
 }
 
 .button {
-    position: absolute;
-    right: 0;
-    width: 4em;
-    height: 1.4em;
-    padding-top: 0.4em;
-    text-align: center;
-    font-weight: bold;
-    background-color: #444;
-    border-radius: 0.2em;
-    cursor: pointer;
+	position: absolute;
+	right: 0;
+	width: 4rem;
+	height: 1.4rem;
+	padding-top: 0.4rem;
+	text-align: center;
+	font-weight: bold;
+	background-color: #444;
+	border-radius: 0.2rem;
+	cursor: pointer;
+}
+
+.button.copy:before {
+	content: 'COPY';
 }
 
 .button:hover {
-    background-color: #777;
+	background-color: #777;
 }
 
 .button:active {
-    background-color: #555;
+	background-color: #555;
 }
 
 textarea {
-    box-sizing: border-box;
-    width: 20em;
-    height: 1.8em;
-    vertical-align: top;
-    font-size: 1em;
-    font-family: sans-serif;
-    color: white;
-    background-color: #111;
-    border: 0.15em solid #444;
-    resize: none;
+	box-sizing: border-box;
+	width: 20rem;
+	height: 1.8rem;
+	vertical-align: top;
+	font-size: 1rem;
+	font-family: sans-serif;
+	color: white;
+	background-color: #111;
+	border: 0.15rem solid #444;
+	resize: none;
 }
 
 textarea:hover {
-    border-color: #777;
+	border-color: #777;
 }
 
 textarea:focus {
-    border-color: #4286F4;
-    outline: none;
+	border-color: #4286F4;
+	outline: none;
 }
 
 textarea[readonly] {
-    border-style: dashed;
-    background-color: #222;
-    cursor: text;
+	border-style: dashed;
+	background-color: #222;
+	cursor: text;
 }
 
 textarea.decode {
-    border-color: yellow;
+	border-color: yellow;
 }
 
 textarea.encode {
-    border-color: red;
+	border-color: red;
 }
 
 textarea.copy {
-    border-color: green;
+	border-color: green;
+}
+
+#in-hidden > textarea {
+    display: block;
+	margin-bottom: 0.4rem;
 }
 
 .copied {
-    visibility: hidden;
-    width: 20em;
-    height: 1.1em;
-    margin-top: -1px;
-    text-align: center;
-    font-weight: bold;
-    background-color: green;
+	visibility: hidden;
+	width: 20rem;
+	height: 1.1rem;
+	margin-top: -1px;
+	text-align: center;
+	font-weight: bold;
+	background-color: green;
 }
 
 .copied.show {
-    visibility: visible;
+	visibility: visible;
 }
 
 #tip {
-    margin-top: 5em;
-    text-align: center;
-    font-size: 60%;
-    color: #777;
+	margin-top: 5rem;
+	text-align: center;
+	font-size: 60%;
+	color: #777;
 }
 
 .key {
-    color: #222;
-    background-color: #DDD;
-    border: 0.1em solid #AAA;
-    border-radius: 0.2em;
+	color: #222;
+	background-color: #DDD;
+	border: 0.1em solid #AAA;
+	border-radius: 0.2rem;
 }
 
 #tab-loop {
-    height: 0;
-    overflow: hidden;
+	height: 0;
+	overflow: hidden;
 }
