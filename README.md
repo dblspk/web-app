@@ -16,7 +16,6 @@ Fields automatically highlight on focus, type/paste to replace text. Clear butto
 
 ## How it works
 
-
 [Unicode](https://en.wikipedia.org/wiki/Unicode) contains some zero width, unprintable characters. 4 of these are sufficiently resilient to input sanitation on the web to be useful. This allows us to encode any data in [quaternary](https://en.wikipedia.org/wiki/Quaternary_numeral_system). For text, the Unicode message to be hidden is converted to a bitstream, which is then encoded using our arbitrary encoding scheme:
 
 | Bits | Character | Description |
