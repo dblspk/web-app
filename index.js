@@ -1,6 +1,6 @@
 var textarea = [];
 
-(function() {
+document.onreadystatechange = function() {
 	var textareas = [
 		'out-plain',
 		'out-cover',
@@ -20,7 +20,7 @@ var textarea = [];
 		textarea[2].placeholder = 'Copy [Command+C] output ciphertext';
 		textarea[3].placeholder = 'Paste [Command+V] input ciphertext';
 	}
-})()
+}
 
 // Embed plaintext in cover text
 function embedData() {

@@ -8,7 +8,7 @@ __https://joshuaptfan.github.io/doublespeak/__
 
 ###### Web interface
 
-__Tab__ / __Shift+Tab__ — cycle through fields
+__Tab__ / __Shift+Tab__ &mdash; cycle through fields
 
 Output ciphertext is automatically copied by tabbing to or clicking on the field.
 
