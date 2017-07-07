@@ -215,7 +215,7 @@ function notifyCopy(ta, copied) {
 
 // Scale elements according to viewport size
 function resizeBody() {
-	document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.03 + 'px';
+	document.documentElement.style.fontSize = ((window.innerWidth > 480 && screen.width > 480) ? Math.min(window.innerWidth, window.innerHeight) * 0.03 : Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04) + 'px';
 	for (var i = 0; i < 4; i++)
 		resizeTextarea(textarea[i]);
 	for (var i = 0, iLen = textarea[4].childNodes.length; i < iLen; i++)

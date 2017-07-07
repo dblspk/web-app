@@ -25,7 +25,7 @@ div, span {
 
 .section {
 	position: relative;
-	margin: 0.4rem 0;
+	margin: 0.5rem 0;
 }
 
 .button {
@@ -55,7 +55,7 @@ div, span {
 
 textarea {
 	box-sizing: border-box;
-	width: 25.6rem;
+	width: 25.5rem;
 	height: 1.8rem;
 	vertical-align: top;
 	font-size: 1rem;
@@ -93,14 +93,14 @@ textarea.copy {
 	border-color: green;
 }
 
-#in-hidden > textarea {
+#in-plain > textarea {
     display: block;
-	margin-bottom: 0.4rem;
+	margin-bottom: 0.5rem;
 }
 
 .copied {
 	visibility: hidden;
-	width: 25.6rem;
+	width: 25.5rem;
 	height: 1.1rem;
 	margin-top: -1px;
 	text-align: center;
@@ -113,7 +113,7 @@ textarea.copy {
 }
 
 #tip {
-	margin-top: 5rem;
+	margin-top: 4rem;
 	text-align: center;
 	font-size: 60%;
 	color: #777;
@@ -129,4 +129,27 @@ textarea.copy {
 #tab-loop {
 	height: 0;
 	overflow: hidden;
+}
+
+@media only screen
+and (max-width: 480px) {
+	#container {
+		width: 22.5rem;
+	}
+
+	.section {
+		margin: 1rem 0;
+	}
+
+	textarea {
+		width: 17.5rem;
+	}
+
+	.copied {
+		width: 17.5rem;
+	}
+
+	#in-plain > textarea {
+		margin-bottom: 1rem;
+	}
 }
