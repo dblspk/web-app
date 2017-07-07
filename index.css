@@ -28,14 +28,6 @@ div, span {
 	margin: 0.4rem 0;
 }
 
-.label {
-	float: left;
-	width: 5rem;
-	height: 1.4rem;
-	padding-top: 0.4rem;
-	font-weight: bold;
-}
-
 .button {
 	position: absolute;
 	right: 0;
@@ -63,7 +55,7 @@ div, span {
 
 textarea {
 	box-sizing: border-box;
-	width: 20rem;
+	width: 25.6rem;
 	height: 1.8rem;
 	vertical-align: top;
 	font-size: 1rem;
@@ -108,7 +100,7 @@ textarea.copy {
 
 .copied {
 	visibility: hidden;
-	width: 20rem;
+	width: 25.6rem;
 	height: 1.1rem;
 	margin-top: -1px;
 	text-align: center;

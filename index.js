@@ -2,11 +2,11 @@ var textarea = [];
 
 (function() {
 	var textareas = [
-		'out-hidden',
+		'out-plain',
 		'out-cover',
 		'out-cipher',
 		'in-cipher',
-		'in-hidden'
+		'in-plain'
 	];
 	for (var i = 0; i < 5; i++)
 		textarea[i] = document.getElementById(textareas[i]);
@@ -22,7 +22,7 @@ var textarea = [];
 	}
 })()
 
-// Embed hidden message in cover text
+// Embed plaintext in cover text
 function embedData() {
 	var coverStr = textarea[1].value;
 	var encodedStr = textarea[0].value != '' ? encodeText('D\u0000\u0000\u0000\u0000\u0000\u0001' + encodeLength(textarea[0].value.length) + textarea[0].value) : '';
@@ -36,10 +36,10 @@ function embedData() {
 	}, 200);
 }
 
-// Extract received cipher data
+// Extract received ciphertext
 function initExtractData() {
 	textarea[3].maxLength = 0x7FFFFFFF;
-	clearInHidden();
+	clearInPlain();
 	window.setTimeout(function () {
 		// Discard cover text
 		extractData(textarea[3].value.match(/[\u200B\u200C\u200D\uFEFF]/g));
@@ -174,7 +174,7 @@ function dropFile(e) {
 	reader.readAsArrayBuffer(file);
 }
 
-function clearOutHidden() {
+function clearOutPlain() {
 	textarea[0].value = '';
 	resizeTextarea(textarea[0]);
 	embedData();
@@ -189,14 +189,14 @@ function clearOut() {
 }
 
 function clearIn() {
-	clearInHidden();
+	clearInPlain();
 	textarea[3].value = '';
 	resizeTextarea(textarea[3]);
 	resizeTextarea(textarea[4].lastChild);
 	textarea[3].focus();
 }
 
-function clearInHidden() {
+function clearInPlain() {
 	textarea[4].firstChild.value = '';
 	while (textarea[4].childNodes.length > 1)
 		textarea[4].removeChild(textarea[4].lastChild);	
