@@ -5,11 +5,13 @@
 	<meta name='viewport' content='width=device-width, initial-scale=1'>
 	<meta name='description' content='Embeds/extracts messages as zero width Unicode characters in text, as a form of steganography. UI is optimized for real time chat.'>
 	<meta name='author' content='Joshua Fan'>
+	<meta name='theme-color' content='#222'>
 	<title>Doublespeak</title>
 	<link rel='icon' type='image/icon' href='favicon.ico'>
 	<link rel='stylesheet' type='text/css' href='index.css'>
 	<link rel='manifest' href='manifest.json'>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js' defer></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/autolinker/1.4.3/Autolinker.min.js' defer></script>
 	<script src='index.js' defer></script>
 </head>
 <body onresize='resizeBody()'>
@@ -36,7 +38,7 @@
 			<span class='button' onclick='clearIn()'>CLEAR</span>
 		</div>
 		<div class='section'>
-			<div id='in-plain' style='display: inline-block'><textarea onfocus='this.select()' tabindex='-1' placeholder='Secret text' readonly></textarea></div>
+			<div id='in-plain' style='display: inline-block'><div onfocus='selectText(this)' tabindex='-1'></div></div>
 		</div>
 		<div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
 		<div id='tab-loop'>

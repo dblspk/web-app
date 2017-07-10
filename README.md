@@ -12,7 +12,13 @@ __Tab__ / __Shift+Tab__ &mdash; cycle through fields
 
 Output ciphertext is automatically copied by tabbing to or clicking on the field.
 
-Fields automatically highlight on focus, type/paste to replace text. Clear buttons should not be needed, even on mobile.
+Fields automatically highlight on focus, type/paste to replace text. Clear buttons should rarely be needed, even on mobile.
+
+## Features
+
+* Multi-message decoding
+* Linkifies URLs, emails, phone numbers, and Twitter hashtags
+* [Progressive Web App](https://developers.google.com/web/progressive-web-apps/)
 
 ## How it works
 
@@ -35,7 +41,7 @@ Each invisible character represents 2 bits, while taking 1 byte (8 bits) to stor
 
 The following features are defined in the [protocol specification](https://docs.google.com/spreadsheets/d/1sx-kw7LFz4f7Qrtmo68lRi8_msIRVGsvGhiQuWppR4A/edit):
 
-* Simultaneous decoding of multiple chained messages
+* CRC-32 header field
 * Encoding and decoding of files
 * Optional built-in encryption for convenience (message can be encrypted before encoding even without this feature)
 
@@ -43,6 +49,6 @@ The following features are defined in the [protocol specification](https://docs.
 
 This project began at [Cal Hacks 3.0](https://calhacks3.devpost.com/) by [a much less memorable name](https://devpost.com/software/invisicrypt).
 
-* [Joshua Fan](https://github.com/joshuaptfan) — web interface
-* [Samuel Arnold](https://github.com/Grond66) — encoding algorithm and Python interface
-* [Nitzan Orr](https://github.com/orrblue) — decoding algorithm
+* [Joshua Fan](https://github.com/joshuaptfan) &mdash; web interface
+* [Samuel Arnold](https://github.com/Grond66) &mdash; encoding algorithm and Python interface
+* [Nitzan Orr](https://github.com/orrblue) &mdash; decoding algorithm

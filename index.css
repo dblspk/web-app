@@ -4,7 +4,9 @@ body {
 	background-color: #222;
 }
 
-div, span {
+.title,
+.button,
+#tip {
 	cursor: default;
 	-webkit-user-select: none;
 	   -moz-user-select: none;
@@ -31,8 +33,8 @@ div, span {
 .button {
 	position: absolute;
 	right: 0;
-	width: 4rem;
 	height: 1.4rem;
+	width: 4rem;
 	padding-top: 0.4rem;
 	text-align: center;
 	font-weight: bold;
@@ -55,8 +57,8 @@ div, span {
 
 textarea {
 	box-sizing: border-box;
-	width: 25.5rem;
 	height: 1.8rem;
+	width: 25.5rem;
 	vertical-align: top;
 	font-size: 1rem;
 	font-family: sans-serif;
@@ -66,11 +68,13 @@ textarea {
 	resize: none;
 }
 
-textarea:hover {
+textarea:hover,
+#in-plain > div:hover {
 	border-color: #777;
 }
 
-textarea:focus {
+textarea:focus,
+#in-plain > div:focus {
 	border-color: #4286F4;
 	outline: none;
 }
@@ -81,10 +85,6 @@ textarea[readonly] {
 	cursor: text;
 }
 
-textarea.decode {
-	border-color: yellow;
-}
-
 textarea.encode {
 	border-color: red;
 }
@@ -93,15 +93,48 @@ textarea.copy {
 	border-color: green;
 }
 
-#in-plain > textarea {
+div.decode {
+	border-color: yellow;
+}
+
+#in-plain > div {
     display: block;
+	overflow: auto;
+	box-sizing: border-box;
+	height: 1.8rem;
+	width: 25.5rem;
 	margin-bottom: 0.5rem;
+	padding: 2px;
+	word-wrap: break-word;
+	font-size: 1rem;
+	color: white;
+	background-color: #222;
+	border: 0.15rem dashed #444;
+	cursor: text;
+}
+
+#in-plain > div:empty::before {
+	color: #777;
+	content: 'Secret text'
+}
+
+a {
+	text-decoration: none;
+	color: #5492F5;
+}
+
+a:visited {
+	color: #2E5DAA;
+}
+
+a:hover {
+	text-decoration: underline;
 }
 
 .copied {
 	visibility: hidden;
-	width: 25.5rem;
 	height: 1.1rem;
+	width: 25.5rem;
 	margin-top: -1px;
 	text-align: center;
 	font-weight: bold;
@@ -149,7 +182,8 @@ and (max-width: 480px) {
 		width: 17.5rem;
 	}
 
-	#in-plain > textarea {
+	#in-plain > div {
 		margin-bottom: 1rem;
+		width: 17.5rem;
 	}
 }
