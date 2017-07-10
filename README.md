@@ -18,7 +18,7 @@ Fields automatically highlight on focus, type/paste to replace text. Clear butto
 
 * Multi-message decoding
 * Linkifies URLs, emails, phone numbers, and Twitter hashtags
-* [Progressive Web App](https://developers.google.com/web/progressive-web-apps/)
+* [Progressive Web App](https://developers.google.com/web/progressive-web-apps/) &mdash; can be pinned to your Android homescreen
 
 ## How it works
 

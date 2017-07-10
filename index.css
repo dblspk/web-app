@@ -1,7 +1,18 @@
 body {
+	margin: 0;
 	font-family: sans-serif;
 	color: white;
 	background-color: #222;
+}
+
+noscript {
+	display: block;
+	line-height: 2rem;
+	width: 100%;
+	text-align: center;
+	font-size: 125%;
+	background-color: maroon;
+	box-shadow: 0 0 1rem black;
 }
 
 .title,
@@ -55,17 +66,32 @@ body {
 	background-color: #555;
 }
 
-textarea {
+textarea,
+#in-plain > div {
 	box-sizing: border-box;
 	height: 1.8rem;
 	width: 25.5rem;
-	vertical-align: top;
+	padding: 0.1rem;
 	font-size: 1rem;
-	font-family: sans-serif;
 	color: white;
-	background-color: #111;
 	border: 0.15rem solid #444;
+}
+
+textarea {
+	vertical-align: top;
+	font-family: sans-serif;
+	background-color: #111;
 	resize: none;
+}
+
+#in-plain > div {
+    display: block;
+	overflow: auto;
+	margin-bottom: 0.5rem;
+	word-wrap: break-word;
+	background-color: #222;
+	border-style: dashed;
+	cursor: text;
 }
 
 textarea:hover,
@@ -80,8 +106,8 @@ textarea:focus,
 }
 
 textarea[readonly] {
-	border-style: dashed;
 	background-color: #222;
+	border-style: dashed;
 	cursor: text;
 }
 
@@ -97,25 +123,34 @@ div.decode {
 	border-color: yellow;
 }
 
-#in-plain > div {
-    display: block;
-	overflow: auto;
-	box-sizing: border-box;
-	height: 1.8rem;
-	width: 25.5rem;
-	margin-bottom: 0.5rem;
-	padding: 2px;
-	word-wrap: break-word;
-	font-size: 1rem;
-	color: white;
-	background-color: #222;
-	border: 0.15rem dashed #444;
-	cursor: text;
+::-webkit-input-placeholder {
+	color: #777;
+}
+::-moz-placeholder {
+	color: #777;
+	opacity: 1;
 }
 
 #in-plain > div:empty::before {
 	color: #777;
 	content: 'Secret text'
+}
+
+::-webkit-scrollbar {
+	width: 0.5rem;
+	background-color: #333;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: silver;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: darkgray;
+}
+
+::-webkit-scrollbar-thumb:active {
+	background-color: dimgray;
 }
 
 a {
