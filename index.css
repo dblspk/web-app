@@ -86,6 +86,7 @@ textarea {
 
 #in-plain > div {
     display: block;
+	overflow: hidden;
 	margin-bottom: 0.5rem;
 	word-wrap: break-word;
 	background-color: #222;
@@ -172,7 +173,7 @@ a:hover {
 
 img {
 	display: block;
-	max-width: 100%;
+	width: 100%;
 	margin: auto;
 	margin-top: 0.5rem;
 }
@@ -220,16 +221,13 @@ and (max-width: 480px) {
 		margin: 1rem 0;
 	}
 
-	textarea {
-		width: 17.5rem;
-	}
-
+	textarea,
+	#in-plain > div,
 	.copied {
 		width: 17.5rem;
 	}
 
 	#in-plain > div {
 		margin-bottom: 1rem;
-		width: 17.5rem;
 	}
 }

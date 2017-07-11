@@ -2,7 +2,10 @@ var textarea = [];
 var autolinker = new Autolinker({
 	stripPrefix: false,
 	stripTrailingSlash: false,
-	hashtag: 'twitter'
+	hashtag: 'twitter',
+	replaceFn: function (match) {
+		return match.buildTag().setAttr('tabindex', -1);
+	}
 });
 
 document.onreadystatechange = function() {
@@ -20,6 +23,13 @@ document.onreadystatechange = function() {
 	new Clipboard('.copy');
 	document.addEventListener('dragover', dragOverFile, false);
 	document.addEventListener('drop', dropFile, false);
+
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('/sw.js')
+			.then(function() {
+				console.info('Service worker registered');
+			});
+	}
 
 	if (/Mac|iP(hone|od|ad)/.test(navigator.userAgent)) {
 		textarea[2].placeholder = 'Copy [Command+C] output ciphertext';
@@ -82,8 +92,8 @@ function extractData(str) {
 		case '\u0001':
 			outputText(str.slice(28 + VLQLen * 4, dataEnd));
 			break;
-		case '\u0000':
 		case '\u0002':
+		case '\u0000':
 		default:
 			console.warn('Only text decoding is supported at this time.')
 	}
@@ -118,7 +128,7 @@ function outputText(str) {
 			a.target = '_blank';
 			a.tabIndex = -1;
 			var img = new Image();
-			img.onload = () => { resizeTextarea(div); };
+			img.onload = function() { resizeTextarea(div); };
 			img.src = embeds[i];
 			a.appendChild(img);
 			div.appendChild(a);
@@ -269,7 +279,7 @@ function resizeTextarea(el) {
 	var fontSize = parseFloat(document.documentElement.style.fontSize);
 	el.style.height = '';
 	if (el.tagName === 'TEXTAREA')
-		el.style.height = Math.min(el.scrollHeight + fontSize * 0.5, fontSize * 12) + 'px';
+		el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
 	else
-		el.style.height = el.scrollHeight + fontSize * 0.5 + 'px';
+		el.style.height = el.scrollHeight + fontSize * 0.3 + 'px';
 }
