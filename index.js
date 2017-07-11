@@ -120,6 +120,7 @@ function outputText(str) {
 	var div = textarea[4].lastChild;
 	// Output text
 	div.innerHTML = outputStr;
+	resizeTextarea(div);
 	if (embeds[0]) {
 		// Embed images
 		for (var i = 0; i < embeds.length; i++) {
@@ -129,12 +130,12 @@ function outputText(str) {
 			a.tabIndex = -1;
 			var img = new Image();
 			img.onload = function() { resizeTextarea(div); };
+			img.onerror = function() { this.style.display = 'none'; };
 			img.src = embeds[i];
 			a.appendChild(img);
 			div.appendChild(a);
 		}
-	} else
-		resizeTextarea(div);
+	}
 	// Flash textarea border
 	div.classList.add('decode');
 	window.setTimeout(function() {
