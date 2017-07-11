@@ -25,7 +25,7 @@ document.onreadystatechange = function() {
 	document.addEventListener('drop', dropFile, false);
 
 	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('/sw.js')
+		navigator.serviceWorker.register('/doublespeak/sw.js')
 			.then(function() {
 				console.info('Service worker registered');
 			});
