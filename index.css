@@ -86,7 +86,6 @@ textarea {
 
 #in-plain > div {
     display: block;
-	overflow: auto;
 	margin-bottom: 0.5rem;
 	word-wrap: break-word;
 	background-color: #222;
@@ -119,13 +118,14 @@ textarea.copy {
 	border-color: green;
 }
 
-div.decode {
+#in-plain > div.decode {
 	border-color: yellow;
 }
 
 ::-webkit-input-placeholder {
 	color: #777;
 }
+
 ::-moz-placeholder {
 	color: #777;
 	opacity: 1;
@@ -134,6 +134,10 @@ div.decode {
 #in-plain > div:empty::before {
 	color: #777;
 	content: 'Secret text'
+}
+
+:invalid {
+	box-shadow: none;
 }
 
 ::-webkit-scrollbar {
@@ -164,6 +168,13 @@ a:visited {
 
 a:hover {
 	text-decoration: underline;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+	margin: auto;
+	margin-top: 0.5rem;
 }
 
 .copied {

@@ -88,13 +88,18 @@ function extractData(str) {
 			console.warn('Only text decoding is supported at this time.')
 	}
 
-	// Recurse until all messages extracted	
+	// Recurse until all messages extracted
 	if (str.length > dataEnd)
 		extractData(str.slice(dataEnd));
 }
 
 function outputText(str) {
-	var outputStr = decodeText(str);
+	var outputStr = autolinker.link(decodeText(str));
+	var regex = /<a href="(.*?\.(?:jpg|jpeg|gif|png|bmp))"/gi;
+	var embed, embeds = [];
+	// Find all image URLs
+	while (embed = regex.exec(outputStr))
+		embeds.push(embed[1]);
 	if (textarea[4].lastChild.innerHTML) {
 		// Generate textarea-like div
 		var div = document.createElement('div');
@@ -103,8 +108,23 @@ function outputText(str) {
 		textarea[4].appendChild(div);
 	}
 	var div = textarea[4].lastChild;
-	div.innerHTML = autolinker.link(outputStr);
-	resizeTextarea(div);
+	// Output text
+	div.innerHTML = outputStr;
+	if (embeds[0]) {
+		// Embed images
+		for (var i = 0; i < embeds.length; i++) {
+			var a = document.createElement('a');
+			a.href = embeds[i];
+			a.target = '_blank';
+			a.tabIndex = -1;
+			var img = new Image();
+			img.onload = () => { resizeTextarea(div); };
+			img.src = embeds[i];
+			a.appendChild(img);
+			div.appendChild(a);
+		}
+	} else
+		resizeTextarea(div);
 	// Flash textarea border
 	div.classList.add('decode');
 	window.setTimeout(function() {
@@ -152,13 +172,19 @@ function decodeText(str) {
 		'\u200D': 2,
 		'\uFEFF': 3
 	};
+	var entities = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;'
+	};
 	for (var i = 0, sLen = str.length; i < sLen; i += 4) {
 		var charCode = 0;
 		for (var j = 0; j < 4; j++)
 			charCode += encodingVals[str[i + j]] << (6 - j * 2);
 		outputStr += String.fromCharCode(charCode);
 	}
-	return outputStr;
+	// Sanitize unsafe HTML characters
+	return outputStr.replace(/[&<>]/g, c => entities[c]);
 }
 
 function dragOverFile(e) {
@@ -234,7 +260,7 @@ function resizeBody() {
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04 + 'px';
 	for (var i = 0; i < 4; i++)
 		resizeTextarea(textarea[i]);
-	for (var i = 0, iLen = textarea[4].childNodes.length; i < iLen; i++)
+	for (var i = 0, nLen = textarea[4].childNodes.length; i < nLen; i++)
 		resizeTextarea(textarea[4].childNodes[i]);
 }
 
@@ -242,5 +268,8 @@ function resizeBody() {
 function resizeTextarea(el) {
 	var fontSize = parseFloat(document.documentElement.style.fontSize);
 	el.style.height = '';
-	el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
+	if (el.tagName === 'TEXTAREA')
+		el.style.height = Math.min(el.scrollHeight + fontSize * 0.5, fontSize * 12) + 'px';
+	else
+		el.style.height = el.scrollHeight + fontSize * 0.5 + 'px';
 }
