@@ -7,6 +7,9 @@
 	<meta name='description' content='Embeds/extracts messages as zero width Unicode characters in text, as a form of steganography. UI is optimized for real time chat.'>
 	<meta name='author' content='Joshua Fan'>
 	<meta name='theme-color' content='#222'>
+	<meta property='og:title' content='Doublespeak'>
+	<meta property='og:type' content='website'>
+	<meta property='og:url' content='https://joshuaptfan.github.io/doublespeak/'>
 	<meta property='og:image' content='https://joshuaptfan.github.io/doublespeak/images/icon-192.png'>
 	<meta name='twitter:card' content='summary'>
 	<meta name='twitter:site' content='@joshuaptfan'>
@@ -23,35 +26,38 @@
 </head>
 <body onresize='resizeBody()'>
 	<noscript>Please enable JavaScript to use this site.</noscript>
-	<div id='container'>
-		<div class='title'>SEND</div>
-		<div class='section'>
+	<div id='content'>
+		<header>SEND</header>
+		<section>
 			<textarea id='out-plain' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Secret text' autofocus></textarea>
-			<span class='button' onclick='clearOutPlain()'>CLEAR</span>
-		</div>
-		<div class='section'>
+			<div class='button' onclick='clearOutPlain()'>CLEAR</div>
+		</section>
+		<section>
 			<textarea id='out-cover' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Cover text'></textarea>
-			<span class='button' onclick='clearOut()'>CLEAR</span>
-		</div>
-		<div class='section'>
+			<div class='button' onclick='clearOut()'>CLEAR</div>
+		</section>
+		<section>
 			<div style='display: inline-block'>
 				<textarea id='out-cipher' oncopy='notifyCopy("out-cipher", "out-copied")' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div id='out-copied' class='copied'>COPIED</div>
 			</div>
-			<span id='out-copy' class='button copy' data-clipboard-target='#out-cipher'></span>
-		</div>
-		<div class='title'>RECEIVE</div>
-		<div class='section'>
+			<div id='out-copy' class='button copy' data-clipboard-target='#out-cipher'></div>
+		</section>
+		<header>RECEIVE</header>
+		<section>
 			<textarea id='in-cipher' onpaste='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
-			<span class='button' onclick='clearIn()'>CLEAR</span>
-		</div>
-		<div class='section'>
-			<div id='in-plain' style='display: inline-block'><div onfocus='selectText(this)' tabindex='-1'></div></div>
-		</div>
+			<div class='button' onclick='clearIn()'>CLEAR</div>
+		</section>
+		<section>
+			<div id='in-plain' style='display: inline-block'><div class='text-div' style='margin-top: 0' onfocus='selectText(this)' tabindex='-1'></div></div>
+		</section>
 		<div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
 		<div id='tab-loop'>
 			<button onfocus='textarea[0].select()'></button>
 		</div>
+		<footer>
+			<a href='https://github.com/joshuaptfan/doublespeak' target='_blank'>Source on GitHub</a>
+		</footer>
 	</div>
 </body>
 </html>

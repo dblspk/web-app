@@ -18,6 +18,7 @@ Fields automatically highlight on focus, type/paste to replace text. Clear butto
 
 * Multi-message decoding
 * Linkifies URLs, emails, phone numbers, and Twitter hashtags
+* Preview image URLs
 * [Progressive Web App](https://developers.google.com/web/progressive-web-apps/) &mdash; can be pinned to your Android homescreen
 
 ## How it works
@@ -39,11 +40,15 @@ Each invisible character represents 2 bits, while taking 1 byte (8 bits) to stor
 
 ## Roadmap
 
-The following features are defined in the [protocol specification](https://docs.google.com/spreadsheets/d/1sx-kw7LFz4f7Qrtmo68lRi8_msIRVGsvGhiQuWppR4A/edit):
+The following features are defined in the [protocol specification](https://docs.google.com/spreadsheets/d/1sx-kw7LFz4f7Qrtmo68lRi8_msIRVGsvGhiQuWppR4A/):
 
-* CRC-32 header field
+* CRC-32 error checking
 * Encoding and decoding of files
 * Optional built-in encryption for convenience (message can be encrypted before encoding even without this feature)
+
+[To do list](https://github.com/joshuaptfan/doublespeak/projects/1)
+
+To suggest a feature, please [create an issue](https://github.com/joshuaptfan/doublespeak/issues).
 
 ## Credits
 
@@ -52,3 +57,7 @@ This project began at [Cal Hacks 3.0](https://calhacks3.devpost.com/) by [a much
 * [Joshua Fan](https://github.com/joshuaptfan) &mdash; web interface
 * [Samuel Arnold](https://github.com/Grond66) &mdash; encoding algorithm and Python interface
 * [Nitzan Orr](https://github.com/orrblue) &mdash; decoding algorithm
+
+## License
+
+[MIT License](https://joshuaptfan.mit-license.org/)

@@ -8,7 +8,7 @@ var autolinker = new Autolinker({
 	}
 });
 
-document.onreadystatechange = function() {
+document.onreadystatechange = function () {
 	var textareas = [
 		'out-plain',
 		'out-cover',
@@ -26,7 +26,7 @@ document.onreadystatechange = function() {
 
 	if ('serviceWorker' in navigator) {
 		navigator.serviceWorker.register('/doublespeak/sw.js')
-			.then(function() {
+			.then(function () {
 				console.info('Service worker registered');
 			});
 	}
@@ -47,7 +47,7 @@ function embedData() {
 	resizeTextarea(textarea[2]);
 	// Flash textarea border
 	textarea[2].classList.add('encode');
-	window.setTimeout(function() {
+	window.setTimeout(function () {
 		textarea[2].classList.remove('encode');
 	}, 200);
 }
@@ -56,7 +56,7 @@ function embedData() {
 function initExtractData() {
 	textarea[3].maxLength = 0x7FFFFFFF;
 	clearInPlain();
-	window.setTimeout(function() {
+	window.setTimeout(function () {
 		// Discard cover text
 		extractData(textarea[3].value.match(/[\u200B\u200C\u200D\uFEFF]/g));
 	}, 1);
@@ -105,41 +105,50 @@ function extractData(str) {
 
 function outputText(str) {
 	var outputStr = autolinker.link(decodeText(str));
-	var regex = /<a href="(.*?\.(?:jpg|jpeg|gif|png|bmp))"/gi;
-	var embed, embeds = [];
+	var imageRegex = /<a href="([^"]+\.(?:jpg|jpeg|gif|png|bmp))/gi;
+	var youtubeRegex = /<a href="[^"]*(?:youtu\.be\/|youtube\.com\/(?:[^"]*?v=|embed\/))([\w-]+)/g;
+	var capture, images = [], videos = [];
 	// Find all image URLs
-	while (embed = regex.exec(outputStr))
-		embeds.push(embed[1]);
+	while (capture = imageRegex.exec(outputStr))
+		images.push(capture[1]);
+	// Find all YouTube video IDs
+	while (capture = youtubeRegex.exec(outputStr))
+		videos.push(capture[1]);
+	// console.log(images, videos);
 	if (textarea[4].lastChild.innerHTML) {
 		// Generate textarea-like div
-		var div = document.createElement('div');
-		div.onfocus = function() { selectText(this); };
-		div.tabIndex = -1;
-		textarea[4].appendChild(div);
+		var textDiv = document.createElement('div');
+		textDiv.className = 'text-div';
+		textDiv.onfocus = function () { selectText(this); };
+		textDiv.tabIndex = -1;
+		textarea[4].appendChild(textDiv);
 	}
-	var div = textarea[4].lastChild;
+	var textDiv = textarea[4].lastChild;
 	// Output text
-	div.innerHTML = outputStr;
-	resizeTextarea(div);
-	if (embeds[0]) {
+	textDiv.innerHTML = outputStr;
+	resizeTextarea(textDiv);
+	if (images[0]) {
+		var embedDiv = document.createElement('div');
+		embedDiv.className = 'embed-div';
 		// Embed images
-		for (var i = 0; i < embeds.length; i++) {
+		for (var i = 0; i < images.length; i++) {
 			var a = document.createElement('a');
-			a.href = embeds[i];
+			a.href = images[i];
 			a.target = '_blank';
 			a.tabIndex = -1;
-			var img = new Image();
-			img.onload = function() { resizeTextarea(div); };
-			img.onerror = function() { this.style.display = 'none'; };
-			img.src = embeds[i];
+			var img = document.createElement('img');
+			img.onload = function () { resizeTextarea(embedDiv); };
+			img.onerror = function () { this.style.display = 'none'; };
+			img.src = images[i];
 			a.appendChild(img);
-			div.appendChild(a);
+			embedDiv.appendChild(a);
 		}
+		textarea[4].appendChild(embedDiv);
 	}
 	// Flash textarea border
-	div.classList.add('decode');
-	window.setTimeout(function() {
-		div.classList.remove('decode');
+	textDiv.classList.add('decode');
+	window.setTimeout(function () {
+		textDiv.classList.remove('decode');
 	}, 1000);
 }
 
@@ -157,7 +166,7 @@ function encodeLength(n) {
 function decodeLength(str) {
 	var length = 0;
 	for (var i = 0; i < str.length; i++)
-		length = length << 7 | str.codePointAt(i) & 0x7F;
+		length = length << 7 | str.charCodeAt(i) & 0x7F;
 	return length;
 }
 
@@ -171,7 +180,7 @@ function encodeText(str) {
 		];
 	for (var i = 0, sLen = str.length; i < sLen; i++)
 		for (var j = 6; j >= 0; j -= 2)
-			outputStr += encodingChars[(str.charCodeAt(i) >> j) & 0x3];
+			outputStr += encodingChars[(str.codePointAt(i) >> j) & 0x3];
 	return outputStr;
 }
 
@@ -183,7 +192,7 @@ function decodeText(str) {
 		'\u200D': 2,
 		'\uFEFF': 3
 	};
-	var entities = {
+	var references = {
 		'&': '&amp;',
 		'<': '&lt;',
 		'>': '&gt;'
@@ -192,10 +201,10 @@ function decodeText(str) {
 		var charCode = 0;
 		for (var j = 0; j < 4; j++)
 			charCode += encodingVals[str[i + j]] << (6 - j * 2);
-		outputStr += String.fromCharCode(charCode);
+		outputStr += String.fromCodePoint(charCode);
 	}
 	// Sanitize unsafe HTML characters
-	return outputStr.replace(/[&<>]/g, c => entities[c]);
+	return outputStr.replace(/[&<>]/g, c => references[c]);
 }
 
 function dragOverFile(e) {
@@ -210,7 +219,7 @@ function dropFile(e) {
 
 	var file = e.dataTransfer.files[0];
 	var reader = new FileReader();
-	reader.onload = function() {
+	reader.onload = function () {
 		console.log(new Uint8Array(reader.result));
 	};
 	reader.readAsArrayBuffer(file);
@@ -257,7 +266,7 @@ function notifyCopy(el, copied) {
 	var copied = document.getElementById(copied);
 	el.classList.add('copy');
 	copied.classList.add('show')
-	window.setTimeout(function() {
+	window.setTimeout(function () {
 		el.classList.remove('copy');
 		copied.classList.remove('show');
 	}, 800)
@@ -281,6 +290,8 @@ function resizeTextarea(el) {
 	el.style.height = '';
 	if (el.tagName === 'TEXTAREA')
 		el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
-	else
+	else if (el.className === 'text-div')
 		el.style.height = el.scrollHeight + fontSize * 0.3 + 'px';
+	else
+		el.style.height = el.scrollHeight + 'px';
 }
