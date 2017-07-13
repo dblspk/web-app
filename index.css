@@ -75,7 +75,7 @@ textarea,
 .text-div,
 .embed-div {
 	box-sizing: border-box;
-	height: 1.8rem;
+	height: auto;
 	width: 25.5rem;
 	padding: 0.1rem;
 	font-size: 1rem;
@@ -84,13 +84,16 @@ textarea,
 }
 
 textarea {
-	vertical-align: top;
+	height: 1.8rem;
 	font-family: sans-serif;
+	vertical-align: top;
 	background-color: #111;
 	resize: none;
 }
 
 .text-div {
+	display: inline-block;
+	min-height: 1.8rem;
 	margin-top: 0.5rem;
 	word-wrap: break-word;
 	white-space: pre-wrap;
@@ -99,8 +102,7 @@ textarea {
 }
 
 .embed-div {
-	padding: 0;
-	padding-top: 1px;
+	padding: 0.1rem 0.2rem;
 	border: none;
 	box-shadow: 0 0 0.4rem black inset;
 }
@@ -184,8 +186,8 @@ a:hover {
 
 img {
 	display: block;
-	width: calc(100% - 0.4rem);
-	margin: 0.2rem;
+	width: 100%;
+	padding: 0.1rem 0;
 }
 
 .copied {

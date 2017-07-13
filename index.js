@@ -126,7 +126,6 @@ function outputText(str) {
 	var textDiv = textarea[4].lastChild;
 	// Output text
 	textDiv.innerHTML = outputStr;
-	resizeTextarea(textDiv);
 	if (images[0]) {
 		var embedDiv = document.createElement('div');
 		embedDiv.className = 'embed-div';
@@ -137,7 +136,6 @@ function outputText(str) {
 			a.target = '_blank';
 			a.tabIndex = -1;
 			var img = document.createElement('img');
-			img.onload = function () { resizeTextarea(embedDiv); };
 			img.onerror = function () { this.style.display = 'none'; };
 			img.src = images[i];
 			a.appendChild(img);
@@ -251,7 +249,6 @@ function clearIn() {
 	clearInPlain();
 	textarea[3].value = '';
 	resizeTextarea(textarea[3]);
-	resizeTextarea(textarea[4].lastChild);
 	textarea[3].focus();
 }
 
@@ -280,18 +277,11 @@ function resizeBody() {
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04 + 'px';
 	for (var i = 0; i < 4; i++)
 		resizeTextarea(textarea[i]);
-	for (var i = 0, nLen = textarea[4].childNodes.length; i < nLen; i++)
-		resizeTextarea(textarea[4].childNodes[i]);
 }
 
 // Scale textarea according to font size
 function resizeTextarea(el) {
 	var fontSize = parseFloat(document.documentElement.style.fontSize);
 	el.style.height = '';
-	if (el.tagName === 'TEXTAREA')
-		el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
-	else if (el.className === 'text-div')
-		el.style.height = el.scrollHeight + fontSize * 0.3 + 'px';
-	else
-		el.style.height = el.scrollHeight + 'px';
+	el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
 }
