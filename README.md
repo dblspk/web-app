@@ -18,8 +18,19 @@ Fields automatically highlight on focus, type/paste to replace text. Clear butto
 
 * Multi-message decoding
 * Linkifies URLs, emails, phone numbers, and Twitter hashtags
-* Preview image URLs
+* Preview URLs for images, video, and audio
 * [Progressive Web App](https://developers.google.com/web/progressive-web-apps/) &mdash; can be pinned to your Android homescreen
+
+## Possible uses
+
+Embed messages, URLs, watermarks, etc. in plain sight in:
+
+* Chat messages
+* Social media posts
+* User profile information
+* Emails
+* Digital documents
+* File names
 
 ## How it works
 

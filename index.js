@@ -7,12 +7,21 @@ var autolinker = new Autolinker({
 	replaceFn: function (match) {
 		if (match.getType() === 'url') {
 			var url = match.getUrl();
-			if (/\.(jpg|jpeg|gif|png|bmp)$/i.test(url))
-				embeds.push({ type: 'img', 'url': url });
-			else if (/(youtu\.be|youtube\.com)\//.test(url)) {
-				var id = /(?:\.be\/|\.com\/(?:.*v=|embed\/))([\w-]+)/.exec(url);
-				if (id)
-					embeds.push({ type: 'yt', 'id': id[1] });
+			var ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
+			if (ext) {
+				if (/^(jpe?g|gif|png|bmp|svg)$/i.test(ext))
+					embeds.push({ type: 'image', 'url': url });
+				else if (/^(mp4|webm|gifv|ogv)$/i.test(ext))
+					embeds.push({ type: 'video', 'url': url });
+				else if (/^(mp3|wav|ogg)$/i.test(ext))
+					embeds.push({ type: 'audio', 'url': url });
+			} else {
+				var youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)/.exec(url);
+				if (youtube)
+					embeds.push({ type: 'youtube', id: youtube[1] });
+				var vimeo = /vimeo\.com\/(?:video\/)?(\d+)/.exec(url);
+				if (vimeo)
+					embeds.push({ type: 'vimeo', id: vimeo[1] });
 			}
 		}
 		return match.buildTag().setAttr('tabindex', -1);
@@ -35,12 +44,8 @@ document.onreadystatechange = function () {
 	document.addEventListener('dragover', dragOverFile, false);
 	document.addEventListener('drop', dropFile, false);
 
-	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('/doublespeak/sw.js')
-			.then(function () {
-				console.info('Service worker registered');
-			});
-	}
+	if ('serviceWorker' in navigator)
+		navigator.serviceWorker.register('/doublespeak/sw.js');
 
 	if (/Mac|iP(hone|od|ad)/.test(navigator.userAgent)) {
 		textarea[2].placeholder = 'Copy [Command+C] output ciphertext';
@@ -133,24 +138,36 @@ function outputText(str) {
 		// Generate embed container
 		var embedDiv = document.createElement('div');
 		embedDiv.className = 'embed-div';
+		// Embed media
 		for (var i = 0; i < embeds.length; i++) {
-			if (embeds[i].type === 'img') {
-				// Embed image
-				var a = document.createElement('a');
-				a.href = embeds[i].url;
-				a.target = '_blank';
-				a.tabIndex = -1;
-				var img = document.createElement('img');
-				img.onerror = function () { this.style.display = 'none'; };
-				img.src = embeds[i].url;
-				a.appendChild(img);
-				embedDiv.appendChild(a);
-			} else if (embeds[i].type === 'yt') {
-				// Embed YouTube video
-				var iframe = document.createElement('iframe');
-				iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id;
-				iframe.setAttribute('allowFullscreen', '');
-				embedDiv.appendChild(iframe);
+			switch (embeds[i].type) {
+				case 'image':
+					var a = document.createElement('a');
+					a.href = embeds[i].url;
+					a.target = '_blank';
+					a.tabIndex = -1;
+					var img = document.createElement('img');
+					img.onerror = function () { this.style.display = 'none'; };
+					img.src = embeds[i].url;
+					a.appendChild(img);
+					embedDiv.appendChild(a);
+					break;
+				case 'video':
+				case 'audio':
+					var el = document.createElement(embeds[i].type);
+					el.controls = true;
+					el.src = embeds[i].url.replace(/\.gifv$/i, '.mp4');
+					embedDiv.appendChild(el);
+					break;
+				case 'youtube':
+				case 'vimeo':
+					var iframe = document.createElement('iframe');
+					if (embeds[i].type === 'youtube')
+						iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id;
+					else
+						iframe.src = 'https://player.vimeo.com/video/' + embeds[i].id;
+					iframe.allowFullscreen = true;
+					embedDiv.appendChild(iframe);
 			}
 		}
 		textarea[4].appendChild(embedDiv);
@@ -162,7 +179,7 @@ function outputText(str) {
 	}, 1000);
 }
 
-// encode length of data as variable length quantity in binary string form
+// Encode length of data as variable length quantity in binary string form
 function encodeLength(n) {
 	var outputStr = String.fromCharCode(n & 0x7F);
 	while (n > 127) {
@@ -172,7 +189,7 @@ function encodeLength(n) {
 	return outputStr;
 }
 
-// decode VLQ to integer
+// Decode VLQ to integer
 function decodeLength(str) {
 	var length = 0;
 	for (var i = 0; i < str.length; i++)

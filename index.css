@@ -186,6 +186,8 @@ a:hover {
 }
 
 .embed-div img,
+.embed-div > video,
+.embed-div > audio,
 .embed-div > iframe {
 	display: block;
 	width: 100%;
