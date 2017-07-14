@@ -1,9 +1,20 @@
 var textarea = [];
+var embeds = [];
 var autolinker = new Autolinker({
 	stripPrefix: false,
 	stripTrailingSlash: false,
 	hashtag: 'twitter',
 	replaceFn: function (match) {
+		if (match.getType() === 'url') {
+			var url = match.getUrl();
+			if (/\.(jpg|jpeg|gif|png|bmp)$/i.test(url))
+				embeds.push({ type: 'img', 'url': url });
+			else if (/(youtu\.be|youtube\.com)\//.test(url)) {
+				var id = /(?:\.be\/|\.com\/(?:.*v=|embed\/))([\w-]+)/.exec(url);
+				if (id)
+					embeds.push({ type: 'yt', 'id': id[1] });
+			}
+		}
 		return match.buildTag().setAttr('tabindex', -1);
 	}
 });
@@ -40,7 +51,8 @@ document.onreadystatechange = function () {
 // Embed plaintext in cover text
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
-	var encodedStr = (val => val !== '' ? encodeText('D\u0000\u0000\u0000\u0000\u0000\u0001' + encodeLength(val.length) + val) : '')(textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, ''));
+	var encodedStr = (val => val ? encodeText('D\u0000\u0000\u0000\u0000\u0000\u0001' +
+		encodeLength(val.length) + val) : '')(textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, ''));
 	var coverStr = textarea[1].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
@@ -79,7 +91,7 @@ function extractData(str) {
 	var VLQLen = 1;
 	while (encodingVals[str[24 + VLQLen * 4]] > 1)
 		VLQLen++;
-	//console.log('VLQLen', VLQLen);
+	// console.log('VLQLen', VLQLen);
 	var header = decodeText(str.slice(8, 28 + VLQLen * 4));
 	// Read data type field
 	var dataType = header[4];
@@ -104,19 +116,10 @@ function extractData(str) {
 }
 
 function outputText(str) {
+	embeds = [];
 	var outputStr = autolinker.link(decodeText(str));
-	var imageRegex = /<a href="([^"]+\.(?:jpg|jpeg|gif|png|bmp))/gi;
-	var youtubeRegex = /<a href="[^"]*(?:youtu\.be\/|youtube\.com\/(?:[^"]*?v=|embed\/))([\w-]+)/g;
-	var capture, images = [], videos = [];
-	// Find all image URLs
-	while (capture = imageRegex.exec(outputStr))
-		images.push(capture[1]);
-	// Find all YouTube video IDs
-	while (capture = youtubeRegex.exec(outputStr))
-		videos.push(capture[1]);
-	// console.log(images, videos);
 	if (textarea[4].lastChild.innerHTML) {
-		// Generate textarea-like div
+		// Generate pseudo-textarea
 		var textDiv = document.createElement('div');
 		textDiv.className = 'text-div';
 		textDiv.onfocus = function () { selectText(this); };
@@ -126,20 +129,29 @@ function outputText(str) {
 	var textDiv = textarea[4].lastChild;
 	// Output text
 	textDiv.innerHTML = outputStr;
-	if (images[0]) {
+	if (embeds[0]) {
+		// Generate embed container
 		var embedDiv = document.createElement('div');
 		embedDiv.className = 'embed-div';
-		// Embed images
-		for (var i = 0; i < images.length; i++) {
-			var a = document.createElement('a');
-			a.href = images[i];
-			a.target = '_blank';
-			a.tabIndex = -1;
-			var img = document.createElement('img');
-			img.onerror = function () { this.style.display = 'none'; };
-			img.src = images[i];
-			a.appendChild(img);
-			embedDiv.appendChild(a);
+		for (var i = 0; i < embeds.length; i++) {
+			if (embeds[i].type === 'img') {
+				// Embed image
+				var a = document.createElement('a');
+				a.href = embeds[i].url;
+				a.target = '_blank';
+				a.tabIndex = -1;
+				var img = document.createElement('img');
+				img.onerror = function () { this.style.display = 'none'; };
+				img.src = embeds[i].url;
+				a.appendChild(img);
+				embedDiv.appendChild(a);
+			} else if (embeds[i].type === 'yt') {
+				// Embed YouTube video
+				var iframe = document.createElement('iframe');
+				iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id;
+				iframe.setAttribute('allowFullscreen', '');
+				embedDiv.appendChild(iframe);
+			}
 		}
 		textarea[4].appendChild(embedDiv);
 	}

@@ -27,7 +27,7 @@
 <body onresize='resizeBody()'>
 	<noscript>Please enable JavaScript to use this site.</noscript>
 	<div id='content'>
-		<header>SEND</header>
+		<h1>SEND</h1>
 		<section>
 			<textarea id='out-plain' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Secret text' autofocus></textarea>
 			<div class='button' onclick='clearOutPlain()'>CLEAR</div>
@@ -43,7 +43,7 @@
 			</div>
 			<div id='out-copy' class='button copy' data-clipboard-target='#out-cipher'></div>
 		</section>
-		<header>RECEIVE</header>
+		<h1>RECEIVE</h1>
 		<section>
 			<textarea id='in-cipher' onpaste='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
 			<div class='button' onclick='clearIn()'>CLEAR</div>

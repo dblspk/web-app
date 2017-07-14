@@ -24,7 +24,7 @@ noscript {
 	margin: 0 auto;
 }
 
-header,
+h1,
 .button,
 #tip {
 	cursor: default;
@@ -34,9 +34,10 @@ header,
 	        user-select: none;
 }
 
-header {
+h1 {
 	margin: 1.2rem 0;
 	font-size: 150%;
+	font-weight: normal;
 	color: #AAA;
 }
 
@@ -184,10 +185,16 @@ a:hover {
 	text-decoration: underline;
 }
 
-img {
+.embed-div img,
+.embed-div > iframe {
 	display: block;
 	width: 100%;
 	padding: 0.1rem 0;
+}
+
+.embed-div > iframe {
+	height: 14.11875rem;
+	border: none;
 }
 
 .copied {
@@ -219,8 +226,8 @@ img {
 }
 
 #tab-loop {
-	height: 0;
 	overflow: hidden;
+	height: 0;
 }
 
 footer {
@@ -231,13 +238,13 @@ footer {
 	text-align: right;
 }
 
-footer a,
-footer a:visited {
+footer > a,
+footer > a:visited {
 	padding: 0 0.1rem;
 	color: #444;
 }
 
-footer a:hover {
+footer > a:hover {
 	text-decoration: none;
 	color: #222;
 	background-color: #444;
@@ -262,5 +269,9 @@ and (max-width: 480px) {
 
 	.text-div {
 		margin-top: 1rem;
+	}
+
+	.embed-div > iframe {
+		height: 9.61875rem;
 	}
 }
