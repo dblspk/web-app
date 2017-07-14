@@ -1,5 +1,6 @@
 {
 	"name": "Doublespeak",
+	"start_url": ".",
 	"icons": [
 		{
 			"src": "images/icon-192.png",
