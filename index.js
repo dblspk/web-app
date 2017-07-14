@@ -12,13 +12,13 @@ var autolinker = new Autolinker({
 				if (/^(jpe?g|gif|png|bmp|svg)$/i.test(ext))
 					embeds.push({ type: 'image', 'url': url });
 				else if (/^(mp4|webm|gifv|ogv)$/i.test(ext))
-					embeds.push({ type: 'video', 'url': url });
+					embeds.push({ type: 'video', 'url': url.replace(/gifv$/i, 'mp4') });
 				else if (/^(mp3|wav|ogg)$/i.test(ext))
 					embeds.push({ type: 'audio', 'url': url });
 			} else {
-				var youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)/.exec(url);
+				var youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
 				if (youtube)
-					embeds.push({ type: 'youtube', id: youtube[1] });
+					embeds.push({ type: 'youtube', id: youtube[1], h: youtube[3] || 0, m: youtube[4] || 0, s: youtube[5] || youtube[2] || 0 });
 				var vimeo = /vimeo\.com\/(?:video\/)?(\d+)/.exec(url);
 				if (vimeo)
 					embeds.push({ type: 'vimeo', id: vimeo[1] });
@@ -154,19 +154,22 @@ function outputText(str) {
 					break;
 				case 'video':
 				case 'audio':
-					var el = document.createElement(embeds[i].type);
-					el.controls = true;
-					el.src = embeds[i].url.replace(/\.gifv$/i, '.mp4');
-					embedDiv.appendChild(el);
+					var media = document.createElement(embeds[i].type);
+					media.src = embeds[i].url;
+					media.controls = true;
+					media.tabIndex = -1;
+					embedDiv.appendChild(media);
 					break;
 				case 'youtube':
 				case 'vimeo':
 					var iframe = document.createElement('iframe');
 					if (embeds[i].type === 'youtube')
-						iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id;
+						iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id +
+							'?start=' + (embeds[i].h * 3600 + embeds[i].m * 60 + parseInt(embeds[i].s));
 					else
 						iframe.src = 'https://player.vimeo.com/video/' + embeds[i].id;
 					iframe.allowFullscreen = true;
+					iframe.tabIndex = -1;
 					embedDiv.appendChild(iframe);
 			}
 		}
