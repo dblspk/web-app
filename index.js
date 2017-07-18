@@ -6,6 +6,7 @@ var autolinker = new Autolinker({
 	hashtag: 'twitter',
 	replaceFn: function (match) {
 		if (match.getType() === 'url') {
+			// collect embeddable URLs
 			var url = match.getUrl();
 			var ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
 			if (ext) {
@@ -16,6 +17,7 @@ var autolinker = new Autolinker({
 				else if (/^(mp3|wav|ogg)$/i.test(ext))
 					embeds.push({ type: 'audio', 'url': url });
 			} else {
+				// Extract ID and timestamp components
 				var youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
 				if (youtube)
 					embeds.push({ type: 'youtube', id: youtube[1], h: youtube[3] || 0, m: youtube[4] || 0, s: youtube[5] || youtube[2] || 0 });
@@ -44,6 +46,7 @@ document.onreadystatechange = function () {
 	document.addEventListener('dragover', dragOverFile, false);
 	document.addEventListener('drop', dropFile, false);
 
+	// Service worker caches page for offline use
 	if ('serviceWorker' in navigator)
 		navigator.serviceWorker.register('/doublespeak/sw.js');
 
@@ -59,6 +62,7 @@ function embedData() {
 	var encodedStr = (val => val ? encodeText('D\u0000\u0000\u0000\u0000\u0000\u0001' +
 		encodeLength(val.length) + val) : '')(textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, ''));
 	var coverStr = textarea[1].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
+	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
 	resizeTextarea(textarea[2]);
@@ -142,27 +146,31 @@ function outputText(str) {
 		for (var i = 0; i < embeds.length; i++) {
 			switch (embeds[i].type) {
 				case 'image':
-					var a = document.createElement('a');
-					a.href = embeds[i].url;
-					a.target = '_blank';
-					a.tabIndex = -1;
+					var div = document.createElement('div');
+					div.className = 'embed-img-container blocked';
 					var img = document.createElement('img');
+					img.className = 'embed';
 					img.onerror = function () { this.style.display = 'none'; };
+					img.onload = function () { checkZoomable(this); };
+					img.onclick = function () { clickImage(this); };
 					img.src = embeds[i].url;
-					a.appendChild(img);
-					embedDiv.appendChild(a);
+					div.appendChild(img);
+					embedDiv.appendChild(div);
 					break;
 				case 'video':
 				case 'audio':
 					var media = document.createElement(embeds[i].type);
+					media.className = 'embed';
 					media.src = embeds[i].url;
 					media.controls = true;
+					media.preload = 'metadata';
 					media.tabIndex = -1;
 					embedDiv.appendChild(media);
 					break;
 				case 'youtube':
 				case 'vimeo':
 					var iframe = document.createElement('iframe');
+					iframe.className = 'embed';
 					if (embeds[i].type === 'youtube')
 						iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id +
 							'?start=' + (embeds[i].h * 3600 + embeds[i].m * 60 + parseInt(embeds[i].s));
@@ -298,7 +306,50 @@ function notifyCopy(el, copied) {
 	window.setTimeout(function () {
 		el.classList.remove('copy');
 		copied.classList.remove('show');
-	}, 800)
+	}, 800);
+}
+
+function clickImage(el) {
+	var parent = el.parentElement;
+	if (parent.classList.contains('blocked'))
+		parent.classList.remove('blocked');
+	else if (el.classList.contains('zoomable')) {
+		var img = el.cloneNode();
+		img.id = 'zoom';
+		img.style.top = el.height * 0.5 + parent.offsetTop - document.body.scrollTop + 'px';
+		img.style.left = el.width * 0.5 + parent.offsetLeft + parent.offsetParent.offsetLeft + 'px';
+		img.onclick = function () {
+			document.body.removeChild(this);
+			document.body.removeChild(document.getElementById('background'));
+		};
+		var bg = document.createElement('div');
+		bg.id = 'background';
+		bg.onclick = function () {
+			document.body.removeChild(document.getElementById('zoom'));
+			document.body.removeChild(this);
+		};
+		document.body.appendChild(bg);
+		document.body.appendChild(img);
+		window.setTimeout(function () {
+			img.removeAttribute('style');
+			img.className = 'zoom-end';
+		}, 1);
+	}
+}
+
+function checkZoomable(el) {
+	var embedWidth = textarea[4].scrollWidth;
+	if (el && !el.parentElement.classList.contains('blocked') && el.naturalWidth > embedWidth) {
+		el.classList.add('zoomable');
+		return;
+	}
+	var images = textarea[4].getElementsByTagName('img');
+	for (var i = 0, iLen = images.length; i < iLen; i++) {
+		if (images[i].naturalWidth > embedWidth)
+			images[i].classList.add('zoomable');
+		else
+			images[i].classList.remove('zoomable');
+	}
 }
 
 // Scale elements according to viewport size
@@ -309,6 +360,7 @@ function resizeBody() {
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04 + 'px';
 	for (var i = 0; i < 4; i++)
 		resizeTextarea(textarea[i]);
+	checkZoomable();
 }
 
 // Scale textarea according to font size
