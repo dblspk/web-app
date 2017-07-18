@@ -360,8 +360,9 @@ function unzoomImage() {
 
 function checkZoomable(el) {
 	var embedWidth = textarea[4].scrollWidth;
-	if (el && !el.parentElement.classList.contains('blocked') && el.naturalWidth > embedWidth) {
-		el.classList.add('zoomable');
+	if (el) {
+		if (el.naturalWidth > embedWidth)
+			el.classList.add('zoomable');
 		return;
 	}
 	var images = textarea[4].getElementsByTagName('img');
