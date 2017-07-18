@@ -54,7 +54,7 @@ document.onreadystatechange = function () {
 		textarea[2].placeholder = 'Copy [Command+C] output ciphertext';
 		textarea[3].placeholder = 'Paste [Command+V] input ciphertext';
 	}
-}
+};
 
 // Embed plaintext in cover text
 function embedData() {
@@ -116,7 +116,7 @@ function extractData(str) {
 		case '\u0002':
 		case '\u0000':
 		default:
-			console.warn('Only text decoding is supported at this time.')
+			console.warn('Only text decoding is supported at this time.');
 	}
 
 	// Recurse until all messages extracted
@@ -127,15 +127,16 @@ function extractData(str) {
 function outputText(str) {
 	embeds = [];
 	var outputStr = autolinker.link(decodeText(str));
+	var textDiv;
 	if (textarea[4].lastChild.innerHTML) {
 		// Generate pseudo-textarea
-		var textDiv = document.createElement('div');
+		textDiv = document.createElement('div');
 		textDiv.className = 'text-div';
 		textDiv.onfocus = function () { selectText(this); };
 		textDiv.tabIndex = -1;
 		textarea[4].appendChild(textDiv);
 	}
-	var textDiv = textarea[4].lastChild;
+	textDiv = textarea[4].lastChild;
 	// Output text
 	textDiv.innerHTML = outputStr;
 	if (embeds[0]) {
@@ -299,10 +300,10 @@ function clearInPlain() {
 }
 
 function notifyCopy(el, copied) {
-	var el = document.getElementById(el);
-	var copied = document.getElementById(copied);
+	el = document.getElementById(el);
+	copied = document.getElementById(copied);
 	el.classList.add('copy');
-	copied.classList.add('show')
+	copied.classList.add('show');
 	window.setTimeout(function () {
 		el.classList.remove('copy');
 		copied.classList.remove('show');
@@ -314,27 +315,47 @@ function clickImage(el) {
 	if (parent.classList.contains('blocked'))
 		parent.classList.remove('blocked');
 	else if (el.classList.contains('zoomable')) {
-		var img = el.cloneNode();
-		img.id = 'zoom';
-		img.style.top = el.height * 0.5 + parent.offsetTop - document.body.scrollTop + 'px';
-		img.style.left = el.width * 0.5 + parent.offsetLeft + parent.offsetParent.offsetLeft + 'px';
-		img.onclick = function () {
-			document.body.removeChild(this);
-			document.body.removeChild(document.getElementById('background'));
-		};
+		var fontSize = parseFloat(document.documentElement.style.fontSize);
+		// Clone clicked image at same position
+		var zoom = el.cloneNode();
+		zoomedImage = el;
+		zoom.id = 'zoom';
+		zoom.style.top = el.height * 0.5 + fontSize * 0.1 + parent.offsetTop - document.body.scrollTop + 'px';
+		zoom.style.left = el.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + parent.offsetParent.offsetLeft + 'px';
+		zoom.onclick = function () { unzoomImage(); };
 		var bg = document.createElement('div');
 		bg.id = 'background';
-		bg.onclick = function () {
-			document.body.removeChild(document.getElementById('zoom'));
-			document.body.removeChild(this);
-		};
+		bg.className = 'fade';
+		bg.onclick = function () { unzoomImage(); };
 		document.body.appendChild(bg);
-		document.body.appendChild(img);
-		window.setTimeout(function () {
-			img.removeAttribute('style');
-			img.className = 'zoom-end';
-		}, 1);
+		document.body.appendChild(zoom);
+		// Force element reflow to enable transition
+		void zoom.offsetWidth;
+		zoom.removeAttribute('style');
+		// Zoom image
+		zoom.className = 'zoom-end';
 	}
+}
+
+function unzoomImage() {
+	var fontSize = parseFloat(document.documentElement.style.fontSize);
+	var parent = zoomedImage.parentElement;
+	var zoom = document.getElementById('zoom');
+	// Unzoom image
+	zoom.style.top = zoomedImage.height * 0.5 + fontSize * 0.1 + parent.offsetTop - document.body.scrollTop + 'px';
+	zoom.style.left = zoomedImage.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + parent.offsetParent.offsetLeft + 'px';
+	zoom.style.width = zoomedImage.width + 'px';
+	delete zoomedImage;
+	var bg = document.getElementById('background');
+	bg.style.animationDirection = 'reverse';
+	bg.className = '';
+	// Force element reflow to restart animation
+	void bg.offsetWidth;
+	bg.className = 'fade';
+	zoom.addEventListener('transitionend', function () {
+		document.body.removeChild(zoom);
+		document.body.removeChild(bg);
+	});
 }
 
 function checkZoomable(el) {

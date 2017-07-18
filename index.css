@@ -151,7 +151,7 @@ textarea.copy {
 
 .text-div:empty::before {
 	color: #777;
-	content: 'Secret text'
+	content: 'Secret text';
 }
 
 :invalid {
@@ -235,7 +235,7 @@ img.embed.zoomable {
 	padding: 0.1rem;
 	box-sizing: border-box;
 	transform: translate(-50%, -50%);
-	transition: all 0.8s;
+	transition: all 0.5s;
 	cursor: pointer;
 }
 
@@ -244,6 +244,7 @@ img.embed.zoomable {
 	left: 50%;
 	max-width: 98vw;
 	max-height: 98vh;
+	transition: all 0.5s;
 }
 
 #background {
@@ -251,7 +252,10 @@ img.embed.zoomable {
 	height: 100%;
 	width: 100%;
 	background-color: rgba(0, 0, 0, 0.9);
-	animation: fade 0.8s;
+}
+
+#background.fade {
+	animation: fade 0.5s;
 }
 
 @keyframes fade {
