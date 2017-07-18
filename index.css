@@ -219,7 +219,7 @@ a:hover {
 
 .embed-img-container.blocked > img.embed {
 	-webkit-filter: blur(1rem);
-			filter: blur(1rem);
+	        filter: blur(1rem);
 	cursor: pointer;
 }
 

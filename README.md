@@ -71,7 +71,7 @@ To suggest a feature, please [create an issue](https://github.com/joshuaptfan/do
 
 ## Cons
 
-Messages can be filtered out or corrupted by communication platforms that exclude any of the encoding characters or consecutive chains of them. These characters were chosen because they are part of official character sets for some languages, making them less likely to be filtered.
+Messages can be filtered out or corrupted by communication platforms that do not support Unicode, or exclude any of the encoding characters or consecutive chains of them. These characters were chosen because they are part of official character sets for some languages, making them less likely to be filtered.
 
 Any digital text can be checked for the possible presence of a message by pasting it into the decoder. If something is found but is deformed (i.e. does not follow the protocol), a "best attempt" decode will be output to the console.
 
