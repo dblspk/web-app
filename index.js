@@ -1,5 +1,4 @@
 var textarea = [];
-var embeds = [];
 var autolinker = new Autolinker({
 	stripPrefix: false,
 	stripTrailingSlash: false,
@@ -184,6 +183,7 @@ function outputText(str) {
 		}
 		textarea[4].appendChild(embedDiv);
 	}
+	delete embeds;
 	// Flash textarea border
 	textDiv.classList.add('decode');
 	window.setTimeout(function () {
@@ -352,7 +352,8 @@ function unzoomImage() {
 	// Force element reflow to restart animation
 	void bg.offsetWidth;
 	bg.className = 'fade';
-	zoom.addEventListener('transitionend', function () {
+	zoom.addEventListener('transitionend', function removeZoom() {
+		zoom.removeEventListener('transitionend', removeZoom);
 		document.body.removeChild(zoom);
 		document.body.removeChild(bg);
 	});
