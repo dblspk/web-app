@@ -234,7 +234,7 @@ function encodeText(str) {
 		];
 	for (var i = 0, sLen = str.length; i < sLen; i++)
 		for (var j = 6; j >= 0; j -= 2)
-			out += encodingChars[(str.codePointAt(i) >> j) & 0x3];
+			out += encodingChars[(str.charCodeAt(i) >> j) & 0x3];
 	return out;
 }
 
@@ -246,11 +246,6 @@ function decodeText(str) {
 		'\u200D': 2,
 		'\uFEFF': 3
 	};
-	var references = {
-		'&': '&amp;',
-		'<': '&lt;',
-		'>': '&gt;'
-	};
 	for (var i = 0, sLen = str.length; i < sLen; i += 4) {
 		var charCode = 0;
 		for (var j = 0; j < 4; j++)
@@ -258,6 +253,11 @@ function decodeText(str) {
 		out += String.fromCodePoint(charCode);
 	}
 	// Sanitize unsafe HTML characters
+	var references = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;'
+	};
 	return out.replace(/[&<>]/g, c => references[c]);
 }
 

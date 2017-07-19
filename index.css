@@ -129,7 +129,7 @@ textarea[readonly] {
 }
 
 textarea.encode {
-	border-color: #FB0;
+	border-color: #BBB;
 }
 
 textarea.copy {
@@ -137,7 +137,7 @@ textarea.copy {
 }
 
 .text-div.decode {
-	border-color: #0BF;
+	border-color: #BBB;
 }
 
 .text-div.error {
