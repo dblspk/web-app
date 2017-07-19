@@ -129,15 +129,19 @@ textarea[readonly] {
 }
 
 textarea.encode {
-	border-color: red;
+	border-color: cyan;
 }
 
 textarea.copy {
-	border-color: green;
+	border-color: lime;
 }
 
 .text-div.decode {
-	border-color: yellow;
+	border-color: orange;
+}
+
+.text-div.error {
+	border-color: red;
 }
 
 ::-webkit-input-placeholder {
@@ -152,6 +156,28 @@ textarea.copy {
 .text-div:empty::before {
 	color: #777;
 	content: 'Secret text';
+}
+
+.notify {
+	height: 1.1rem;
+	width: 25.5rem;
+	margin-top: -1px;
+	text-align: center;
+	font-weight: bold;
+	color: white;
+}
+
+.copied-div {
+	visibility: hidden;
+	background-color: lime;
+}
+
+.copied-div.show {
+	visibility: visible;
+}
+
+.error-div {
+	background-color: red;
 }
 
 :invalid {
@@ -208,7 +234,7 @@ a:hover {
 	line-height: 3rem;
 	width: 3rem;
 	margin: -1.5rem 0 0 -1.5rem;
-	font-family: sans-serif, 'Segoe UI Symbol';
+	font-family: sans-serif, 'Segoe UI Symbol', EmojiSymbols;
 	font-size: 250%;
 	text-align: center;
 	color: #CCC;
@@ -269,21 +295,6 @@ iframe.embed {
 	border: none;
 }
 
-.copied {
-	visibility: hidden;
-	height: 1.1rem;
-	width: 25.5rem;
-	margin-top: -1px;
-	text-align: center;
-	font-weight: bold;
-	color: white;
-	background-color: green;
-}
-
-.copied.show {
-	visibility: visible;
-}
-
 #tip {
 	margin: 4rem 0;
 	font-size: 60%;
@@ -336,7 +347,7 @@ and (max-width: 480px) {
 	textarea,
 	.text-div,
 	.embed-div,
-	.copied {
+	.notify {
 		width: 17.5rem;
 	}
 
@@ -344,7 +355,7 @@ and (max-width: 480px) {
 		margin-top: 1rem;
 	}
 
-	img.zoom-start {
+	#zoom {
 		width: 17.3rem;
 	}
 

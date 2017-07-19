@@ -1,33 +1,4 @@
 var textarea = [];
-var autolinker = new Autolinker({
-	stripPrefix: false,
-	stripTrailingSlash: false,
-	hashtag: 'twitter',
-	replaceFn: function (match) {
-		if (match.getType() === 'url') {
-			// collect embeddable URLs
-			var url = match.getUrl();
-			var ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
-			if (ext) {
-				if (/^(jpe?g|gif|png|bmp|svg)$/i.test(ext))
-					embeds.push({ type: 'image', 'url': url });
-				else if (/^(mp4|webm|gifv|ogv)$/i.test(ext))
-					embeds.push({ type: 'video', 'url': url.replace(/gifv$/i, 'mp4') });
-				else if (/^(mp3|wav|ogg)$/i.test(ext))
-					embeds.push({ type: 'audio', 'url': url });
-			} else {
-				// Extract ID and timestamp components
-				var youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
-				if (youtube)
-					embeds.push({ type: 'youtube', id: youtube[1], h: youtube[3] || 0, m: youtube[4] || 0, s: youtube[5] || youtube[2] || 0 });
-				var vimeo = /vimeo\.com\/(?:video\/)?(\d+)/.exec(url);
-				if (vimeo)
-					embeds.push({ type: 'vimeo', id: vimeo[1] });
-			}
-		}
-		return match.buildTag().setAttr('tabindex', -1);
-	}
-});
 
 document.onreadystatechange = function () {
 	var textareas = [
@@ -58,8 +29,8 @@ document.onreadystatechange = function () {
 // Embed plaintext in cover text
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
-	var encodedStr = (val => val ? encodeText('D\u0000\u0000\u0000\u0000\u0000\u0001' +
-		encodeLength(val.length) + val) : '')(textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, ''));
+	var encodedStr = (val => val ? encodeText('D\u0000' + crc32(val) + '\u0001' + encodeLength(val.length) +
+		val) : '')(textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, ''));
 	var coverStr = textarea[1].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
@@ -83,7 +54,6 @@ function initExtractData() {
 }
 
 function extractData(str) {
-	// console.log(decodeText(str));
 	// Check protocol signature and revision
 	if (!str || decodeText(str.slice(0, 8)) !== 'D\u0000') {
 		console.error(!str ? 'No message detected' : 'Protocol mismatch\nData: ' + decodeText(str));
@@ -95,22 +65,27 @@ function extractData(str) {
 		'\u200D': 2,
 		'\uFEFF': 3
 	};
-	// Get length of variable length quantity data length field
+	// Get length of variable length quantity data length field by checking
+	// the first bit of each byte from VLQ start position in its encoded form
 	var VLQLen = 1;
 	while (encodingVals[str[24 + VLQLen * 4]] > 1)
 		VLQLen++;
-	// console.log('VLQLen', VLQLen);
-	var header = decodeText(str.slice(8, 28 + VLQLen * 4));
+	var dataStart = 28 + VLQLen * 4;
+	var header = decodeText(str.slice(8, dataStart));
 	// Read data type field
 	var dataType = header[4];
 	// Get length and end position of data field
 	var dataLen = decodeLength(header.slice(5));
-	var dataEnd = 28 + (VLQLen + dataLen) * 4;
-	// console.log('dataEnd', dataEnd, 'length', str.length);
+	var dataEnd = dataStart + dataLen * 4;
+	var data = decodeText(str.slice(dataStart, dataEnd));
+	var crcMatch = false;
+	// Check CRC-32
+	if (header.slice(0, 4) === crc32(data))
+		crcMatch = true;
 
 	switch (dataType) {
 		case '\u0001':
-			outputText(str.slice(28 + VLQLen * 4, dataEnd));
+			outputText(data, crcMatch);
 			break;
 		case '\u0002':
 		case '\u0000':
@@ -123,9 +98,40 @@ function extractData(str) {
 		extractData(str.slice(dataEnd));
 }
 
-function outputText(str) {
+var autolinker = new Autolinker({
+	stripPrefix: false,
+	stripTrailingSlash: false,
+	hashtag: 'twitter',
+	replaceFn: function (match) {
+		if (match.getType() === 'url') {
+			// collect embeddable URLs
+			var url = match.getUrl();
+			var ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
+			if (ext) {
+				if (/^(jpe?g|gif|png|bmp|svg)$/i.test(ext))
+					embeds.push({ type: 'image', 'url': url });
+				else if (/^(mp4|webm|gifv|ogv)$/i.test(ext))
+					embeds.push({ type: 'video', 'url': url });
+				else if (/^(mp3|wav|ogg)$/i.test(ext))
+					embeds.push({ type: 'audio', 'url': url });
+			} else {
+				// Extract ID and timestamp components
+				var youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
+				if (youtube)
+					embeds.push({ type: 'youtube', id: youtube[1], h: youtube[3] || 0, m: youtube[4] || 0, s: youtube[5] || youtube[2] || 0 });
+				var vimeo = /vimeo\.com\/(?:video\/)?(\d+)/.exec(url);
+				if (vimeo)
+					embeds.push({ type: 'vimeo', id: vimeo[1] });
+			}
+		}
+		return match.buildTag().setAttr('tabindex', -1);
+	}
+});
+
+function outputText(str, crcMatch) {
+	// Create deletable property on global object
 	embeds = [];
-	var outputStr = autolinker.link(decodeText(str));
+	var outputStr = autolinker.link(str);
 	var textDiv;
 	if (textarea[4].lastChild.innerHTML) {
 		// Generate pseudo-textarea
@@ -138,6 +144,14 @@ function outputText(str) {
 	textDiv = textarea[4].lastChild;
 	// Output text
 	textDiv.innerHTML = outputStr;
+	if (!crcMatch) {
+		// Notify error on CRC fail
+		textDiv.classList.add('error');
+		var errorDiv = document.createElement('div');
+		errorDiv.className = 'notify error-div';
+		errorDiv.innerHTML = 'CRC FAILED';
+		textarea[4].appendChild(errorDiv);
+	}
 	if (embeds[0]) {
 		// Generate embed container
 		var embedDiv = document.createElement('div');
@@ -161,7 +175,8 @@ function outputText(str) {
 				case 'audio':
 					var media = document.createElement(embeds[i].type);
 					media.className = 'embed';
-					media.src = embeds[i].url;
+					media.src = embeds[i].url.replace(/gifv$/i, 'mp4');
+					media.loop = /gifv$/i.test(embeds[i].url) && true;
 					media.controls = true;
 					media.preload = 'metadata';
 					media.tabIndex = -1;
@@ -191,26 +206,26 @@ function outputText(str) {
 	}, 1000);
 }
 
-// Encode length of data as variable length quantity in binary string form
+// Encode length of data as variable length quantity in ASCII string
 function encodeLength(n) {
-	var outputStr = String.fromCharCode(n & 0x7F);
+	var out = String.fromCharCode(n & 0x7F);
 	while (n > 127) {
 		n >>= 7;
-		outputStr = String.fromCharCode(n & 0x7F | 0x80) + outputStr;
+		out = String.fromCharCode(n & 0x7F | 0x80) + out;
 	}
-	return outputStr;
+	return out;
 }
 
 // Decode VLQ to integer
 function decodeLength(str) {
-	var length = 0;
+	var len = 0;
 	for (var i = 0; i < str.length; i++)
-		length = length << 7 | str.charCodeAt(i) & 0x7F;
-	return length;
+		len = len << 7 | str.charCodeAt(i) & 0x7F;
+	return len;
 }
 
 function encodeText(str) {
-	var outputStr = '';
+	var out = '';
 	var encodingChars = [
 			'\u200B', // zero width space
 			'\u200C', // zero width non-joiner
@@ -219,12 +234,12 @@ function encodeText(str) {
 		];
 	for (var i = 0, sLen = str.length; i < sLen; i++)
 		for (var j = 6; j >= 0; j -= 2)
-			outputStr += encodingChars[(str.codePointAt(i) >> j) & 0x3];
-	return outputStr;
+			out += encodingChars[(str.codePointAt(i) >> j) & 0x3];
+	return out;
 }
 
 function decodeText(str) {
-	var outputStr = '';
+	var out = '';
 	var encodingVals = {
 		'\u200B': 0,
 		'\u200C': 1,
@@ -240,10 +255,38 @@ function decodeText(str) {
 		var charCode = 0;
 		for (var j = 0; j < 4; j++)
 			charCode += encodingVals[str[i + j]] << (6 - j * 2);
-		outputStr += String.fromCodePoint(charCode);
+		out += String.fromCodePoint(charCode);
 	}
 	// Sanitize unsafe HTML characters
-	return outputStr.replace(/[&<>]/g, c => references[c]);
+	return out.replace(/[&<>]/g, c => references[c]);
+}
+
+function makeCRCTable() {
+	var c;
+	var crcTable = [];
+	for (var n = 0; n < 256; n++) {
+		c = n;
+		for (var k = 0; k < 8; k++) {
+			c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
+		}
+		crcTable[n] = c;
+	}
+	return crcTable;
+}
+
+// Calculate CRC-32 on plaintext
+function crc32(str) {
+	var crcTable = window.crcTable || (window.crcTable = makeCRCTable());
+	var crc = 0 ^ -1;
+	for (var i = 0, sLen = str.length; i < sLen; i++) {
+		crc = (crc >>> 8) ^ crcTable[(crc ^ str.charCodeAt(i)) & 0xFF];
+	}
+	crc = (crc ^ -1) >>> 0;
+	// Convert bytestring to ASCII string
+	var out = '';
+	for (var i = 0; i < 32; i += 8)
+		out = String.fromCharCode(crc >> i & 0xFF) + out;
+	return out;
 }
 
 function dragOverFile(e) {
@@ -295,6 +338,7 @@ function clearIn() {
 
 function clearInPlain() {
 	textarea[4].firstChild.innerHTML = '';
+	textarea[4].firstChild.className = 'text-div';
 	while (textarea[4].childNodes.length > 1)
 		textarea[4].removeChild(textarea[4].lastChild);
 }
@@ -318,7 +362,6 @@ function clickImage(el) {
 		var fontSize = parseFloat(document.documentElement.style.fontSize);
 		// Clone clicked image at same position
 		var zoom = el.cloneNode();
-		zoomedImage = el;
 		zoom.id = 'zoom';
 		zoom.style.top = el.height * 0.5 + fontSize * 0.1 + parent.offsetTop - document.body.scrollTop + 'px';
 		zoom.style.left = el.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + parent.offsetParent.offsetLeft + 'px';
@@ -334,6 +377,8 @@ function clickImage(el) {
 		zoom.removeAttribute('style');
 		// Zoom image
 		zoom.className = 'zoom-end';
+		// Create deletable property on global object
+		zoomedImage = el;
 	}
 }
 
@@ -367,7 +412,7 @@ function checkZoomable(el) {
 		return;
 	}
 	var images = textarea[4].getElementsByTagName('img');
-	for (var i = 0, iLen = images.length; i < iLen; i++) {
+	for (var i = 0; i < images.length; i++) {
 		if (images[i].naturalWidth > embedWidth)
 			images[i].classList.add('zoomable');
 		else

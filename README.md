@@ -16,6 +16,7 @@ Fields automatically highlight on focus, type/paste to replace text. Clear butto
 
 ## Features
 
+* CRC-32 error checking
 * Multi-message decoding
 * Linkifies URLs, emails, phone numbers, and Twitter hashtags
 * Preview URLs for images, video, and audio
@@ -61,7 +62,6 @@ Each invisible character represents 2 bits, while taking 1 byte (8 bits) to stor
 
 The following features are defined in the [protocol specification](https://docs.google.com/spreadsheets/d/1sx-kw7LFz4f7Qrtmo68lRi8_msIRVGsvGhiQuWppR4A/):
 
-* CRC-32 error checking
 * Encoding and decoding of files
 * Optional built-in encryption for convenience (message can be encrypted before encoding even without this feature)
 
