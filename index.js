@@ -145,7 +145,7 @@ function outputText(str, crcMatch) {
 	// Output text
 	textDiv.innerHTML = outputStr;
 	if (!crcMatch) {
-		// Notify error on CRC fail
+		// Notify of error on CRC fail
 		textDiv.classList.add('error');
 		var errorDiv = document.createElement('div');
 		errorDiv.className = 'notify error-div';

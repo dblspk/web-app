@@ -118,7 +118,7 @@ textarea:hover,
 
 textarea:focus,
 .text-div:focus {
-	border-color: #4286F4;
+	border-color: #49F;
 	outline: none;
 }
 
@@ -129,19 +129,19 @@ textarea[readonly] {
 }
 
 textarea.encode {
-	border-color: cyan;
+	border-color: #FB0;
 }
 
 textarea.copy {
-	border-color: lime;
+	border-color: #0B0;
 }
 
 .text-div.decode {
-	border-color: orange;
+	border-color: #0BF;
 }
 
 .text-div.error {
-	border-color: red;
+	border-color: #C00;
 }
 
 ::-webkit-input-placeholder {
@@ -169,7 +169,7 @@ textarea.copy {
 
 .copied-div {
 	visibility: hidden;
-	background-color: lime;
+	background-color: #0B0;
 }
 
 .copied-div.show {
@@ -177,7 +177,7 @@ textarea.copy {
 }
 
 .error-div {
-	background-color: red;
+	background-color: #C00;
 }
 
 :invalid {
@@ -204,11 +204,11 @@ textarea.copy {
 
 a {
 	text-decoration: none;
-	color: #5492F5;
+	color: #59F;
 }
 
 a:visited {
-	color: #2E5DAA;
+	color: #36A;
 }
 
 a:hover {
