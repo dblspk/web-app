@@ -1,6 +1,12 @@
 var textarea = [];
 
 document.onreadystatechange = function () {
+	if (!window.TextEncoder) {
+		var script = document.createElement('script');
+		script.src = 'polyfills/text-encoding.js';
+		document.head.appendChild(script);
+	}
+
 	var textareas = [
 		'out-plain',
 		'out-cover',
@@ -79,10 +85,8 @@ function extractData(str) {
 	var dataLen = decodeLength(header.slice(5));
 	var dataEnd = dataStart + dataLen * 4;
 	var data = decodeUTF8(str.slice(dataStart, dataEnd));
-	var crcMatch = false;
 	// Check CRC-32
-	if (header.slice(0, 4) === crc32(data))
-		crcMatch = true;
+	var crcMatch = header.slice(0, 4) === crc32(data);
 
 	switch (dataType) {
 		case '\u0001':
@@ -226,6 +230,7 @@ function decodeLength(str) {
 }
 
 // Convert extended ASCII to encoding characters
+// UTF-8 cannot be used for header data as we need use of the entire byte
 function encodeASCII(str) {
 	var out = '';
 	var encodingChars = [
