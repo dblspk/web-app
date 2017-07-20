@@ -191,15 +191,15 @@ textarea.copy {
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: silver;
+	background-color: #777;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: darkgray;
+	background-color: #AAA;
 }
 
 ::-webkit-scrollbar-thumb:active {
-	background-color: dimgray;
+	background-color: #555;
 }
 
 a {

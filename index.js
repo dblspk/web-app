@@ -29,8 +29,9 @@ document.onreadystatechange = function () {
 // Embed plaintext in cover text
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
-	var encodedStr = (val => val ? encodeText('D\u0000' + crc32(val) + '\u0001' + encodeLength(val.length) +
-		val) : '')(textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, ''));
+	var plaintext = textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
+	var encodedStr = plaintext ? (data => encodeASCII('D\u0000' + crc32(plaintext) + '\u0001' +
+		encodeLength(data.length)) + data)(encodeUTF8(plaintext)) : '';
 	var coverStr = textarea[1].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
@@ -55,8 +56,8 @@ function initExtractData() {
 
 function extractData(str) {
 	// Check protocol signature and revision
-	if (!str || decodeText(str.slice(0, 8)) !== 'D\u0000') {
-		console.error(!str ? 'No message detected' : 'Protocol mismatch\nData: ' + decodeText(str));
+	if (!str || decodeASCII(str.slice(0, 8)) !== 'D\u0000') {
+		console.error(!str ? 'No message detected' : 'Protocol mismatch\nData: ' + decodeUTF8(str));
 		return;
 	}
 	var encodingVals = {
@@ -71,13 +72,13 @@ function extractData(str) {
 	while (encodingVals[str[24 + VLQLen * 4]] > 1)
 		VLQLen++;
 	var dataStart = 28 + VLQLen * 4;
-	var header = decodeText(str.slice(8, dataStart));
+	var header = decodeASCII(str.slice(8, dataStart));
 	// Read data type field
 	var dataType = header[4];
 	// Get length and end position of data field
 	var dataLen = decodeLength(header.slice(5));
 	var dataEnd = dataStart + dataLen * 4;
-	var data = decodeText(str.slice(dataStart, dataEnd));
+	var data = decodeUTF8(str.slice(dataStart, dataEnd));
 	var crcMatch = false;
 	// Check CRC-32
 	if (header.slice(0, 4) === crc32(data))
@@ -145,7 +146,7 @@ function outputText(str, crcMatch) {
 	// Output text
 	textDiv.innerHTML = outputStr;
 	if (!crcMatch) {
-		// Notify of error on CRC fail
+		// Notify of CRC fail
 		textDiv.classList.add('error');
 		var errorDiv = document.createElement('div');
 		errorDiv.className = 'notify error-div';
@@ -224,21 +225,23 @@ function decodeLength(str) {
 	return len;
 }
 
-function encodeText(str) {
+// Convert extended ASCII to encoding characters
+function encodeASCII(str) {
 	var out = '';
 	var encodingChars = [
-			'\u200B', // zero width space
-			'\u200C', // zero width non-joiner
-			'\u200D', // zero width joiner
-			'\uFEFF'  // zero width non-breaking space
-		];
+		'\u200B', // zero width space
+		'\u200C', // zero width non-joiner
+		'\u200D', // zero width joiner
+		'\uFEFF'  // zero width non-breaking space
+	];
 	for (var i = 0, sLen = str.length; i < sLen; i++)
 		for (var j = 6; j >= 0; j -= 2)
-			out += encodingChars[(str.charCodeAt(i) >> j) & 0x3];
+			out += encodingChars[str.charCodeAt(i) >> j & 0x3];
 	return out;
 }
 
-function decodeText(str) {
+// Convert encoding characters to extended ASCII
+function decodeASCII(str) {
 	var out = '';
 	var encodingVals = {
 		'\u200B': 0,
@@ -250,8 +253,43 @@ function decodeText(str) {
 		var charCode = 0;
 		for (var j = 0; j < 4; j++)
 			charCode += encodingVals[str[i + j]] << (6 - j * 2);
-		out += String.fromCodePoint(charCode);
+		out += String.fromCharCode(charCode);
 	}
+	return out;
+}
+
+// Convert UTF-8 to encoding characters
+function encodeUTF8(str) {
+	var out = '';
+	var encodingChars = [
+		'\u200B', // zero width space
+		'\u200C', // zero width non-joiner
+		'\u200D', // zero width joiner
+		'\uFEFF'  // zero width non-breaking space
+	];
+	var bytes = new Uint8Array(new TextEncoder().encode(str));
+	for (var i = 0, bLen = bytes.length; i < bLen; i++)
+		for (var j = 6; j >= 0; j -= 2)
+			out += encodingChars[bytes[i] >> j & 0x3];
+	return out;
+}
+
+// Convert encoding characters to UTF-8
+function decodeUTF8(str) {
+	var bytes = [];
+	var encodingVals = {
+		'\u200B': 0,
+		'\u200C': 1,
+		'\u200D': 2,
+		'\uFEFF': 3
+	};
+	for (var i = 0, sLen = str.length / 4; i < sLen; i++) {
+		bytes[i] = 0;
+		for (var j = 0; j < 4; j++) {
+			bytes[i] += encodingVals[str[i * 4 + j]] << (6 - j * 2);
+		}
+	}
+	var out = new TextDecoder().decode(Uint8Array.from(bytes));
 	// Sanitize unsafe HTML characters
 	var references = {
 		'&': '&amp;',
@@ -274,7 +312,6 @@ function makeCRCTable() {
 	return crcTable;
 }
 
-// Calculate CRC-32 on plaintext
 function crc32(str) {
 	var crcTable = window.crcTable || (window.crcTable = makeCRCTable());
 	var crc = 0 ^ -1;
@@ -284,7 +321,7 @@ function crc32(str) {
 	crc = (crc ^ -1) >>> 0;
 	// Convert bytestring to ASCII string
 	var out = '';
-	for (var i = 0; i < 32; i += 8)
+	for (i = 0; i < 32; i += 8)
 		out = String.fromCharCode(crc >> i & 0xFF) + out;
 	return out;
 }
