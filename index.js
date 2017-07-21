@@ -1,3 +1,10 @@
+var encVals = {
+	'\u200B': 0, // zero width space
+	'\u200C': 1, // zero width non-joiner
+	'\u200D': 2, // zero width joiner
+	'\uFEFF': 3  // zero width non-breaking space
+};
+var encChars = Object.keys(encVals);
 var textarea = [];
 
 document.onreadystatechange = function () {
@@ -67,16 +74,10 @@ function extractData(str) {
 		console.error(!str ? 'No message detected' : 'Protocol mismatch\nData: ' + decodeUTF8(str));
 		return;
 	}
-	var encodingVals = {
-		'\u200B': 0,
-		'\u200C': 1,
-		'\u200D': 2,
-		'\uFEFF': 3
-	};
 	// Get length of variable length quantity data length field by checking
 	// the first bit of each byte from VLQ start position in its encoded form
 	var VLQLen = 1;
-	while (encodingVals[str[24 + VLQLen * 4]] > 1)
+	while (encVals[str[24 + VLQLen * 4]] > 1)
 		VLQLen++;
 	var dataStart = 28 + VLQLen * 4;
 	var header = decodeBytes(str.slice(8, dataStart));
@@ -233,18 +234,13 @@ function decodeLength(byteArray) {
 // Convert byte arrays to encoding characters
 function encodeBytes(...args) {
 	var out = '';
-	var encodingChars = [
-		'\u200B', // zero width space
-		'\u200C', // zero width non-joiner
-		'\u200D', // zero width joiner
-		'\uFEFF'  // zero width non-breaking space
-	];
+	var encChars = window.encChars;
 	for (var i = 0; i < args.length; i++) {
 		if (!(args[i] instanceof Uint8Array))
 			args[i] = Uint8Array.of(args[i]);
 		for (var j = 0, aLen = args[i].length; j < aLen; j++)
 			for (var k = 6; k >= 0; k -= 2)
-				out += encodingChars[args[i][j] >> k & 0x3]
+				out += encChars[args[i][j] >> k & 0x3]
 	}
 	return out;
 }
@@ -252,16 +248,11 @@ function encodeBytes(...args) {
 // Convert encoding characters to byte arrays
 function decodeBytes(str) {
 	var bytes = [];
-	var encodingVals = {
-		'\u200B': 0,
-		'\u200C': 1,
-		'\u200D': 2,
-		'\uFEFF': 3
-	};
+	var encVals = window.encVals;
 	for (var i = 0, sLen = str.length; i < sLen; i += 4) {
 		var byte = 0;
 		for (var j = 0; j < 4; j++)
-			byte += encodingVals[str[i + j]] << (6 - j * 2);
+			byte += encVals[str[i + j]] << (6 - j * 2);
 		bytes.push(byte);
 	}
 	return Uint8Array.from(bytes);
@@ -270,32 +261,22 @@ function decodeBytes(str) {
 // Convert UTF-8 to encoding characters
 function encodeUTF8(str) {
 	var out = '';
-	var encodingChars = [
-		'\u200B',
-		'\u200C',
-		'\u200D',
-		'\uFEFF'
-	];
+	var encChars = window.encChars;
 	var bytes = new TextEncoder().encode(str);
 	for (var i = 0, bLen = bytes.length; i < bLen; i++)
 		for (var j = 6; j >= 0; j -= 2)
-			out += encodingChars[bytes[i] >> j & 0x3];
+			out += encChars[bytes[i] >> j & 0x3];
 	return out;
 }
 
 // Convert encoding characters to UTF-8
 function decodeUTF8(str) {
 	var bytes = [];
-	var encodingVals = {
-		'\u200B': 0,
-		'\u200C': 1,
-		'\u200D': 2,
-		'\uFEFF': 3
-	};
+	var encVals = window.encVals;
 	for (var i = 0, sLen = str.length / 4; i < sLen; i++) {
 		bytes[i] = 0;
 		for (var j = 0; j < 4; j++) {
-			bytes[i] += encodingVals[str[i * 4 + j]] << (6 - j * 2);
+			bytes[i] += encVals[str[i * 4 + j]] << (6 - j * 2);
 		}
 	}
 	var out = new TextDecoder().decode(Uint8Array.from(bytes));
@@ -313,9 +294,8 @@ function makeCRCTable() {
 	var crcTable = [];
 	for (var n = 0; n < 256; n++) {
 		c = n;
-		for (var k = 0; k < 8; k++) {
+		for (var k = 0; k < 8; k++)
 			c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
-		}
 		crcTable[n] = c;
 	}
 	return crcTable;
@@ -324,9 +304,8 @@ function makeCRCTable() {
 function crc32(str) {
 	var crcTable = window.crcTable || (window.crcTable = makeCRCTable());
 	var crc = 0 ^ -1;
-	for (var i = 0, sLen = str.length; i < sLen; i++) {
+	for (var i = 0, sLen = str.length; i < sLen; i++)
 		crc = (crc >>> 8) ^ crcTable[(crc ^ str.charCodeAt(i)) & 0xFF];
-	}
 	return numToByteArray((crc ^ -1) >>> 0, 4);
 }
 

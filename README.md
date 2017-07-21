@@ -1,6 +1,6 @@
 # Doublespeak
 
-Embeds/extracts messages as zero width Unicode characters in text, as a form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI is optimized for real time chat.
+Embeds/extracts messages as zero width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI is optimized for real time chat.
 
 Web app: __https://joshuaptfan.github.io/doublespeak/__
 
@@ -70,13 +70,23 @@ The following features are defined in the [protocol specification](https://docs.
 
 To suggest a feature, please [create an issue](https://github.com/joshuaptfan/doublespeak/issues).
 
-## Caveats
+## Comparison to other steganography techniques
 
-Messages can be filtered out or corrupted by communication platforms that do not support Unicode, or exclude any of the encoding characters or consecutive chains of them. These characters were chosen because they are part of official character sets for some languages, making them less likely to be filtered.
+### Pros
 
-It is extremely easy to detect. Any digital text can be checked for the possible presence of a message by pasting it into the decoder, or a text editor that displays non-printing characters.
+* Produces no visible alteration in the text.
+* Can store a near-unlimited amount of data regardless of length of the cover text.
+* Can be used with software that does not support file transfer.
+* Reduces suspicion by not requiring the frequent transfer of large files during communication.
 
-As with any method of communication, security is only as good as the encryption applied. Doublespeak itself only provides a casual level of security through obscurity.
+### Cons
+
+* Can be filtered or corrupted by software that does not support Unicode, or that attempts to format user input.
+* Extremely easy to detect. Any digital text can be checked for the possible presence of a message by pasting it into the decoder, or a text editor that displays non-printing characters. Large messages may create line breaks in some text fields.
+
+If you are serious about concealing your payload, you should use another form of steganography.
+
+As with any method of communication, security is only as good as the encryption applied. This only provides a casual level of security through obscurity.
 
 ## Credits
 
