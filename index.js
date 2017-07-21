@@ -36,7 +36,8 @@ document.onreadystatechange = function () {
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
 	var plaintext = textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
-	var encodedStr = plaintext ? (data => encodeASCII('D\u0000' + crc32(plaintext) + '\u0001' +
+	// 0x44 0x0 == 'D\u0000' protocol signature and version
+	var encodedStr = plaintext ? (data => encodeBytes(0x44, 0x0, crc32(plaintext), 0x1,
 		encodeLength(data.length)) + data)(encodeUTF8(plaintext)) : '';
 	var coverStr = textarea[1].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
 	// Select random position in cover text to insert encoded text
@@ -62,7 +63,7 @@ function initExtractData() {
 
 function extractData(str) {
 	// Check protocol signature and revision
-	if (!str || decodeASCII(str.slice(0, 8)) !== 'D\u0000') {
+	if (!str || decodeBytes(str.slice(0, 8)).toString() !== '68,0') {
 		console.error(!str ? 'No message detected' : 'Protocol mismatch\nData: ' + decodeUTF8(str));
 		return;
 	}
@@ -78,22 +79,22 @@ function extractData(str) {
 	while (encodingVals[str[24 + VLQLen * 4]] > 1)
 		VLQLen++;
 	var dataStart = 28 + VLQLen * 4;
-	var header = decodeASCII(str.slice(8, dataStart));
-	// Read data type field
+	var header = decodeBytes(str.slice(8, dataStart));
+	// Get data type field
 	var dataType = header[4];
 	// Get length and end position of data field
 	var dataLen = decodeLength(header.slice(5));
 	var dataEnd = dataStart + dataLen * 4;
 	var data = decodeUTF8(str.slice(dataStart, dataEnd));
 	// Check CRC-32
-	var crcMatch = header.slice(0, 4) === crc32(data);
+	var crcMatch = crc32(data).every((v, i) => v === header[i]);
 
 	switch (dataType) {
-		case '\u0001':
+		case 0x1:
 			outputText(data, crcMatch);
 			break;
-		case '\u0002':
-		case '\u0000':
+		case 0x2:
+		case 0x0:
 		default:
 			console.warn('Only text decoding is supported at this time.');
 	}
@@ -109,7 +110,7 @@ var autolinker = new Autolinker({
 	hashtag: 'twitter',
 	replaceFn: function (match) {
 		if (match.getType() === 'url') {
-			// collect embeddable URLs
+			// Collect embeddable URLs
 			var url = match.getUrl();
 			var ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
 			if (ext) {
@@ -211,27 +212,26 @@ function outputText(str, crcMatch) {
 	}, 1000);
 }
 
-// Encode length of data as variable length quantity in ASCII string
+// Encode length of data as variable length quantity in byte array
 function encodeLength(n) {
-	var out = String.fromCharCode(n & 0x7F);
+	var bytes = [n & 0x7F];
 	while (n > 127) {
 		n >>= 7;
-		out = String.fromCharCode(n & 0x7F | 0x80) + out;
+		bytes.unshift(n & 0x7F | 0x80);
 	}
-	return out;
+	return Uint8Array.from(bytes);
 }
 
 // Decode VLQ to integer
-function decodeLength(str) {
+function decodeLength(byteArray) {
 	var len = 0;
-	for (var i = 0; i < str.length; i++)
-		len = len << 7 | str.charCodeAt(i) & 0x7F;
+	for (var i = 0; i < byteArray.length; i++)
+		len = len << 7 | byteArray[i] & 0x7F;
 	return len;
 }
 
-// Convert extended ASCII to encoding characters
-// UTF-8 cannot be used for header data as we need use of the entire byte
-function encodeASCII(str) {
+// Convert byte arrays to encoding characters
+function encodeBytes(...args) {
 	var out = '';
 	var encodingChars = [
 		'\u200B', // zero width space
@@ -239,15 +239,19 @@ function encodeASCII(str) {
 		'\u200D', // zero width joiner
 		'\uFEFF'  // zero width non-breaking space
 	];
-	for (var i = 0, sLen = str.length; i < sLen; i++)
-		for (var j = 6; j >= 0; j -= 2)
-			out += encodingChars[str.charCodeAt(i) >> j & 0x3];
+	for (var i = 0; i < args.length; i++) {
+		if (!(args[i] instanceof Uint8Array))
+			args[i] = Uint8Array.of(args[i]);
+		for (var j = 0, aLen = args[i].length; j < aLen; j++)
+			for (var k = 6; k >= 0; k -= 2)
+				out += encodingChars[args[i][j] >> k & 0x3]
+	}
 	return out;
 }
 
-// Convert encoding characters to extended ASCII
-function decodeASCII(str) {
-	var out = '';
+// Convert encoding characters to byte arrays
+function decodeBytes(str) {
+	var bytes = [];
 	var encodingVals = {
 		'\u200B': 0,
 		'\u200C': 1,
@@ -258,21 +262,21 @@ function decodeASCII(str) {
 		var charCode = 0;
 		for (var j = 0; j < 4; j++)
 			charCode += encodingVals[str[i + j]] << (6 - j * 2);
-		out += String.fromCharCode(charCode);
+		bytes.push(charCode);
 	}
-	return out;
+	return Uint8Array.from(bytes);
 }
 
 // Convert UTF-8 to encoding characters
 function encodeUTF8(str) {
 	var out = '';
 	var encodingChars = [
-		'\u200B', // zero width space
-		'\u200C', // zero width non-joiner
-		'\u200D', // zero width joiner
-		'\uFEFF'  // zero width non-breaking space
+		'\u200B',
+		'\u200C',
+		'\u200D',
+		'\uFEFF'
 	];
-	var bytes = new Uint8Array(new TextEncoder().encode(str));
+	var bytes = new TextEncoder().encode(str);
 	for (var i = 0, bLen = bytes.length; i < bLen; i++)
 		for (var j = 6; j >= 0; j -= 2)
 			out += encodingChars[bytes[i] >> j & 0x3];
@@ -323,12 +327,14 @@ function crc32(str) {
 	for (var i = 0, sLen = str.length; i < sLen; i++) {
 		crc = (crc >>> 8) ^ crcTable[(crc ^ str.charCodeAt(i)) & 0xFF];
 	}
-	crc = (crc ^ -1) >>> 0;
-	// Convert bytestring to ASCII string
-	var out = '';
-	for (i = 0; i < 32; i += 8)
-		out = String.fromCharCode(crc >> i & 0xFF) + out;
-	return out;
+	return numToByteArray((crc ^ -1) >>> 0, 4);
+}
+
+function numToByteArray(num, size) {
+	var bytes = [];
+	for (var i = (size - 1) * 8; i >= 0; i -= 8)
+		bytes.push(num >> i & 0xFF);
+	return Uint8Array.from(bytes);
 }
 
 function dragOverFile(e) {

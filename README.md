@@ -2,7 +2,7 @@
 
 Embeds/extracts messages as zero width Unicode characters in text, as a form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI is optimized for real time chat.
 
-__https://joshuaptfan.github.io/doublespeak/__
+Web app: __https://joshuaptfan.github.io/doublespeak/__
 
 ## Usage
 
@@ -37,6 +37,7 @@ Possible places for storage:
 * Chat messages
 * Social media posts
 * User profile information
+* Forums
 * Emails
 * Digital documents
 * File names
@@ -69,11 +70,11 @@ The following features are defined in the [protocol specification](https://docs.
 
 To suggest a feature, please [create an issue](https://github.com/joshuaptfan/doublespeak/issues).
 
-## Cons
+## Caveats
 
 Messages can be filtered out or corrupted by communication platforms that do not support Unicode, or exclude any of the encoding characters or consecutive chains of them. These characters were chosen because they are part of official character sets for some languages, making them less likely to be filtered.
 
-Any digital text can be checked for the possible presence of a message by pasting it into the decoder. If something is found but is deformed (i.e. does not follow the protocol), a "best attempt" decode will be output to the console.
+It is extremely easy to detect. Any digital text can be checked for the possible presence of a message by pasting it into the decoder, or a text editor that displays non-printing characters.
 
 As with any method of communication, security is only as good as the encryption applied. Doublespeak itself only provides a casual level of security through obscurity.
 
