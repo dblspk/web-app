@@ -37,8 +37,8 @@ function embedData() {
 	// Filter out ciphertext to prevent double encoding
 	var plaintext = textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
-	var encodedStr = plaintext ? encodeBytes(0x44, 0x0, crc32(plaintext), 0x1,
-		encodeLength(plaintext.length)) + encodeUTF8(plaintext) : '';
+	var encodedStr = plaintext ? (data => encodeBytes(0x44, 0x0, crc32(plaintext), 0x1,
+		encodeLength(data.length >> 2)) + data)(encodeUTF8(plaintext)) : '';
 	var coverStr = textarea[1].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
