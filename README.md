@@ -66,11 +66,22 @@ Possible places for storage:
 |   14    |  E  |  1110  | `U+FE01`  | [variation selector-2](https://en.wikipedia.org/wiki/Variation_Selectors_(Unicode_block)) |
 |   15    |  F  |  1111  | `U+FEFF`  | [zero width non-breaking space](https://en.wikipedia.org/wiki/Byte_order_mark) |
 
+A header, encoded in the same way, is prepended:
+
+| Size | Field | Description |
+| ---- | ----- | ----------- |
+| 1 byte | Protocol signature | ASCII letter "D", or 0x44 |
+| 1 byte | Protocol version | 0x00 |
+| 4 bytes | CRC-32 | Calculated on decoded data field |
+| 1 byte | Data type | 0x00: Encryption wrapper<br>0x01: Text<br>0x02: File |
+| 1+ bytes | Data length | [Variable length quantity](https://en.wikipedia.org/wiki/Variable-length_quantity), representing length of the data field<br>Needed to allow decoding of multiple concatenated messages |
+| Varies | Data | Depends on data type |
+
 The resulting string of invisible characters is then inserted at a random location in the cover text.
 
 ## Efficiency
 
-Each invisible character represents 4 bits, while taking 3 bytes (24 bits) to store. Thus, the hidden data consumes 6 times as much memory as the original data, not including cover text.
+Each invisible character represents 4 bits, while taking 3 bytes (24 bits) to store. Thus, the hidden data consumes 6 times as much memory as the original data, not including header data and cover text.
 
 ## Roadmap
 
@@ -89,13 +100,13 @@ To suggest a feature, please [create an issue](https://github.com/joshuaptfan/do
 
 * Produces no visible alteration in the text.
 * Can store a near-unlimited amount of data regardless of length of the cover text.
-* Can be used with software that does not support file transfers.
+* Can be used with applications that do not support file transfers.
 * Reduces suspicion by not requiring the frequent transfer of large files during communication.
 
 ### Cons
 
-* Can be filtered or corrupted by software that does not support Unicode, or that attempts to format user input.
-* Extremely easy to detect. Any digital text can be checked for the possible presence of a message by pasting it into a decoder, or a text editor that displays non-printing characters. Large messages may create line breaks in some text fields.
+* Can be filtered or corrupted by applications that do not support Unicode, or that attempt to format user input.
+* Extremely easy to detect. Any digital text can be checked for the possible presence of a message by pasting it into a decoder, or a text editor that displays non-printing characters. Large messages may create line breaks in some applications.
 
 __If you are serious about concealing your payload, you should use another form of steganography.__
 
