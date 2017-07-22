@@ -1,10 +1,23 @@
 var encVals = {
-	'\u200B': 0, // zero width space
-	'\u200C': 1, // zero width non-joiner
-	'\u200D': 2, // zero width joiner
-	'\uFEFF': 3  // zero width non-breaking space
+	'\u061C': 0,  // Arabic letter mark
+	'\u180E': 1,  // Mongolian vowel separator
+	'\u200B': 2,  // zero width space
+	'\u200C': 3,  // zero width non-joiner
+	'\u200D': 4,  // zero width joiner
+	'\u200E': 5,  // left-to-right mark
+	'\u200F': 6,  // right-to-left mark
+	'\u202A': 7,  // left-to-right embedding
+	'\u202B': 8,  // right-to-left embedding
+	'\u202D': 9,  // left-to-right override
+	'\u202E': 10, // right-to-left override
+	'\u2060': 11, // word joiner
+	'\u2061': 12, // function application
+	'\u2062': 13, // invisible times
+	'\u2063': 14, // invisible separator
+	'\uFEFF': 15  // zero width non-breaking space
 };
 var encChars = Object.keys(encVals);
+var encRegex = /[\u061C\u180E\u200B-\u200F\u202A\u202B\u202D\u202E\u2060-\u2063\uFEFF]/g;
 var textarea = [];
 
 document.onreadystatechange = function () {
@@ -42,11 +55,11 @@ document.onreadystatechange = function () {
 // Embed plaintext in cover text
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
-	var plaintext = textarea[0].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
+	var plaintext = textarea[0].value.replace(encRegex, '');
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
 	var encodedStr = plaintext ? (data => encodeBytes(0x44, 0x0, crc32(plaintext), 0x1,
-		encodeLength(data.length >> 2)) + data)(encodeUTF8(plaintext)) : '';
-	var coverStr = textarea[1].value.replace(/[\u200B\u200C\u200D\uFEFF]{2,}/g, '');
+		encodeLength(data.length >> 1)) + data)(encodeUTF8(plaintext)) : '';
+	var coverStr = textarea[1].value.replace(encRegex, '');
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
@@ -64,23 +77,23 @@ function initExtractData() {
 	clearInPlain();
 	window.setTimeout(function () {
 		// Discard cover text
-		extractData(textarea[3].value.match(/[\u200B\u200C\u200D\uFEFF]/g));
+		extractData(textarea[3].value.match(encRegex));
 	}, 1);
 }
 
 function extractData(str) {
 	// Check protocol signature and revision
-	if (!str || decodeBytes(str.slice(0, 8)).toString() !== '68,0') {
+	if (!str || decodeBytes(str.slice(0, 4)).toString() !== '68,0') {
 		console.error(!str ? 'No message detected' : 'Protocol mismatch\nData: ' + decodeUTF8(str));
 		return;
 	}
 	// Get length of variable length quantity data length field by checking
 	// the first bit of each byte from VLQ start position in its encoded form
 	var VLQLen = 1;
-	while (encVals[str[24 + VLQLen * 4]] > 1)
+	while (encVals[str[12 + VLQLen * 2]] > 7)
 		VLQLen++;
-	var dataStart = 28 + VLQLen * 4;
-	var header = decodeBytes(str.slice(8, dataStart));
+	var dataStart = 14 + VLQLen * 2;
+	var header = decodeBytes(str.slice(4, dataStart));
 	// Get data type field
 	var dataType = header[4];
 	// Get length and end position of data field
@@ -239,8 +252,7 @@ function encodeBytes(...args) {
 		if (!(args[i] instanceof Uint8Array))
 			args[i] = Uint8Array.of(args[i]);
 		for (var j = 0, aLen = args[i].length; j < aLen; j++)
-			for (var k = 6; k >= 0; k -= 2)
-				out += encChars[args[i][j] >> k & 0x3]
+			out += encChars[args[i][j] >> 4] + encChars[args[i][j] & 0xF];
 	}
 	return out;
 }
@@ -249,12 +261,8 @@ function encodeBytes(...args) {
 function decodeBytes(str) {
 	var bytes = [];
 	var encVals = window.encVals;
-	for (var i = 0, sLen = str.length; i < sLen; i += 4) {
-		var byte = 0;
-		for (var j = 0; j < 4; j++)
-			byte += encVals[str[i + j]] << (6 - j * 2);
-		bytes.push(byte);
-	}
+	for (var i = 0, sLen = str.length; i < sLen; i += 2)
+		bytes.push((encVals[str[i]] << 4) + encVals[str[i + 1]]);
 	return Uint8Array.from(bytes);
 }
 
@@ -264,8 +272,7 @@ function encodeUTF8(str) {
 	var encChars = window.encChars;
 	var bytes = new TextEncoder().encode(str);
 	for (var i = 0, bLen = bytes.length; i < bLen; i++)
-		for (var j = 6; j >= 0; j -= 2)
-			out += encChars[bytes[i] >> j & 0x3];
+		out += encChars[bytes[i] >> 4] + encChars[bytes[i] & 0xF];
 	return out;
 }
 
@@ -273,11 +280,8 @@ function encodeUTF8(str) {
 function decodeUTF8(str) {
 	var bytes = [];
 	var encVals = window.encVals;
-	for (var i = 0, sLen = str.length / 4; i < sLen; i++) {
-		bytes[i] = 0;
-		for (var j = 0; j < 4; j++) {
-			bytes[i] += encVals[str[i * 4 + j]] << (6 - j * 2);
-		}
+	for (var i = 0, sLen = str.length / 2; i < sLen; i++) {
+		bytes[i] = (encVals[str[i * 2]] << 4) + encVals[str[i * 2 + 1]];
 	}
 	var out = new TextDecoder().decode(Uint8Array.from(bytes));
 	// Sanitize unsafe HTML characters

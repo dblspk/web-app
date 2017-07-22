@@ -6,10 +6,9 @@ self.addEventListener('install', e => {
 				'/doublespeak/index.html',
 				'/doublespeak/index.css',
 				'/doublespeak/index.js'
-			])
-			.then(() => self.skipWaiting());
+			]).then(() => self.skipWaiting());
 		})
-	)
+	);
 });
 
 self.addEventListener('activate', e => {
@@ -18,8 +17,11 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
 	e.respondWith(
-		caches.match(e.request).then(response => {
-			return response || fetch(e.request);
+		caches.open('doublespeak').then((cache) => {
+			return fetch(e.request).then((response) => {
+				cache.put(e.request, response.clone());
+				return response;
+			});
 		})
 	);
 });

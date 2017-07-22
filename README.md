@@ -38,26 +38,39 @@ Possible places for storage:
 * Social media posts
 * User profile information
 * Forums
+* HT‍‍؜؜⁠⁡⁣⁠⁢‍​‎؜᠎᠎‌‎‭‏﻿‪‎​‪‪​‏‎​؜‪؜‪​‏‎‪‍‪‍‪‭​؜‏‪‏﻿‏﻿‏‍​⁣ML
 * Emails
 * Digital documents
 * File names
 
 ## How it works
 
-[Unicode](https://en.wikipedia.org/wiki/Unicode) contains some zero width, unprintable characters. 4 of these are sufficiently resilient to input sanitation on the web to be useful. This allows us to encode any data in [quaternary](https://en.wikipedia.org/wiki/Quaternary_numeral_system). For text, the Unicode message to be hidden is converted to a bitstream, which is then encoded using our arbitrary encoding scheme:
+[Unicode](https://en.wikipedia.org/wiki/Unicode) contains some zero width, unprintable characters. We use 16 of them to encode any data in [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal). For text, the Unicode message to be hidden is converted to a bitstream, which is then encoded using our arbitrary encoding scheme:
 
-| Bits | Character | Description |
-| ---- | --------- | ----------- |
-| 00   | U+200B    | [zero width space](https://en.wikipedia.org/wiki/Zero-width_space) |
-| 01   | U+200C    | [zero width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) |
-| 10   | U+200D    | [zero width joiner](https://en.wikipedia.org/wiki/Zero-width_joiner) |
-| 11   | U+FEFF    | [zero width non-breaking space](https://en.wikipedia.org/wiki/Byte_order_mark) |
+| Decimal | Hex | Binary | Character | Description |
+| -------:| ---:| ------:| --------- | ----------- |
+|    0    |  0  |  0000  | `U+061C`  | [Arabic letter mark](https://codepoints.net/U+061C) |
+|    1    |  1  |  0001  | `U+180E`  | [Mongolian vowel separator](https://codepoints.net/U+180E) |
+|    2    |  2  |  0010  | `U+200B`  | [zero width space](https://en.wikipedia.org/wiki/Zero-width_space) |
+|    3    |  3  |  0011  | `U+200C`  | [zero width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) |
+|    4    |  4  |  0100  | `U+200D`  | [zero width joiner](https://en.wikipedia.org/wiki/Zero-width_joiner) |
+|    5    |  5  |  0101  | `U+200E`  | [left-to-right mark](https://en.wikipedia.org/wiki/Left-to-right_mark) |
+|    6    |  6  |  0110  | `U+200F`  | [right-to-left mark](https://en.wikipedia.org/wiki/Right-to-left_mark) |
+|    7    |  7  |  0111  | `U+202A`  | [left-to-right embedding](https://codepoints.net/U+202A) |
+|    8    |  8  |  1000  | `U+202B`  | [right-to-left embedding](https://codepoints.net/U+202B) |
+|    9    |  9  |  1001  | `U+202D`  | [left-to-right override](https://codepoints.net/U+202D) |
+|   10    |  A  |  1010  | `U+202E`  | [right-to-left override](https://codepoints.net/U+202E) |
+|   11    |  B  |  1011  | `U+2060`  | [word joiner](https://en.wikipedia.org/wiki/Word_joiner) |
+|   12    |  C  |  1100  | `U+2061`  | [function application](https://codepoints.net/U+2061) |
+|   13    |  D  |  1101  | `U+2062`  | [invisible times](https://codepoints.net/U+2062) |
+|   14    |  E  |  1110  | `U+2063`  | [invisible separator](https://codepoints.net/U+2063) |
+|   15    |  F  |  1111  | `U+FEFF`  | [zero width non-breaking space](https://en.wikipedia.org/wiki/Byte_order_mark) |
 
 The resulting string of invisible characters is then inserted at a random location in the cover text.
 
 ## Efficiency
 
-Each invisible character represents 2 bits, while taking 1 byte (8 bits) to store. Thus, the hidden data consumes 4 times as much memory as the original data, not including cover text.
+Each invisible character represents 4 bits, while taking 3 bytes (24 bits) to store. Thus, the hidden data consumes 6 times as much memory as the original data, not including cover text.
 
 ## Roadmap
 
