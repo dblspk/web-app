@@ -1,23 +1,23 @@
 var encVals = {
-	'\u061C': 0,  // Arabic letter mark
-	'\u180E': 1,  // Mongolian vowel separator
-	'\u200B': 2,  // zero width space
-	'\u200C': 3,  // zero width non-joiner
-	'\u200D': 4,  // zero width joiner
-	'\u200E': 5,  // left-to-right mark
-	'\u200F': 6,  // right-to-left mark
-	'\u202A': 7,  // left-to-right embedding
-	'\u202B': 8,  // right-to-left embedding
-	'\u202D': 9,  // left-to-right override
-	'\u202E': 10, // right-to-left override
-	'\u2060': 11, // word joiner
-	'\u2061': 12, // function application
-	'\u2062': 13, // invisible times
-	'\u2063': 14, // invisible separator
+	'\u200C': 0,  // zero width non-joiner
+	'\u200D': 1,  // zero width joiner
+	'\u2060': 2,  // word joiner
+	'\u2061': 3,  // function application
+	'\u2062': 4,  // invisible times
+	'\u2063': 5,  // invisible separator
+	'\u2064': 6,  // invisible plus
+	'\u206A': 7,  // inhibit symmetric swapping
+	'\u206B': 8,  // activate symmetric swapping
+	'\u206C': 9,  // inhibit Arabic form shaping
+	'\u206D': 10, // activate Arabic form shaping
+	'\u206E': 11, // national digit shapes
+	'\u206F': 12, // nominal digit shapes
+	'\uFE00': 13, // variation selector-1
+	'\uFE01': 14, // variation selector-2
 	'\uFEFF': 15  // zero width non-breaking space
 };
 var encChars = Object.keys(encVals);
-var encRegex = /[\u061C\u180E\u200B-\u200F\u202A\u202B\u202D\u202E\u2060-\u2063\uFEFF]/g;
+var encRegex = /[\u200C\u200D\u2060-\u2064\u206A-\u206F\uFE00\uFE01\uFEFF]/g;
 var textarea = [];
 
 document.onreadystatechange = function () {
@@ -56,7 +56,7 @@ document.onreadystatechange = function () {
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
 	var plaintext = textarea[0].value.replace(encRegex, '');
-	// 0x44 0x0 == 'D\u0000' protocol signature and revision
+	// 0x44 0x0 == 'D\u0000' protocol signature and version
 	var encodedStr = plaintext ? (data => encodeBytes(0x44, 0x0, crc32(plaintext), 0x1,
 		encodeLength(data.length >> 1)) + data)(encodeUTF8(plaintext)) : '';
 	var coverStr = textarea[1].value.replace(encRegex, '');
@@ -82,23 +82,22 @@ function initExtractData() {
 }
 
 function extractData(str) {
-	// Check protocol signature and revision
+	// Check protocol signature and version
 	if (!str || decodeBytes(str.slice(0, 4)).toString() !== '68,0') {
 		console.error(!str ? 'No message detected' : 'Protocol mismatch\nData: ' + decodeUTF8(str));
 		return;
 	}
 	// Get length of variable length quantity data length field by checking
 	// the first bit of each byte from VLQ start position in its encoded form
-	var VLQLen = 1;
-	while (encVals[str[12 + VLQLen * 2]] > 7)
-		VLQLen++;
+	var VLQLen = 0;
+	while (encVals[str[12 + ++VLQLen * 2]] > 7) {}
+	// Get start position of data field
 	var dataStart = 14 + VLQLen * 2;
 	var header = decodeBytes(str.slice(4, dataStart));
 	// Get data type field
 	var dataType = header[4];
-	// Get length and end position of data field
-	var dataLen = decodeLength(header.slice(5));
-	var dataEnd = dataStart + dataLen * 2;
+	// Get end position of data field
+	var dataEnd = dataStart + decodeLength(header.slice(5)) * 2;
 	var data = decodeUTF8(str.slice(dataStart, dataEnd));
 	// Check CRC-32
 	var crcMatch = crc32(data).every((v, i) => v === header[i]);

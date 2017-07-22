@@ -38,32 +38,32 @@ Possible places for storage:
 * Social media posts
 * User profile information
 * Forums
-* HT‍‍؜؜⁠⁡⁣⁠⁢‍​‎؜᠎᠎‌‎‭‏﻿‪‎​‪‪​‏‎​؜‪؜‪​‏‎‪‍‪‍‪‭​؜‏‪‏﻿‏﻿‏‍​⁣ML
+* HT⁢⁢‌‌⁮⁯︁⁮︀⁢⁠⁣‌‍‍⁡⁣⁬⁤﻿⁪⁣⁠⁪⁪⁠⁤⁣⁠‌⁪‌⁪⁠⁤⁣⁪⁢⁪⁢⁪⁬⁠‌⁤⁪⁤﻿⁤﻿⁤⁢⁠︁ML
 * Emails
 * Digital documents
 * File names
 
 ## How it works
 
-[Unicode](https://en.wikipedia.org/wiki/Unicode) contains some zero width, unprintable characters. We use 16 of them to encode any data in [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal). For text, the Unicode message to be hidden is converted to a bitstream, which is then encoded using our arbitrary encoding scheme:
+[Unicode](https://en.wikipedia.org/wiki/Unicode) contains some zero width, unprintable characters. We use 16 of them to encode any data in [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal), using our arbitrary encoding scheme:
 
 | Decimal | Hex | Binary | Character | Description |
 | -------:| ---:| ------:| --------- | ----------- |
-|    0    |  0  |  0000  | `U+061C`  | [Arabic letter mark](https://codepoints.net/U+061C) |
-|    1    |  1  |  0001  | `U+180E`  | [Mongolian vowel separator](https://codepoints.net/U+180E) |
-|    2    |  2  |  0010  | `U+200B`  | [zero width space](https://en.wikipedia.org/wiki/Zero-width_space) |
-|    3    |  3  |  0011  | `U+200C`  | [zero width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) |
-|    4    |  4  |  0100  | `U+200D`  | [zero width joiner](https://en.wikipedia.org/wiki/Zero-width_joiner) |
-|    5    |  5  |  0101  | `U+200E`  | [left-to-right mark](https://en.wikipedia.org/wiki/Left-to-right_mark) |
-|    6    |  6  |  0110  | `U+200F`  | [right-to-left mark](https://en.wikipedia.org/wiki/Right-to-left_mark) |
-|    7    |  7  |  0111  | `U+202A`  | [left-to-right embedding](https://codepoints.net/U+202A) |
-|    8    |  8  |  1000  | `U+202B`  | [right-to-left embedding](https://codepoints.net/U+202B) |
-|    9    |  9  |  1001  | `U+202D`  | [left-to-right override](https://codepoints.net/U+202D) |
-|   10    |  A  |  1010  | `U+202E`  | [right-to-left override](https://codepoints.net/U+202E) |
-|   11    |  B  |  1011  | `U+2060`  | [word joiner](https://en.wikipedia.org/wiki/Word_joiner) |
-|   12    |  C  |  1100  | `U+2061`  | [function application](https://codepoints.net/U+2061) |
-|   13    |  D  |  1101  | `U+2062`  | [invisible times](https://codepoints.net/U+2062) |
-|   14    |  E  |  1110  | `U+2063`  | [invisible separator](https://codepoints.net/U+2063) |
+|    0    |  0  |  0000  | `U+200C`  | [zero width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) |
+|    1    |  1  |  0001  | `U+200D`  | [zero width joiner](https://en.wikipedia.org/wiki/Zero-width_joiner) |
+|    2    |  2  |  0010  | `U+2060`  | [word joiner](https://en.wikipedia.org/wiki/Word_joiner) |
+|    3    |  3  |  0011  | `U+2061`  | [function application](https://codepoints.net/U+2061) |
+|    4    |  4  |  0100  | `U+2062`  | [invisible times](https://codepoints.net/U+2062) |
+|    5    |  5  |  0101  | `U+2063`  | [invisible separator](https://codepoints.net/U+2063) |
+|    6    |  6  |  0110  | `U+2064`  | [invisible plus](https://codepoints.net/U+2064) |
+|    7    |  7  |  0111  | `U+206A`  | [inhibit symmetric swapping](https://codepoints.net/U+206A) |
+|    8    |  8  |  1000  | `U+206B`  | [activate symmetric swapping](https://codepoints.net/U+206B) |
+|    9    |  9  |  1001  | `U+206C`  | [inhibit Arabic form shaping](https://codepoints.net/U+206C) |
+|   10    |  A  |  1010  | `U+206D`  | [activate Arabic form shaping](https://codepoints.net/U+206D) |
+|   11    |  B  |  1011  | `U+206E`  | [national digit shapes](https://codepoints.net/U+206E) |
+|   12    |  C  |  1100  | `U+206F`  | [nominal digit shapes](https://codepoints.net/U+206F) |
+|   13    |  D  |  1101  | `U+FE00`  | [variation selector-1](https://en.wikipedia.org/wiki/Variation_Selectors_(Unicode_block)) |
+|   14    |  E  |  1110  | `U+FE01`  | [variation selector-2](https://en.wikipedia.org/wiki/Variation_Selectors_(Unicode_block)) |
 |   15    |  F  |  1111  | `U+FEFF`  | [zero width non-breaking space](https://en.wikipedia.org/wiki/Byte_order_mark) |
 
 The resulting string of invisible characters is then inserted at a random location in the cover text.
@@ -89,15 +89,15 @@ To suggest a feature, please [create an issue](https://github.com/joshuaptfan/do
 
 * Produces no visible alteration in the text.
 * Can store a near-unlimited amount of data regardless of length of the cover text.
-* Can be used with software that does not support file transfer.
+* Can be used with software that does not support file transfers.
 * Reduces suspicion by not requiring the frequent transfer of large files during communication.
 
 ### Cons
 
 * Can be filtered or corrupted by software that does not support Unicode, or that attempts to format user input.
-* Extremely easy to detect. Any digital text can be checked for the possible presence of a message by pasting it into the decoder, or a text editor that displays non-printing characters. Large messages may create line breaks in some text fields.
+* Extremely easy to detect. Any digital text can be checked for the possible presence of a message by pasting it into a decoder, or a text editor that displays non-printing characters. Large messages may create line breaks in some text fields.
 
-If you are serious about concealing your payload, you should use another form of steganography.
+__If you are serious about concealing your payload, you should use another form of steganography.__
 
 As with any method of communication, security is only as good as the encryption applied. This only provides a casual level of security through obscurity.
 
