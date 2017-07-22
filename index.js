@@ -56,7 +56,7 @@ document.onreadystatechange = function () {
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
 	var plaintext = textarea[0].value.replace(encRegex, '');
-	// 0x44 0x0 == 'D\u0000' protocol signature and version
+	// 0x44 0x0 == 'D\u0000' protocol signature and revision
 	var encodedStr = plaintext ? (data => encodeBytes(0x44, 0x0, crc32(plaintext), 0x1,
 		encodeLength(data.length >> 1)) + data)(encodeUTF8(plaintext)) : '';
 	var coverStr = textarea[1].value.replace(encRegex, '');
@@ -98,7 +98,7 @@ function extractData(str) {
 	var dataType = header[4];
 	// Get length and end position of data field
 	var dataLen = decodeLength(header.slice(5));
-	var dataEnd = dataStart + dataLen * 4;
+	var dataEnd = dataStart + dataLen * 2;
 	var data = decodeUTF8(str.slice(dataStart, dataEnd));
 	// Check CRC-32
 	var crcMatch = crc32(data).every((v, i) => v === header[i]);
@@ -280,9 +280,8 @@ function encodeUTF8(str) {
 function decodeUTF8(str) {
 	var bytes = [];
 	var encVals = window.encVals;
-	for (var i = 0, sLen = str.length / 2; i < sLen; i++) {
+	for (var i = 0, sLen = str.length / 2; i < sLen; i++)
 		bytes[i] = (encVals[str[i * 2]] << 4) + encVals[str[i * 2 + 1]];
-	}
 	var out = new TextDecoder().decode(Uint8Array.from(bytes));
 	// Sanitize unsafe HTML characters
 	var references = {
