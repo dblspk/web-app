@@ -29,11 +29,11 @@
 	<div id='content'>
 		<h1>SEND</h1>
 		<section>
-			<textarea id='out-plain' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Secret text' autofocus></textarea>
+			<textarea id='out-plain' onkeyup='mirrorCover()' onpaste='mirrorCover()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Secret text' autofocus></textarea>
 			<div class='button' onclick='clearOutPlain()'>CLEAR</div>
 		</section>
 		<section>
-			<textarea id='out-cover' onkeyup='embedData()' onpaste='embedData()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Cover text'></textarea>
+			<textarea id='out-cover' onkeyup='mirrorCover()' onpaste='mirrorCover()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Cover text'></textarea>
 			<div class='button' onclick='clearOut()'>CLEAR</div>
 		</section>
 		<section>
@@ -41,7 +41,7 @@
 				<textarea id='out-cipher' oncopy='notifyCopy("out-cipher", "out-copied")' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div id='out-copied' class='notify copied-div'>COPIED</div>
 			</div>
-			<div id='out-copy' class='button copy' data-clipboard-target='#out-cipher'></div>
+			<div id='out-copy' class='button' data-clipboard-target='#out-cipher'>COPY</div>
 		</section>
 		<h1>RECEIVE</h1>
 		<section>
@@ -56,7 +56,7 @@
 			<button onfocus='textarea[0].select()'></button>
 		</div>
 		<footer>
-			<a href='https://github.com/joshuaptfan/doublespeak' target='_blank'>Source on GitHub</a>
+			<a href='https://github.com/joshuaptfan/doublespeak' target='_blank'>Sour⁢⁢‌‌⁠⁣⁠︁﻿⁡⁢⁬‌‍⁠⁤⁣⁢⁤⁫⁤⁬⁤︁⁤⁮⁠‌⁪⁬⁤﻿⁪⁣⁠⁪⁪⁠⁤⁣⁠‌⁪‌⁪⁠⁤⁣⁪⁢⁪⁢⁪⁬⁠‌⁤⁡⁤⁯⁤⁣⁪⁤⁤⁣⁪⁠⁠⁯⁠‌⁤⁢⁤﻿⁤︁⁠⁪⁪⁢⁠‌⁪⁬⁤﻿⁪⁣⁡﻿ce on GitHub</a>
 		</footer>
 	</div>
 </body>

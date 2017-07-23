@@ -60,10 +60,6 @@ section {
 	cursor: pointer;
 }
 
-.button.copy:before {
-	content: 'COPY';
-}
-
 .button:hover,
 .embed-img-container.blocked:hover::after {
 	color: white;

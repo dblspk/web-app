@@ -1,20 +1,20 @@
 var encVals = {
-	'\u200C': 0,  // zero width non-joiner
-	'\u200D': 1,  // zero width joiner
-	'\u2060': 2,  // word joiner
-	'\u2061': 3,  // function application
-	'\u2062': 4,  // invisible times
-	'\u2063': 5,  // invisible separator
-	'\u2064': 6,  // invisible plus
-	'\u206A': 7,  // inhibit symmetric swapping
-	'\u206B': 8,  // activate symmetric swapping
-	'\u206C': 9,  // inhibit Arabic form shaping
-	'\u206D': 10, // activate Arabic form shaping
-	'\u206E': 11, // national digit shapes
-	'\u206F': 12, // nominal digit shapes
-	'\uFE00': 13, // variation selector-1
-	'\uFE01': 14, // variation selector-2
-	'\uFEFF': 15  // zero width non-breaking space
+	'\u200C': 0x0, // zero width non-joiner
+	'\u200D': 0x1, // zero width joiner
+	'\u2060': 0x2, // word joiner
+	'\u2061': 0x3, // function application
+	'\u2062': 0x4, // invisible times
+	'\u2063': 0x5, // invisible separator
+	'\u2064': 0x6, // invisible plus
+	'\u206A': 0x7, // inhibit symmetric swapping
+	'\u206B': 0x8, // activate symmetric swapping
+	'\u206C': 0x9, // inhibit Arabic form shaping
+	'\u206D': 0xA, // activate Arabic form shaping
+	'\u206E': 0xB, // national digit shapes
+	'\u206F': 0xC, // nominal digit shapes
+	'\uFE00': 0xD, // variation selector-1
+	'\uFE01': 0xE, // variation selector-2
+	'\uFEFF': 0xF  // zero width non-breaking space
 };
 var encChars = Object.keys(encVals);
 var encRegex = /[\u200C\u200D\u2060-\u2064\u206A-\u206F\uFE00\uFE01\uFEFF]/g;
@@ -38,9 +38,12 @@ document.onreadystatechange = function () {
 		textarea[i] = document.getElementById(textareas[i]);
 
 	resizeBody();
-	new Clipboard('.copy');
 	document.addEventListener('dragover', dragOverFile, false);
 	document.addEventListener('drop', dropFile, false);
+
+	new Clipboard('#out-copy', {
+		text: () => { embedData(); }
+	});
 
 	// Service worker caches page for offline use
 	if ('serviceWorker' in navigator)
@@ -51,6 +54,19 @@ document.onreadystatechange = function () {
 		textarea[3].placeholder = 'Paste [Command+V] input ciphertext';
 	}
 };
+
+// Mirror cover text to ciphertext box, pretending to embed data
+// Embed does not actually occur until copy event
+// Visual cues are still important for intuitive UX
+function mirrorCover() {
+	textarea[2].value = textarea[1].value;
+	resizeTextarea(textarea[2]);
+	// Flash textarea border
+	textarea[2].classList.add('encode');
+	window.setTimeout(function () {
+		textarea[2].classList.remove('encode');
+	}, 200);
+}
 
 // Embed plaintext in cover text
 function embedData() {
@@ -63,12 +79,6 @@ function embedData() {
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
-	resizeTextarea(textarea[2]);
-	// Flash textarea border
-	textarea[2].classList.add('encode');
-	window.setTimeout(function () {
-		textarea[2].classList.remove('encode');
-	}, 200);
 }
 
 // Extract received ciphertext
@@ -83,7 +93,7 @@ function initExtractData() {
 
 function extractData(str) {
 	// Check protocol signature and version
-	if (!str || decodeBytes(str.slice(0, 4)).toString() !== '68,0') {
+	if (!str || str.slice(0, 4).join('') !== '\u2062\u2062\u200C\u200C') {
 		console.error(!str ? 'No message detected' : 'Protocol mismatch\nData: ' + decodeUTF8(str));
 		return;
 	}
@@ -128,11 +138,11 @@ var autolinker = new Autolinker({
 			var ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
 			if (ext) {
 				if (/^(jpe?g|gif|png|bmp|svg)$/i.test(ext))
-					embeds.push({ type: 'image', 'url': url });
+					embeds.push({ type: 'image', url });
 				else if (/^(mp4|webm|gifv|ogv)$/i.test(ext))
-					embeds.push({ type: 'video', 'url': url });
+					embeds.push({ type: 'video', url });
 				else if (/^(mp3|wav|ogg)$/i.test(ext))
-					embeds.push({ type: 'audio', 'url': url });
+					embeds.push({ type: 'audio', url });
 			} else {
 				// Extract ID and timestamp components
 				var youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
@@ -148,8 +158,7 @@ var autolinker = new Autolinker({
 });
 
 function outputText(str, crcMatch) {
-	// Create deletable property on global object
-	embeds = [];
+	window.embeds = [];
 	var outputStr = autolinker.link(str);
 	var textDiv;
 	if (textarea[4].lastChild.innerHTML) {
@@ -217,7 +226,7 @@ function outputText(str, crcMatch) {
 		}
 		textarea[4].appendChild(embedDiv);
 	}
-	delete embeds;
+	delete window.embeds;
 	// Flash textarea border
 	textDiv.classList.add('decode');
 	window.setTimeout(function () {
@@ -354,7 +363,7 @@ function clearOutPlain() {
 function clearOut() {
 	textarea[1].value = '';
 	resizeTextarea(textarea[1]);
-	embedData();
+	mirrorCover();
 	textarea[1].focus();
 }
 
@@ -406,8 +415,7 @@ function clickImage(el) {
 		zoom.removeAttribute('style');
 		// Zoom image
 		zoom.className = 'zoom-end';
-		// Create deletable property on global object
-		zoomedImage = el;
+		window.zoomedImage = el;
 	}
 }
 
@@ -419,7 +427,7 @@ function unzoomImage() {
 	zoom.style.top = zoomedImage.height * 0.5 + fontSize * 0.1 + parent.offsetTop - document.body.scrollTop + 'px';
 	zoom.style.left = zoomedImage.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + parent.offsetParent.offsetLeft + 'px';
 	zoom.style.width = zoomedImage.width + 'px';
-	delete zoomedImage;
+	delete window.zoomedImage;
 	var bg = document.getElementById('background');
 	bg.style.animationDirection = 'reverse';
 	bg.className = '';

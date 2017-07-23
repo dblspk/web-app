@@ -6,7 +6,7 @@ Web app: __https://joshuaptfan.github.io/doublespeak/__
 
 ## Usage
 
-###### Web interface
+###### Web app
 
 __Tab__ / __Shift+Tab__ &mdash; cycle through fields
 
@@ -73,7 +73,7 @@ A header, encoded in the same way, is prepended:
 | 1 byte | Protocol signature | ASCII letter "D", or 0x44 |
 | 1 byte | Protocol version | 0x00 |
 | 4 bytes | CRC-32 | Calculated on decoded data field |
-| 1 byte | Data type | 0x00: Encryption wrapper<br>0x01: Text<br>0x02: File |
+| 1 byte | Data type | 0x00: Encryption wrapper<br>0x01: UTF-8 text<br>0x02: File |
 | 1+ bytes | Data length | [Variable length quantity](https://en.wikipedia.org/wiki/Variable-length_quantity), representing length of the data field<br>Needed to allow decoding of multiple concatenated messages |
 | Varies | Data | Depends on data type |
 
