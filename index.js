@@ -17,7 +17,7 @@ var encVals = {
 	'\uFEFF': 0xF  // zero width non-breaking space
 };
 var encChars = Object.keys(encVals);
-var encRegex = /[\u200C\u200D\u2060-\u2064\u206A-\u206F\uFE00\uFE01\uFEFF]/g;
+var encRegex = /[\u200C\u200D\u2060-\u2064\u206A-\u206F\uFE00\uFE01\uFEFF]{8,}/g;
 var textarea = [];
 
 document.onreadystatechange = function () {
@@ -80,6 +80,8 @@ function embedData() {
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+	console.info('Original size:', bytes.length, 'bytes,', plainStr.length, 'characters',
+		'\nEncoded size:', encodedStr.length * 3, 'bytes,', encodedStr.length, 'characters');
 }
 
 // Extract received ciphertext
@@ -88,13 +90,13 @@ function initExtractData() {
 	clearInPlain();
 	window.setTimeout(function () {
 		// Discard cover text
-		extractData(textarea[3].value.match(encRegex));
+		extractData(textarea[3].value.match(encRegex).join(''));
 	}, 1);
 }
 
 function extractData(str) {
 	// Check protocol signature and version
-	if (!str || str.slice(0, 4).join('') !== '\u2062\u2062\u200C\u200C') {
+	if (!str || str.slice(0, 4) !== '\u2062\u2062\u200C\u200C') {
 		console.error(!str ? 'No message detected' :
 			'Protocol mismatch\nData: ' + new TextDecoder().decode(decodeBytes(str)));
 		return;
@@ -111,6 +113,8 @@ function extractData(str) {
 	// Get end position of data field
 	var dataEnd = dataStart + decodeLength(header.slice(5)) * 2;
 	var data = decodeBytes(str.slice(dataStart, dataEnd));
+	console.info('Original size:', data.length, 'bytes',
+		'\nEncoded size:', dataEnd * 3, 'bytes,', dataEnd, 'characters');
 	// Check CRC-32
 	var crcMatch = crc32(data).every((v, i) => v === header[i]);
 
