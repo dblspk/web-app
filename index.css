@@ -15,13 +15,10 @@ noscript {
 	box-shadow: 0 0 1rem black;
 }
 
-#content {
+main {
 	position: absolute;
-	left: 0;
-	right: 0;
 	min-height: 100%;
-	width: 30rem;
-	margin: 0 auto;
+	width: 100%;
 }
 
 h1,
@@ -35,20 +32,20 @@ h1,
 }
 
 h1 {
-	margin: 1.2rem 0;
+	width: 30rem;
+	margin: 1.2rem auto;
 	font-size: 150%;
 	font-weight: normal;
 	color: #AAA;
 }
 
 section {
-	margin: 0.5rem 0;
+	width: 30rem;
+	margin: 0.5rem auto;
 }
 
 .button {
-	display: inline-block;
-	position: absolute;
-	right: 0;
+	float: right;
 	height: 1.4rem;
 	width: 4rem;
 	padding-top: 0.4rem;
@@ -310,7 +307,10 @@ iframe.embed {
 footer {
 	position: absolute;
 	bottom: 0.1rem;
+	left: 0;
 	right: 0;
+	width: 30rem;
+	margin: auto;
 	font-size: 50%;
 	text-align: right;
 }
@@ -329,7 +329,9 @@ footer > a:hover {
 
 @media only screen
 and (max-width: 480px) {
-	#content {
+	h1,
+	section,
+	footer {
 		width: 22.5rem;
 	}
 
