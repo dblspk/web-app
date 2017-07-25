@@ -28,26 +28,31 @@
 	<main>
 		<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank'>update your browser</a> to use this site.</div>
 		<noscript id='noscript'>Please enable JavaScript to use this site.</noscript>
+		<header>
+			<nav>
+				<a>Doublespeak</a><a href='https://github.com/joshuaptfan/doublespeak' target='_blank'>⁢⁢‌‌⁠⁣⁠︁﻿⁡⁢⁬‌‍⁠⁤⁣⁢⁤⁫⁤⁬⁤︁⁤⁮⁠‌⁪⁬⁤﻿⁪⁣⁠⁪⁪⁠⁤⁣⁠‌⁪‌⁪⁠⁤⁣⁪⁢⁪⁢⁪⁬⁠‌⁤⁡⁤⁯⁤⁣⁪⁤⁤⁣⁪⁠⁠⁯⁠‌⁤⁢⁤﻿⁤︁⁠⁪⁪⁢⁠‌⁪⁬⁤﻿⁪⁣⁡﻿GitHub</a><a>FAQ</a>
+			</nav>
+		</header>
 		<h1>SEND</h1>
 		<section>
 			<textarea id='out-plain' onkeyup='mirrorCover()' onpaste='mirrorCover()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Secret text' autofocus></textarea>
-			<div class='button' onclick='clearOutPlain()'>CLEAR</div>
+			<button onclick='clearOutPlain()' tabindex='-1'>CLEAR</button>
 		</section>
 		<section>
 			<textarea id='out-cover' onkeyup='mirrorCover()' onpaste='mirrorCover()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Cover text'></textarea>
-			<div class='button' onclick='clearOut()'>CLEAR</div>
+			<button onclick='clearOut()' tabindex='-1'>CLEAR</button>
 		</section>
 		<section>
 			<div style='display: inline-block'>
 				<textarea id='out-cipher' oncopy='notifyCopy()' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div id='out-copied' class='notify copied-div'>COPIED</div>
 			</div>
-			<div id='out-copy' class='button' data-clipboard-target='#out-cipher'>COPY</div>
+			<button id='out-copy' tabindex='-1' data-clipboard-target='#out-cipher'>COPY</button>
 		</section>
 		<h1>RECEIVE</h1>
 		<section>
 			<textarea id='in-cipher' onpaste='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
-			<div class='button' onclick='clearIn()'>CLEAR</div>
+			<button onclick='clearIn()' tabindex='-1'>CLEAR</button>
 		</section>
 		<section>
 			<div id='in-plain' style='display: inline-block'><div class='text-div' style='margin-top: 0' onfocus='selectText(this)' tabindex='-1'></div></div>
@@ -56,13 +61,10 @@
 		<div id='tab-loop'>
 			<button onfocus='textarea[0].select()'></button>
 		</div>
-		<footer>
-			<a href='https://github.com/joshuaptfan/doublespeak' target='_blank'>⁢⁢‌‌⁠⁣⁠︁﻿⁡⁢⁬‌‍⁠⁤⁣⁢⁤⁫⁤⁬⁤︁⁤⁮⁠‌⁪⁬⁤﻿⁪⁣⁠⁪⁪⁠⁤⁣⁠‌⁪‌⁪⁠⁤⁣⁪⁢⁪⁢⁪⁬⁠‌⁤⁡⁤⁯⁤⁣⁪⁤⁤⁣⁪⁠⁠⁯⁠‌⁤⁢⁤﻿⁤︁⁠⁪⁪⁢⁠‌⁪⁬⁤﻿⁪⁣⁡﻿Source on GitHub</a>
-		</footer>
 	</main>
 	<script type='text/javascript'>
 		try {
-			eval('var test = () => 0');
+			eval('"use strict"; var test = () => 0');
 		} catch (e) {
 			document.getElementById('ES6-warn').style.display = 'block';
 		}

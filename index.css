@@ -26,8 +26,47 @@ main {
 	width: 100%;
 }
 
+header {
+	line-height: 1.5rem;
+	width: 100%;
+	padding-top: 0.2rem;
+	font-size: 80%;
+	background-color: black;
+}
+
+nav,
 h1,
-.button,
+section {
+	width: 30rem;
+	margin: 0 auto;
+}
+
+nav > a {
+	display: inline-block;
+	height: 100%;
+	padding: 0 0.4rem;
+	color: #EEE;
+	background-color: #222;
+}
+
+nav > a:not(:first-child) {
+	float: right;
+	margin-left: 0.5rem;
+	color: #CCC;
+	background-color: #111;
+}
+
+nav > a:hover {
+	text-decoration: none;
+	background-color: #333;
+}
+
+nav > a:visited {
+	color: #CCC;
+}
+
+h1,
+button,
 #tip {
 	cursor: default;
 	-webkit-user-select: none;
@@ -37,38 +76,42 @@ h1,
 }
 
 h1 {
-	width: 30rem;
 	margin: 1.2rem auto;
 	font-size: 150%;
 	font-weight: normal;
 	color: #AAA;
 }
 
+h1:first-of-type {
+	margin-top: 2rem;
+}
+
 section {
-	width: 30rem;
 	margin: 0.5rem auto;
 }
 
-.button {
+button {
 	float: right;
-	height: 1.4rem;
+	height: 1.8rem;
 	width: 4rem;
-	padding-top: 0.4rem;
+	padding: 0;
+	font-family: sans-serif;
+	font-size: 1rem;
 	font-weight: bold;
-	text-align: center;
 	color: #CCC;
 	background-color: #444;
+	border: none;
 	border-radius: 0.2rem;
 	cursor: pointer;
 }
 
-.button:hover,
+button:hover,
 .embed-img-container.blocked:hover::after {
 	color: white;
 	background-color: #777;
 }
 
-.button:active,
+button:active,
 .embed-img-container.blocked:active::after {
 	color: #888;
 	background-color: #333;
@@ -309,39 +352,16 @@ iframe.embed {
 	height: 0;
 }
 
-footer {
-	position: absolute;
-	bottom: 0.1rem;
-	left: 0;
-	right: 0;
-	width: 30rem;
-	margin: auto;
-	font-size: 50%;
-	text-align: right;
-}
-
-footer > a,
-footer > a:visited {
-	padding: 0 0.1rem;
-	color: #444;
-}
-
-footer > a:hover {
-	text-decoration: none;
-	color: #222;
-	background-color: #444;
-}
-
 @media only screen
 and (max-width: 480px) {
+	nav,
 	h1,
-	section,
-	footer {
+	section {
 		width: 22.5rem;
 	}
 
 	section {
-		margin: 1rem 0;
+		margin: 1rem auto;
 	}
 
 	textarea,

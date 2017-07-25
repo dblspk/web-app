@@ -90,7 +90,7 @@ The following features are defined in the [protocol specification](https://docs.
 * Encoding and decoding of files
 * Optional built-in encryption for convenience (message can be encrypted before encoding even without this feature)
 
-[To do list](https://github.com/joshuaptfan/doublespeak/projects/1)
+[To-do list](https://github.com/joshuaptfan/doublespeak/projects/1)
 
 To suggest a feature, please [create an issue](https://github.com/joshuaptfan/doublespeak/issues).
 
