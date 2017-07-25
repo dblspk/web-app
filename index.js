@@ -64,7 +64,7 @@ function mirrorCover() {
 	resizeTextarea(textarea[2]);
 	// Flash textarea border
 	textarea[2].classList.add('encoded');
-	window.setTimeout(function () {
+	setTimeout(() => {
 		textarea[2].classList.remove('encoded');
 	}, 200);
 }
@@ -89,10 +89,10 @@ function embedData() {
 function initExtractData() {
 	textarea[3].maxLength = 0x7FFFFFFF;
 	clearInPlain();
-	window.setTimeout(function () {
+	setTimeout(() => {
 		// Discard cover text
 		extractData((m => m && m.join(''))(textarea[3].value.match(encRegex)));
-	}, 1);
+	}, 0);
 }
 
 function extractData(str) {
@@ -242,10 +242,10 @@ function outputText(bytes, crcMatch) {
 		}
 		textarea[4].appendChild(embedDiv);
 	}
-	delete window.embeds;
+	window.embeds = null;
 	// Flash textarea border
 	textDiv.classList.add('decoded');
-	window.setTimeout(function () {
+	setTimeout(() => {
 		textDiv.classList.remove('decoded');
 	}, 1000);
 }
@@ -286,7 +286,7 @@ function decodeBytes(str) {
 	var bytes = [];
 	var encVals = window.encVals;
 	for (var i = 0, sLen = str.length; i < sLen; i += 2)
-		bytes.push((encVals[str[i]] << 4) + encVals[str[i + 1]]);
+		bytes.push(encVals[str[i]] << 4 | encVals[str[i + 1]]);
 	return Uint8Array.from(bytes);
 }
 
@@ -374,13 +374,12 @@ function clearInPlain() {
 		inPlain.removeChild(inPlain.lastChild);
 }
 
-function notifyCopy(el, copied) {
-	el = document.getElementById(el);
-	copied = document.getElementById(copied);
-	el.classList.add('copied');
+function notifyCopy() {
+	copied = document.getElementById('out-copied');
+	textarea[2].classList.add('copied');
 	copied.classList.add('copied');
-	window.setTimeout(function () {
-		el.classList.remove('copied');
+	setTimeout(() => {
+		textarea[2].classList.remove('copied');
 		copied.classList.remove('copied');
 	}, 800);
 }
@@ -420,7 +419,7 @@ function unzoomImage() {
 	zoom.style.top = zoomedImage.height * 0.5 + fontSize * 0.1 + parent.offsetTop - document.body.scrollTop + 'px';
 	zoom.style.left = zoomedImage.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + 'px';
 	zoom.style.width = zoomedImage.width + 'px';
-	delete window.zoomedImage;
+	window.zoomedImage = null;
 	var bg = document.getElementById('background');
 	bg.style.animationDirection = 'reverse';
 	bg.className = '';

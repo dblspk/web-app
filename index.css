@@ -5,14 +5,19 @@ body {
 	background-color: #222;
 }
 
-noscript {
+#ES6-warn,
+#noscript {
 	display: block;
 	line-height: 2rem;
 	width: 100%;
 	font-size: 125%;
 	text-align: center;
-	background-color: maroon;
+	background-color: #F70;
 	box-shadow: 0 0 1rem black;
+}
+
+#ES6-warn {
+	display: none;
 }
 
 main {

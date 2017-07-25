@@ -26,7 +26,8 @@
 </head>
 <body onresize='resizeBody()'>
 	<main>
-		<noscript>Please enable JavaScript to use this site.</noscript>
+		<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank'>update your browser</a> to use this site.</div>
+		<noscript id='noscript'>Please enable JavaScript to use this site.</noscript>
 		<h1>SEND</h1>
 		<section>
 			<textarea id='out-plain' onkeyup='mirrorCover()' onpaste='mirrorCover()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Secret text' autofocus></textarea>
@@ -38,7 +39,7 @@
 		</section>
 		<section>
 			<div style='display: inline-block'>
-				<textarea id='out-cipher' oncopy='notifyCopy("out-cipher", "out-copied")' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+				<textarea id='out-cipher' oncopy='notifyCopy()' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div id='out-copied' class='notify copied-div'>COPIED</div>
 			</div>
 			<div id='out-copy' class='button' data-clipboard-target='#out-cipher'>COPY</div>
@@ -59,5 +60,12 @@
 			<a href='https://github.com/joshuaptfan/doublespeak' target='_blank'>⁢⁢‌‌⁠⁣⁠︁﻿⁡⁢⁬‌‍⁠⁤⁣⁢⁤⁫⁤⁬⁤︁⁤⁮⁠‌⁪⁬⁤﻿⁪⁣⁠⁪⁪⁠⁤⁣⁠‌⁪‌⁪⁠⁤⁣⁪⁢⁪⁢⁪⁬⁠‌⁤⁡⁤⁯⁤⁣⁪⁤⁤⁣⁪⁠⁠⁯⁠‌⁤⁢⁤﻿⁤︁⁠⁪⁪⁢⁠‌⁪⁬⁤﻿⁪⁣⁡﻿Source on GitHub</a>
 		</footer>
 	</main>
+	<script type='text/javascript'>
+		try {
+			eval('var test = () => 0');
+		} catch (e) {
+			document.getElementById('ES6-warn').style.display = 'block';
+		}
+	</script>
 </body>
 </html>
