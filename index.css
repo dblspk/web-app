@@ -20,51 +20,80 @@ body {
 	display: none;
 }
 
-main {
-	position: absolute;
-	min-height: 100%;
-	width: 100%;
-}
-
 header {
+	overflow: hidden;
+	height: 1.7rem;
 	line-height: 1.5rem;
 	width: 100%;
-	padding-top: 0.2rem;
-	font-size: 80%;
 	background-color: black;
 }
 
 nav,
 h1,
-section {
+section,
+p,
+ul {
 	width: 30rem;
 	margin: 0 auto;
 }
 
+p {
+	margin: 1rem auto;
+}
+
+ul {
+	width: 29rem;
+}
+
+nav > label,
 nav > a {
 	display: inline-block;
-	height: 100%;
+	float: right;
+	height: 1.6rem;
 	padding: 0 0.4rem;
+	margin-left: 0.5rem;
+	color: #CCC;
+	background-color: #111;
+	border-top: 0.2rem solid black;
+	cursor: pointer;
+}
+
+nav > label[for=nav-main] {
+	float: none;
+	margin: 0;
+}
+
+nav > label.selected {
 	color: #EEE;
 	background-color: #222;
 }
 
-nav > a:not(:first-child) {
-	float: right;
-	margin-left: 0.5rem;
-	color: #CCC;
-	background-color: #111;
-}
-
+nav > label:hover,
 nav > a:hover {
 	text-decoration: none;
-	background-color: #333;
+	background-color: #222;
 }
 
 nav > a:visited {
 	color: #CCC;
 }
 
+input {
+	display: none;
+}
+
+#nav-main:checked ~ #main,
+#nav-faq:checked ~ #faq {
+	display: block;
+}
+
+#nav-main:checked ~ #faq,
+#nav-faq:checked ~ #main {
+	display: none;
+}
+
+label,
+nav > a,
 h1,
 button,
 #tip {
@@ -82,6 +111,7 @@ h1 {
 	color: #AAA;
 }
 
+#faq > h1,
 h1:first-of-type {
 	margin-top: 2rem;
 }
@@ -354,9 +384,22 @@ iframe.embed {
 
 @media only screen
 and (max-width: 480px) {
+	header {
+		height: 2.4rem;
+		line-height: 2.2rem;
+		font-size: 150%;
+	}
+
+	nav > label,
+	nav > a {
+		height: 2.2rem;
+	}
+
 	nav,
 	h1,
-	section {
+	section,
+	p,
+	ul {
 		width: 22.5rem;
 	}
 

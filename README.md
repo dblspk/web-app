@@ -2,6 +2,8 @@
 
 Embeds/extracts messages as zero width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI is optimized for real time chat.
 
+TL;DR: It hides secret messages in text.
+
 Web app: __https://joshuaptfan.github.io/doublespeak/__
 
 ## Usage
@@ -16,7 +18,7 @@ Fields automatically highlight on focus, type/paste to replace text. Clear butto
 
 ## Features
 
-* CRC-32 error checking
+* [CRC-32](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) error checking
 * Multi-message decoding
 * Linkifies URLs, emails, phone numbers, and Twitter hashtags
 * Preview URLs for images, video, and audio
@@ -41,7 +43,7 @@ Possible places for storage:
 * HT⁢⁢‌‌⁮⁯︁⁮︀⁢⁠⁣‌‍‍⁡⁣⁬⁤﻿⁪⁣⁠⁪⁪⁠⁤⁣⁠‌⁪‌⁪⁠⁤⁣⁪⁢⁪⁢⁪⁬⁠‌⁤⁪⁤﻿⁤﻿⁤⁢⁠︁ML
 * Emails
 * Digital documents
-* File names
+* File names (very short messages only)
 
 ## How it works
 

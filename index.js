@@ -42,10 +42,6 @@ document.onreadystatechange = function () {
 	document.addEventListener('dragover', dragOverFile, false);
 	document.addEventListener('drop', dropFile, false);
 
-	new Clipboard('#out-copy', {
-		text: () => { embedData(); }
-	});
-
 	// Service worker caches page for offline use
 	if ('serviceWorker' in navigator)
 		navigator.serviceWorker.register('/doublespeak/sw.js');
@@ -59,9 +55,12 @@ document.onreadystatechange = function () {
 // Mirror cover text to ciphertext box, pretending to embed data
 // Embed does not actually occur until copy event
 // Visual cues are still important for intuitive UX
-function mirrorCover() {
-	textarea[2].value = textarea[1].value;
-	resizeTextarea(textarea[2]);
+function mirrorCover(el) {
+	resizeTextarea(el);
+	if (el === textarea[1]) {
+		textarea[2].value = textarea[1].value;
+		resizeTextarea(textarea[2]);
+	}
 	// Flash textarea border
 	textarea[2].classList.add('encoded');
 	setTimeout(() => {
@@ -81,6 +80,8 @@ function embedData() {
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+	textarea[2].select();
+	document.execCommand('copy');
 	console.info('Original size:', bytes.length, 'bytes,', plainStr.length, 'characters',
 		'\nEncoded size:', encodedStr.length * 3, 'bytes,', encodedStr.length, 'characters');
 }
@@ -348,14 +349,14 @@ function selectText(el) {
 function clearOutPlain() {
 	textarea[0].value = '';
 	resizeTextarea(textarea[0]);
-	embedData();
 	textarea[0].focus();
 }
 
 function clearOut() {
 	textarea[1].value = '';
+	textarea[2].value = '';
 	resizeTextarea(textarea[1]);
-	mirrorCover();
+	resizeTextarea(textarea[2]);
 	textarea[1].focus();
 }
 
@@ -447,6 +448,13 @@ function checkZoomable(el) {
 		else
 			images[i].classList.remove('zoomable');
 	}
+}
+
+function clickNav(el) {
+	var labels = document.getElementsByTagName('label');
+	for (var i = 0; i < labels.length; i++)
+		labels[i].classList.remove('selected');
+	el.classList.add('selected');
 }
 
 // Scale elements according to viewport size

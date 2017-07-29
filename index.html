@@ -20,26 +20,29 @@
 	<link rel='icon' sizes='192x192' href='images/icon-192.png'>
 	<link rel='stylesheet' type='text/css' href='index.css'>
 	<link rel='manifest' href='manifest.json'>
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js' defer></script>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/autolinker/1.4.3/Autolinker.min.js' defer></script>
 	<script src='index.js' defer></script>
 </head>
 <body onresize='resizeBody()'>
-	<main>
-		<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank'>update your browser</a> to use this site.</div>
-		<noscript id='noscript'>Please enable JavaScript to use this site.</noscript>
-		<header>
-			<nav>
-				<a>Doublespeak</a><a href='https://github.com/joshuaptfan/doublespeak' target='_blank'>⁢⁢‌‌⁠⁣⁠︁﻿⁡⁢⁬‌‍⁠⁤⁣⁢⁤⁫⁤⁬⁤︁⁤⁮⁠‌⁪⁬⁤﻿⁪⁣⁠⁪⁪⁠⁤⁣⁠‌⁪‌⁪⁠⁤⁣⁪⁢⁪⁢⁪⁬⁠‌⁤⁡⁤⁯⁤⁣⁪⁤⁤⁣⁪⁠⁠⁯⁠‌⁤⁢⁤﻿⁤︁⁠⁪⁪⁢⁠‌⁪⁬⁤﻿⁪⁣⁡﻿GitHub</a><a>FAQ</a>
-			</nav>
-		</header>
+	<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank'>update your browser</a> to use this site.</div>
+	<noscript id='noscript'>Please enable JavaScript to use this site.</noscript>
+	<header>
+		<nav>
+			<label for='nav-main' class='selected' onclick='clickNav(this)'>Doublespeak</label>
+			<a href='https://github.com/joshuaptfan/doublespeak' target='_blank' tabindex='-1'>GitHub</a>
+			<label for='nav-faq' onclick='clickNav(this)'>FAQ</label>
+		</nav>
+	</header>
+	<input type='radio' name='nav' id='nav-main' checked>
+	<input type='radio' name='nav' id='nav-faq'>
+	<div id='main'>
 		<h1>SEND</h1>
 		<section>
-			<textarea id='out-plain' onkeyup='mirrorCover()' onpaste='mirrorCover()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Secret text' autofocus></textarea>
+			<textarea id='out-plain' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Secret text' autofocus></textarea>
 			<button onclick='clearOutPlain()' tabindex='-1'>CLEAR</button>
 		</section>
 		<section>
-			<textarea id='out-cover' onkeyup='mirrorCover()' onpaste='mirrorCover()' onfocus='this.select()' oninput='resizeTextarea(this)' placeholder='Cover text'></textarea>
+			<textarea id='out-cover' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Cover text'></textarea>
 			<button onclick='clearOut()' tabindex='-1'>CLEAR</button>
 		</section>
 		<section>
@@ -47,7 +50,7 @@
 				<textarea id='out-cipher' oncopy='notifyCopy()' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div id='out-copied' class='notify copied-div'>COPIED</div>
 			</div>
-			<button id='out-copy' tabindex='-1' data-clipboard-target='#out-cipher'>COPY</button>
+			<button id='out-copy' onclick='embedData()' tabindex='-1' data-clipboard-target='#out-cipher'>COPY</button>
 		</section>
 		<h1>RECEIVE</h1>
 		<section>
@@ -61,7 +64,68 @@
 		<div id='tab-loop'>
 			<button onfocus='textarea[0].select()'></button>
 		</div>
-	</main>
+	</div>
+	<div id='faq'>
+		<h1>What is this?</h1>
+		<p>Doublespeak embeds/extracts messages as zero width Unicode characters in text, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank'>steganography</a>. UI is optimized for real time chat.</p>
+		<p>TL;DR: It hides secret messages in text.</p>
+		<h1>Usage</h1>
+		<p><strong>Tab</strong> / <strong>Shift+Tab</strong> &mdash; cycle through fields</p>
+		<p>Output ciphertext is automatically copied by tabbing to or clicking on the field.<p>
+		<p>Fields automatically highlight on focus, type/paste to replace text. Clear buttons should rarely be needed, even on mobile.</p>
+		<h1>Features</h1>
+		<ul>
+			<li><a href='https://en.wikipedia.org/wiki/Cyclic_redundancy_check' target'_blank'>CRC-32</a> error checking</li>
+			<li>Multi-message decoding</li>
+			<li>Linkifies URLs, emails, phone numbers, and Twitter hashtags</li>
+			<li>Preview URLs for images, video, and audio</li>
+			<li><a href='https://developers.google.com/web/progressive-web-apps/' target='_blank'>Progressive Web App</a> &mdash; can be pinned to your Android homescreen</li>
+		</ul>
+		<h1>Possible uses</h1>
+		<p>What can be hidden:</p>
+		<ul>
+			<li>Text</li>
+			<li>URLs (similar use to <a href='https://en.wikipedia.org/wiki/QR_code' target=_blank>QR codes</a>)</li>
+			<li>Files (coming soon&trade;)</li>
+			<li>Watermarks</li>
+			<li>Pre-shared keys for encryption</li>
+		</ul>
+		<p>Possible places for storage:</p>
+		<ul>
+			<li>Chat messages</li>
+			<li>Social media posts</li>
+			<li>User profile information</li>
+			<li>Forums</li>
+			<li>HT⁢⁢‌‌⁠⁣⁠︁﻿⁡⁢⁬‌‍⁠⁤⁣⁢⁤⁫⁤⁬⁤︁⁤⁮⁠‌⁪⁬⁤﻿⁪⁣⁠⁪⁪⁠⁤⁣⁠‌⁪‌⁪⁠⁤⁣⁪⁢⁪⁢⁪⁬⁠‌⁤⁡⁤⁯⁤⁣⁪⁤⁤⁣⁪⁠⁠⁯⁠‌⁤⁢⁤﻿⁤︁⁠⁪⁪⁢⁠‌⁪⁬⁤﻿⁪⁣⁡﻿ML</li>
+			<li>Emails</li>
+			<li>Digital documents</li>
+			<li>File names (very short messages only)</li>
+		</ul>
+		<h1>How does it work?</h1>
+		<p><a href='https://en.wikipedia.org/wiki/Unicode' target='_blank'>Unicode</a> contains some zero width, unprintable characters. We use 16 of them to encode any data in hexadecimal, using our
+		<a href='https://github.com/joshuaptfan/doublespeak#how-it-works' target='_blank'>arbitrary encoding scheme</a>.</p>
+		<p>The resulting string of invisible characters is then inserted at a random location in the cover text.</p>
+		<h1>Efficiency</h1>
+		<p>Each invisible character represents 4 bits, while taking 3 bytes (24 bits) to store. Thus, the hidden data consumes 6 times
+		as much memory as the original data, not including header data and cover text.</p>
+		<h1>Comparison to other steganography techniques</h1>
+		<p>Pros</p>
+		<ul>
+			<li>Produces no visible alteration in the text.</li>
+			<li>Can store a near-unlimited amount of data regardless of length of the cover text.</li>
+			<li>Can be used with applications that do not support file transfers.</li>
+			<li>Reduces suspicion by not requiring the frequent transfer of large files during communication.</li>
+		</ul>
+		<p>Cons</p>
+		<ul>
+			<li>Can be filtered or corrupted by applications that do not support Unicode, or that attempt to format user input.</li>
+			<li>Extremely easy to detect. Any digital text can be checked for the possible presence of a message by pasting it into a decoder,
+			or a text editor that displays non-printing characters. Large messages may create line breaks in some applications.</li>
+		</ul>
+		<p><strong>If you are serious about concealing your payload, you should use another form of steganography.</strong></p>
+		<p>As with any method of communication, security is only as good as the encryption applied. This only provides a casual level
+		of security through obscurity.</p>
+	</div>
 	<script type='text/javascript'>
 		try {
 			eval('"use strict"; var test = () => 0');
