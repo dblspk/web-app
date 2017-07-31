@@ -26,13 +26,11 @@
 <body onresize='resizeBody()'>
 	<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank'>update your browser</a> to use this site.</div>
 	<noscript id='noscript'>Please enable JavaScript to use this site.</noscript>
-	<header>
-		<nav>
-			<label for='nav-main' class='selected' onclick='clickNav(this)'>Doublespeak</label>
-			<a href='https://github.com/joshuaptfan/doublespeak' target='_blank' tabindex='-1'>GitHub</a>
-			<label for='nav-faq' onclick='clickNav(this)'>FAQ</label>
-		</nav>
-	</header>
+	<nav>
+		<label for='nav-main' class='selected' onclick='clickNav(this)'>Doublespeak</label>
+		<a href='https://github.com/joshuaptfan/doublespeak' target='_blank' tabindex='-1'>GitHub</a>
+		<label for='nav-faq' onclick='clickNav(this)'>FAQ</label>
+	</nav>
 	<input type='radio' name='nav' id='nav-main' checked>
 	<input type='radio' name='nav' id='nav-faq'>
 	<div id='main'>
@@ -69,7 +67,7 @@
 		</section>
 		<div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
 		<div id='tab-loop'>
-			<button onfocus='textarea[0].select()'></button>
+			<button onfocus='textarea[2].select()'></button>
 		</div>
 	</div>
 	<div id='faq'>

@@ -20,12 +20,16 @@ body {
 	display: none;
 }
 
-header {
-	overflow: hidden;
-	height: 1.7rem;
-	line-height: 1.5rem;
-	width: 100%;
-	background-color: black;
+label,
+nav > a,
+h1,
+button,
+#tip {
+	cursor: default;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	    -ms-user-select: none;
+	        user-select: none;
 }
 
 nav,
@@ -38,10 +42,6 @@ ul {
 	margin: 0 auto;
 }
 
-nav {
-	width: 31rem;
-}
-
 p {
 	margin: 1rem auto;
 }
@@ -51,36 +51,33 @@ ul {
 }
 
 nav > label,
-nav > a {
-	display: inline-block;
+nav > a,
+nav > a:visited {
 	float: right;
-	height: 1.6rem;
-	padding: 0 0.4rem;
-	margin-left: 0.5rem;
-	color: #CCC;
-	background-color: #111;
-	border-top: 0.2rem solid black;
+	line-height: 1.4rem;
+	margin-left: 1rem;
+	text-shadow: 0 0 0.2rem black;
+	color: #AAA;
+	border-top: 0.2rem solid transparent;
 	cursor: pointer;
 }
 
 nav > label[for=nav-main] {
+	display: inline-block;
 	float: none;
 	margin: 0;
 }
 
 nav > label.selected {
 	color: #EEE;
-	background-color: #222;
+	border-color: #444;
 }
 
 nav > label:hover,
 nav > a:hover {
 	text-decoration: none;
-	background-color: #222;
-}
-
-nav > a:visited {
-	color: #CCC;
+	color: white !important;
+	border-color: #777;
 }
 
 input {
@@ -97,24 +94,12 @@ input {
 	display: none;
 }
 
-label,
-nav > a,
-h1,
-button,
-#tip {
-	cursor: default;
-	-webkit-user-select: none;
-	   -moz-user-select: none;
-	    -ms-user-select: none;
-	        user-select: none;
-}
-
 h1 {
 	margin: 1.2rem auto;
 	font-size: 150%;
 	font-weight: normal;
-	color: #AAA;
 	text-shadow: 0 0 0.2rem black;
+	color: #AAA;
 }
 
 #main > h1:first-of-type {
@@ -139,7 +124,7 @@ label[for=send-options-button]:hover {
 	height: 0;
 	width: 100%;
 	background-color: #1A1A1A;
-	box-shadow: 0 0.8rem 0.8rem -0.8rem black inset, 0 -0.8rem 0.8rem -0.8rem black inset;
+	box-shadow: 0 0.4rem 0.4rem -0.4rem black inset, 0 -0.4rem 0.4rem -0.4rem black inset;
 	transition: height 0.2s;
 }
 
@@ -195,6 +180,7 @@ textarea,
 	height: auto;
 	width: 25.5rem;
 	padding: 0.1rem;
+	margin: 0;
 	box-sizing: border-box;
 	font-size: 1rem;
 	color: white;
@@ -290,10 +276,6 @@ textarea.copied {
 
 .error-div {
 	background-color: #C00;
-}
-
-:invalid {
-	box-shadow: none;
 }
 
 ::-webkit-scrollbar {
@@ -428,15 +410,10 @@ iframe.embed {
 
 @media only screen
 and (max-width: 480px) {
-	header {
-		height: 2.4rem;
-		line-height: 2.2rem;
-		font-size: 150%;
-	}
-
 	nav > label,
 	nav > a {
-		height: 2.2rem;
+		line-height: 1.75rem;
+		font-size: 125%;
 	}
 
 	nav,
@@ -446,10 +423,6 @@ and (max-width: 480px) {
 	p,
 	ul {
 		width: 22.5rem;
-	}
-
-	nav {
-		width: 23.5rem;
 	}
 
 	#out-prefix,
