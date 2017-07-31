@@ -29,13 +29,15 @@ document.onreadystatechange = function () {
 	}
 
 	var textareas = [
+		'out-prefix',
+		'out-postfix',
 		'out-plain',
 		'out-cover',
 		'out-cipher',
 		'in-cipher',
 		'in-plain'
 	];
-	for (var i = 0; i < 5; i++)
+	for (var i = 0; i < 7; i++)
 		textarea[i] = document.getElementById(textareas[i]);
 
 	resizeBody();
@@ -47,8 +49,8 @@ document.onreadystatechange = function () {
 		navigator.serviceWorker.register('/doublespeak/sw.js');
 
 	if (/Mac|iP(hone|od|ad)/.test(navigator.userAgent)) {
-		textarea[2].placeholder = 'Copy [Command+C] output ciphertext';
-		textarea[3].placeholder = 'Paste [Command+V] input ciphertext';
+		textarea[4].placeholder = 'Copy [Command+C] output ciphertext';
+		textarea[5].placeholder = 'Paste [Command+V] input ciphertext';
 	}
 };
 
@@ -57,30 +59,31 @@ document.onreadystatechange = function () {
 // Visual cues are still important for intuitive UX
 function mirrorCover(el) {
 	resizeTextarea(el);
-	if (el === textarea[1]) {
-		textarea[2].value = textarea[1].value;
-		resizeTextarea(textarea[2]);
+	if (el === textarea[3]) {
+		textarea[4].value = textarea[3].value;
+		resizeTextarea(textarea[4]);
 	}
 	// Flash textarea border
-	textarea[2].classList.add('encoded');
+	textarea[4].classList.add('encoded');
 	setTimeout(() => {
-		textarea[2].classList.remove('encoded');
+		textarea[4].classList.remove('encoded');
 	}, 200);
 }
 
 // Embed plaintext in cover text
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
-	var plainStr = textarea[0].value.replace(encRegex, '');
+	var plainStr = ((v => v ? v + ' ' : '')(textarea[0].value) + textarea[2].value +
+		(v => v ? ' ' + v : '')(textarea[1].value)).replace(encRegex, '');
 	var bytes = new TextEncoder().encode(plainStr);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
 	var encodedStr = bytes.length > 0 ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
 		encodeLength(bytes.length), bytes) : '';
-	var coverStr = textarea[1].value.replace(encRegex, '');
+	var coverStr = textarea[3].value.replace(encRegex, '');
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
-	textarea[2].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
-	textarea[2].select();
+	textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+	textarea[4].select();
 	document.execCommand('copy');
 	console.info('Original size:', bytes.length, 'bytes,', plainStr.length, 'characters',
 		'\nEncoded size:', encodedStr.length * 3, 'bytes,', encodedStr.length, 'characters');
@@ -88,11 +91,11 @@ function embedData() {
 
 // Extract received ciphertext
 function initExtractData() {
-	textarea[3].maxLength = 0x7FFFFFFF;
+	textarea[5].maxLength = 0x7FFFFFFF;
 	clearInPlain();
 	setTimeout(() => {
 		// Discard cover text
-		extractData((m => m && m.join(''))(textarea[3].value.match(encRegex)));
+		extractData((m => m && m.join(''))(textarea[5].value.match(encRegex)));
 	}, 0);
 }
 
@@ -177,15 +180,15 @@ function outputText(bytes, crcMatch) {
 	// 3. Linkify URLs
 	var outputStr = autolinker.link(new TextDecoder().decode(bytes).replace(/[&<>]/g, c => references[c]));
 	var textDiv;
-	if (textarea[4].lastChild.innerHTML) {
+	if (textarea[6].lastChild.innerHTML) {
 		// Generate pseudo-textarea
 		textDiv = document.createElement('div');
 		textDiv.className = 'text-div';
 		textDiv.onfocus = function () { selectText(this); };
 		textDiv.tabIndex = -1;
-		textarea[4].appendChild(textDiv);
+		textarea[6].appendChild(textDiv);
 	}
-	textDiv = textarea[4].lastChild;
+	textDiv = textarea[6].lastChild;
 	// Output text
 	textDiv.innerHTML = outputStr;
 	if (!crcMatch) {
@@ -195,7 +198,7 @@ function outputText(bytes, crcMatch) {
 		var errorDiv = document.createElement('div');
 		errorDiv.className = 'notify error-div';
 		errorDiv.innerHTML = 'CRC MISMATCH';
-		textarea[4].appendChild(errorDiv);
+		textarea[6].appendChild(errorDiv);
 	}
 	if (embeds[0]) {
 		// Generate embed container
@@ -241,7 +244,7 @@ function outputText(bytes, crcMatch) {
 					embedDiv.appendChild(iframe);
 			}
 		}
-		textarea[4].appendChild(embedDiv);
+		textarea[6].appendChild(embedDiv);
 	}
 	window.embeds = null;
 	// Flash textarea border
@@ -347,28 +350,28 @@ function selectText(el) {
 }
 
 function clearOutPlain() {
-	textarea[0].value = '';
-	resizeTextarea(textarea[0]);
-	textarea[0].focus();
+	textarea[2].value = '';
+	resizeTextarea(textarea[2]);
+	textarea[2].focus();
 }
 
 function clearOut() {
-	textarea[1].value = '';
-	textarea[2].value = '';
-	resizeTextarea(textarea[1]);
-	resizeTextarea(textarea[2]);
-	textarea[1].focus();
+	textarea[3].value = '';
+	textarea[4].value = '';
+	resizeTextarea(textarea[3]);
+	resizeTextarea(textarea[4]);
+	textarea[3].focus();
 }
 
 function clearIn() {
 	clearInPlain();
-	textarea[3].value = '';
-	resizeTextarea(textarea[3]);
-	textarea[3].focus();
+	textarea[5].value = '';
+	resizeTextarea(textarea[5]);
+	textarea[5].focus();
 }
 
 function clearInPlain() {
-	var inPlain = textarea[4];
+	var inPlain = textarea[6];
 	inPlain.firstChild.innerHTML = '';
 	inPlain.firstChild.className = 'text-div';
 	while (inPlain.childNodes.length > 1)
@@ -377,10 +380,10 @@ function clearInPlain() {
 
 function notifyCopy() {
 	copied = document.getElementById('out-copied');
-	textarea[2].classList.add('copied');
+	textarea[4].classList.add('copied');
 	copied.classList.add('copied');
 	setTimeout(() => {
-		textarea[2].classList.remove('copied');
+		textarea[4].classList.remove('copied');
 		copied.classList.remove('copied');
 	}, 800);
 }
@@ -435,13 +438,13 @@ function unzoomImage() {
 }
 
 function checkZoomable(el) {
-	var embedWidth = textarea[4].scrollWidth;
+	var embedWidth = textarea[6].scrollWidth;
 	if (el) {
 		if (el.naturalWidth > embedWidth)
 			el.classList.add('zoomable');
 		return;
 	}
-	var images = textarea[4].getElementsByTagName('img');
+	var images = textarea[6].getElementsByTagName('img');
 	for (var i = 0; i < images.length; i++) {
 		if (images[i].naturalWidth > embedWidth)
 			images[i].classList.add('zoomable');
@@ -452,9 +455,11 @@ function checkZoomable(el) {
 
 function clickNav(el) {
 	var labels = document.getElementsByTagName('label');
-	for (var i = 0; i < labels.length; i++)
+	for (var i = 0; i < 2; i++)
 		labels[i].classList.remove('selected');
 	el.classList.add('selected');
+	if (el.getAttribute('for') === 'nav-main')
+		setTimeout(() => { resizeBody(); }, 0);
 }
 
 // Scale elements according to viewport size
@@ -463,7 +468,7 @@ function resizeBody() {
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.03 + 'px';
 	else
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04 + 'px';
-	for (var i = 0; i < 4; i++)
+	for (var i = 0; i < 6; i++)
 		resizeTextarea(textarea[i]);
 	checkZoomable();
 }

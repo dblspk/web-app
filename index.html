@@ -36,7 +36,14 @@
 	<input type='radio' name='nav' id='nav-main' checked>
 	<input type='radio' name='nav' id='nav-faq'>
 	<div id='main'>
-		<h1>SEND</h1>
+		<h1>SEND<label for='send-options-button'>&#9776;</label></h1>
+		<input type='checkbox' id='send-options-button'>
+		<div>
+			<div id='send-options'>
+				<textarea id='out-prefix' onfocus='this.select()' placeholder='Secret prefix' tabindex='-1'></textarea>
+				<textarea id='out-postfix' onfocus='this.select()' placeholder='Secret postfix' tabindex='-1'></textarea>
+			</div>
+		</div>
 		<section>
 			<textarea id='out-plain' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Secret text' autofocus></textarea>
 			<button onclick='clearOutPlain()' tabindex='-1'>CLEAR</button>

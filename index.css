@@ -30,11 +30,16 @@ header {
 
 nav,
 h1,
+#send-options,
 section,
 p,
 ul {
 	width: 30rem;
 	margin: 0 auto;
+}
+
+nav {
+	width: 31rem;
 }
 
 p {
@@ -109,11 +114,40 @@ h1 {
 	font-size: 150%;
 	font-weight: normal;
 	color: #AAA;
+	text-shadow: 0 0 0.2rem black;
 }
 
 #faq > h1,
 h1:first-of-type {
 	margin-top: 2rem;
+}
+
+label[for=send-options-button] {
+	float: right;
+	cursor: pointer;
+}
+
+#send-options-button + div {
+	overflow: hidden;
+	height: 0;
+	width: 100%;
+	background-color: #1A1A1A;
+	box-shadow: 0 0.8rem 0.8rem -0.8rem black inset, 0 -0.8rem 0.8rem -0.8rem black inset;
+	transition: height 0.2s;
+}
+
+#send-options-button:checked + div {
+	height: 2.2rem;
+	transition: height 0.2s;
+}
+
+#send-options {
+	padding: 0.2rem 0;
+}
+
+#out-prefix,
+#out-postfix {
+	width: 12.6rem;
 }
 
 section {
@@ -132,6 +166,7 @@ button {
 	background-color: #444;
 	border: none;
 	border-radius: 0.2rem;
+	box-shadow: 0 0 0.2rem black;
 	cursor: pointer;
 }
 
@@ -164,6 +199,7 @@ textarea {
 	font-family: sans-serif;
 	vertical-align: top;
 	background-color: #111;
+	box-shadow: 0 0 0.4rem black inset, 0 0 0.2rem black;
 	resize: none;
 }
 
@@ -196,6 +232,7 @@ textarea:focus,
 textarea[readonly] {
 	background-color: #222;
 	border-style: dashed;
+	box-shadow: none;
 	cursor: text;
 }
 
@@ -324,7 +361,6 @@ img.embed.zoomable {
 
 #zoom {
 	position: fixed;
-	z-index: 1;
 	width: auto;
 	max-width: 25.3rem;
 	padding: 0.1rem;
@@ -344,6 +380,7 @@ img.embed.zoomable {
 
 #background {
 	position: fixed;
+	top: 0;
 	height: 100%;
 	width: 100%;
 	background-color: rgba(0, 0, 0, 0.9);
@@ -364,7 +401,7 @@ iframe.embed {
 }
 
 #tip {
-	margin: 4rem 0;
+	margin: 4rem 0 2rem 0;
 	font-size: 60%;
 	text-align: center;
 	color: #777;
@@ -397,10 +434,20 @@ and (max-width: 480px) {
 
 	nav,
 	h1,
+	#send-options,
 	section,
 	p,
 	ul {
 		width: 22.5rem;
+	}
+
+	nav {
+		width: 23.5rem;
+	}
+
+	#out-prefix,
+	#out-postfix {
+		width: 8.64706rem;
 	}
 
 	section {
