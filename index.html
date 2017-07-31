@@ -33,59 +33,49 @@
 	</nav>
 	<input type='radio' name='nav' id='nav-main' checked>
 	<input type='radio' name='nav' id='nav-faq'>
-	<div id='main'>
+	<section id='main'>
 		<h1>SEND<label for='send-options-button'>&#9776;</label></h1>
 		<input type='checkbox' id='send-options-button'>
-		<div>
-			<div id='send-options'>
-				<textarea id='out-prefix' onfocus='this.select()' placeholder='Secret prefix' tabindex='-1'></textarea>
-				<textarea id='out-postfix' onfocus='this.select()' placeholder='Secret postfix' tabindex='-1'></textarea>
+		<div id='send-options'>
+			<div class='row'>
+				<textarea id='out-prepend' onfocus='this.select()' placeholder='Prepend text' tabindex='-1'></textarea>
+				<textarea id='out-append' onfocus='this.select()' placeholder='Append text' tabindex='-1'></textarea>
 			</div>
 		</div>
-		<section>
-			<textarea id='out-plain' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Secret text' autofocus></textarea>
+		<div class='row'>
+			<textarea id='out-plain' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Type secret message' autofocus></textarea>
 			<button onclick='clearOutPlain()' tabindex='-1'>CLEAR</button>
-		</section>
-		<section>
-			<textarea id='out-cover' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Cover text'></textarea>
+		</div>
+		<div class='row'>
+			<textarea id='out-cover' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Type cover message'></textarea>
 			<button onclick='clearOut()' tabindex='-1'>CLEAR</button>
-		</section>
-		<section>
+		</div>
+		<div class='row'>
 			<div style='display: inline-block'>
 				<textarea id='out-cipher' oncopy='notifyCopy()' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div id='out-copied' class='notify copied-div'>COPIED</div>
 			</div>
 			<button id='out-copy' onclick='embedData()' tabindex='-1' data-clipboard-target='#out-cipher'>COPY</button>
-		</section>
+		</div>
 		<h1>RECEIVE</h1>
-		<section>
+		<div class='row'>
 			<textarea id='in-cipher' onpaste='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
 			<button onclick='clearIn()' tabindex='-1'>CLEAR</button>
-		</section>
-		<section>
+		</div>
+		<div class='row'>
 			<div id='in-plain' style='display: inline-block'><div class='text-div' style='margin-top: 0' onfocus='selectText(this)' tabindex='-1'></div></div>
-		</section>
+		</div>
 		<div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
 		<div id='tab-loop'>
 			<button onfocus='textarea[2].select()'></button>
 		</div>
-	</div>
-	<div id='faq'>
+	</section>
+	<section id='faq'>
 		<h1>What is this?</h1>
 		<p>Doublespeak embeds/extracts messages as zero width Unicode characters in text, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank'>steganography</a>. UI is optimized for real time chat.</p>
 		<p>TL;DR: It hides secret messages in text.</p>
 		<h1>Usage</h1>
 		<p><strong>Tab</strong> / <strong>Shift+Tab</strong> &mdash; cycle through fields</p>
-		<p>Output ciphertext is automatically copied by tabbing to or clicking on the field.<p>
-		<p>Fields automatically highlight on focus, type/paste to replace text. Clear buttons should rarely be needed, even on mobile.</p>
-		<h1>Features</h1>
-		<ul>
-			<li><a href='https://en.wikipedia.org/wiki/Cyclic_redundancy_check' target'_blank'>CRC-32</a> error checking</li>
-			<li>Multi-message decoding</li>
-			<li>Linkifies URLs, emails, phone numbers, and Twitter hashtags</li>
-			<li>Preview URLs for images, video, and audio</li>
-			<li><a href='https://developers.google.com/web/progressive-web-apps/' target='_blank'>Progressive Web App</a> &mdash; can be pinned to your Android homescreen</li>
-		</ul>
 		<h1>Possible uses</h1>
 		<p>What can be hidden:</p>
 		<ul>
@@ -130,7 +120,7 @@
 		<p><strong>If you are serious about concealing your payload, you should use another form of steganography.</strong></p>
 		<p>As with any method of communication, security is only as good as the encryption applied. This only provides a casual level
 		of security through obscurity.</p>
-	</div>
+	</section>
 	<script type='text/javascript'>
 		try {
 			eval('"use strict"; var test = () => 0');

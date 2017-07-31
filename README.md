@@ -14,8 +14,6 @@ __Tab__ / __Shift+Tab__ &mdash; cycle through fields
 
 Output ciphertext is automatically copied by tabbing to or clicking on the field.
 
-Fields automatically highlight on focus, type/paste to replace text. Clear buttons should rarely be needed, even on mobile.
-
 ## Features
 
 * [CRC-32](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) error checking

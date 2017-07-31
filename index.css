@@ -34,8 +34,7 @@ button,
 
 nav,
 h1,
-#send-options,
-section,
+.row,
 p,
 ul {
 	width: 30rem;
@@ -119,7 +118,7 @@ label[for=send-options-button]:hover {
 	color: white;
 }
 
-#send-options-button + div {
+#send-options {
 	overflow: hidden;
 	height: 0;
 	width: 100%;
@@ -128,21 +127,21 @@ label[for=send-options-button]:hover {
 	transition: height 0.2s;
 }
 
-#send-options-button:checked + div {
+#send-options-button:checked + #send-options {
 	height: 2.2rem;
 	transition: height 0.2s;
 }
 
-#send-options {
-	padding: 0.2rem 0;
+#send-options > div {
+	margin: 0.2rem auto;
 }
 
-#out-prefix,
-#out-postfix {
+#out-prepend,
+#out-append {
 	width: 12.6rem;
 }
 
-section {
+.row {
 	margin: 0.5rem auto;
 }
 
@@ -207,6 +206,7 @@ textarea {
 }
 
 .embed-div {
+	background-color: #1A1A1A;
 	border: none;
 	box-shadow: 0 0 0.4rem black inset;
 }
@@ -253,7 +253,7 @@ textarea.copied {
 
 .text-div:empty::before {
 	color: #777;
-	content: 'Secret text';
+	content: 'Read secret message';
 }
 
 .notify {
@@ -410,23 +410,26 @@ iframe.embed {
 
 @media only screen
 and (max-width: 480px) {
+	nav,
+	h1,
+	.row,
+	p,
+	ul {
+		width: 22.5rem;
+	}
+
 	nav > label,
 	nav > a {
 		line-height: 1.75rem;
 		font-size: 125%;
 	}
 
-	nav,
-	h1,
-	#send-options,
-	section,
-	p,
-	ul {
-		width: 22.5rem;
+	#main > h1:first-of-type {
+		margin-bottom: 0.2rem;
 	}
 
-	#out-prefix,
-	#out-postfix {
+	#out-prepend,
+	#out-append {
 		width: 8.64706rem;
 	}
 

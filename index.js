@@ -29,8 +29,8 @@ document.onreadystatechange = function () {
 	}
 
 	var textareas = [
-		'out-prefix',
-		'out-postfix',
+		'out-prepend',
+		'out-append',
 		'out-plain',
 		'out-cover',
 		'out-cipher',
