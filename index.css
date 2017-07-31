@@ -117,14 +117,21 @@ h1 {
 	text-shadow: 0 0 0.2rem black;
 }
 
-#faq > h1,
-h1:first-of-type {
+#main > h1:first-of-type {
+	margin: 2rem auto 0.7rem auto;
+}
+
+#faq > h1 {
 	margin-top: 2rem;
 }
 
 label[for=send-options-button] {
 	float: right;
 	cursor: pointer;
+}
+
+label[for=send-options-button]:hover {
+	color: white;
 }
 
 #send-options-button + div {
