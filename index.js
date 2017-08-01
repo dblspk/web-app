@@ -397,12 +397,12 @@ function clickImage(el) {
 		// Clone clicked image at same position
 		var zoom = el.cloneNode();
 		zoom.id = 'zoom';
-		zoom.style.top = el.height * 0.5 + fontSize * 0.1 + parent.offsetTop - document.body.scrollTop + 'px';
+		zoom.style.top = el.height * 0.5 + fontSize * 0.1 + parent.offsetTop + parent.offsetParent.offsetTop - document.body.scrollTop + 'px';
 		zoom.style.left = el.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + 'px';
 		zoom.onclick = function () { unzoomImage(); };
 		var bg = document.createElement('div');
 		bg.id = 'background';
-		bg.className = 'fade';
+		bg.className = 'fade-in';
 		bg.onclick = function () { unzoomImage(); };
 		document.body.appendChild(bg);
 		document.body.appendChild(zoom);
@@ -420,7 +420,7 @@ function unzoomImage() {
 	var parent = zoomedImage.parentElement;
 	var zoom = document.getElementById('zoom');
 	// Unzoom image
-	zoom.style.top = zoomedImage.height * 0.5 + fontSize * 0.1 + parent.offsetTop - document.body.scrollTop + 'px';
+	zoom.style.top = zoomedImage.height * 0.5 + fontSize * 0.1 + parent.offsetTop + parent.offsetParent.offsetTop - document.body.scrollTop + 'px';
 	zoom.style.left = zoomedImage.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + 'px';
 	zoom.style.width = zoomedImage.width + 'px';
 	window.zoomedImage = null;
@@ -429,7 +429,7 @@ function unzoomImage() {
 	bg.className = '';
 	// Force element reflow to restart animation
 	void bg.offsetWidth;
-	bg.className = 'fade';
+	bg.className = 'fade-in';
 	zoom.addEventListener('transitionend', function removeZoom() {
 		zoom.removeEventListener('transitionend', removeZoom);
 		document.body.removeChild(zoom);

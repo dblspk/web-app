@@ -83,14 +83,30 @@ input {
 	display: none;
 }
 
+section {
+	position: relative;
+}
+
 #nav-main:checked ~ #main,
 #nav-faq:checked ~ #faq {
 	display: block;
+	animation: fade-up 0.3s;
 }
 
 #nav-main:checked ~ #faq,
 #nav-faq:checked ~ #main {
 	display: none;
+}
+
+@keyframes fade-up {
+	from {
+		top: 2rem;
+		opacity: 0;
+	}
+	to {
+		top: 0;
+		opacity: 1;
+	}
 }
 
 h1 {
@@ -375,11 +391,11 @@ img.embed.zoomable {
 	background-color: rgba(0, 0, 0, 0.9);
 }
 
-#background.fade {
-	animation: fade 0.5s;
+#background.fade-in {
+	animation: fade-in 0.5s;
 }
 
-@keyframes fade {
+@keyframes fade-in {
 	from { opacity: 0 }
 	to { opacity: 1 }
 }
@@ -433,7 +449,7 @@ and (max-width: 480px) {
 		width: 8.64706rem;
 	}
 
-	section {
+	.row {
 		margin: 1rem auto;
 	}
 
