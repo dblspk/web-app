@@ -98,8 +98,10 @@ function initExtractData() {
 function extractData(str) {
 	// Check protocol signature and version
 	if (!str || str.slice(0, 4) !== '\u2062\u2062\u200C\u200C') {
-		console.error(!str ? 'No message detected' :
-			'Protocol mismatch\nData: ' + new TextDecoder().decode(decodeBytes(str)));
+		textarea[6].firstChild.classList.add('error');
+		outputError(!str ? 'No message detected' : 'Protocol mismatch');
+		if (str)
+			console.error('Data:', new TextDecoder().decode(decodeBytes(str)));
 		return;
 	}
 	// Get length of variable length quantity data length field by checking
@@ -129,7 +131,7 @@ function extractData(str) {
 			break;
 		case 0x0:
 		default:
-			console.warn('Unsupported data type');
+			console.error('Unsupported data type');
 	}
 
 	// Recurse until all messages extracted
