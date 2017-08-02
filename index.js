@@ -18,6 +18,7 @@ var encVals = {
 };
 var encChars = Object.keys(encVals);
 var encRegex = /[\u200C\u200D\u2060-\u2064\u206A-\u206F\uFE00\uFE01\uFEFF]{8,}/g;
+var encQueue = [];
 var textarea = [];
 var crcTable = makeCRCTable();
 
@@ -41,8 +42,8 @@ document.onreadystatechange = function () {
 		textarea[i] = document.getElementById(textareas[i]);
 
 	resizeBody();
-	document.addEventListener('dragover', dragOverFile, false);
-	document.addEventListener('drop', dropFile, false);
+	document.addEventListener('dragover', dragOverFiles, false);
+	document.getElementById('drop-target').addEventListener('drop', dropFiles, false);
 
 	// Service worker caches page for offline use
 	if ('serviceWorker' in navigator)
@@ -63,11 +64,7 @@ function mirrorCover(el) {
 		textarea[4].value = textarea[3].value;
 		resizeTextarea(textarea[4]);
 	}
-	// Flash textarea border
-	textarea[4].classList.add('encoded');
-	setTimeout(() => {
-		textarea[4].classList.remove('encoded');
-	}, 200);
+	flashBorder(textarea[4], 'encoded', 200);
 }
 
 // Embed plaintext in cover text
@@ -77,8 +74,8 @@ function embedData() {
 		(v => v ? ' ' + v : '')(textarea[1].value)).replace(encRegex, '');
 	var bytes = new TextEncoder().encode(plainStr);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
-	var encodedStr = bytes.length > 0 ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
-		encodeLength(bytes.length), bytes) : '';
+	var encodedStr = (bytes.length > 0 ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
+		encodeLength(bytes.length), bytes) : '').concat(...encQueue);
 	var coverStr = textarea[3].value.replace(encRegex, '');
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
@@ -128,9 +125,11 @@ function extractData(str) {
 			outputText(data, crcMatch);
 			break;
 		case 0x2:
+			outputFile(data, crcMatch);
+			break;
 		case 0x0:
 		default:
-			console.warn('Only text decoding is supported at this time.');
+			console.warn('Unsupported data type');
 	}
 
 	// Recurse until all messages extracted
@@ -179,27 +178,13 @@ function outputText(bytes, crcMatch) {
 	// 2. Sanitize unsafe HTML characters
 	// 3. Linkify URLs
 	var outputStr = autolinker.link(new TextDecoder().decode(bytes).replace(/[&<>]/g, c => references[c]));
-	var textDiv;
-	if (textarea[6].lastChild.innerHTML) {
-		// Generate pseudo-textarea
-		textDiv = document.createElement('div');
-		textDiv.className = 'text-div';
-		textDiv.onfocus = function () { selectText(this); };
-		textDiv.tabIndex = -1;
-		textarea[6].appendChild(textDiv);
-	}
-	textDiv = textarea[6].lastChild;
+	var textDiv = getTextDiv();
 	// Output text
 	textDiv.innerHTML = outputStr;
-	if (!crcMatch) {
-		// Notify of CRC fail
-		console.error('CRC-32 mismatch');
-		textDiv.classList.add('error');
-		var errorDiv = document.createElement('div');
-		errorDiv.className = 'notify error-div';
-		errorDiv.innerHTML = 'CRC MISMATCH';
-		textarea[6].appendChild(errorDiv);
-	}
+
+	if (!crcMatch)
+		outputError('CRC mismatch');
+
 	if (embeds[0]) {
 		// Generate embed container
 		var embedDiv = document.createElement('div');
@@ -247,11 +232,102 @@ function outputText(bytes, crcMatch) {
 		textarea[6].appendChild(embedDiv);
 	}
 	window.embeds = null;
-	// Flash textarea border
-	textDiv.classList.add('decoded');
-	setTimeout(() => {
-		textDiv.classList.remove('decoded');
-	}, 1000);
+
+	flashBorder(textDiv, 'decoded', 1000);
+}
+
+function outputFile(bytes, crcMatch) {
+	// Slice byte array by null terminators
+	var nullPos = [];
+	for (var i = 0, bLen = bytes.length; i < bLen; i++) {
+		if (!bytes[i]) {
+			nullPos.push(i);
+			if (nullPos.length > 1)
+				break;
+		}
+	}
+	var type = new TextDecoder().decode(bytes.slice(0, nullPos[0]));
+	var name = new TextDecoder().decode(bytes.slice(nullPos[0] + 1, nullPos[1]));
+	var blob = new Blob([bytes.slice(nullPos[1] + 1)], { type });
+
+	var textDiv = getTextDiv();
+	textDiv.textContent = name;
+	var info = document.createElement('p');
+	info.className = 'file-info';
+	info.textContent = type + ', ' + blob.size + ' bytes';
+	textDiv.appendChild(info);
+	var link = document.createElement('a');
+	link.className = 'file-button';
+	link.href = window.URL.createObjectURL(blob);
+	link.download = name;
+	link.textContent = 'Download';
+	textDiv.appendChild(link);
+
+	if (!crcMatch)
+		outputError('CRC mismatch');
+
+	flashBorder(textDiv, 'decoded', 1000);
+}
+
+function getTextDiv() {
+	var textDiv;
+	if (textarea[6].lastChild.innerHTML) {
+		// Generate pseudo-textarea
+		textDiv = document.createElement('div');
+		textDiv.className = 'text-div';
+		textDiv.onfocus = function () { selectText(this); };
+		textDiv.tabIndex = -1;
+		textarea[6].appendChild(textDiv);
+	}
+	textDiv = textarea[6].lastChild;
+	return textDiv;
+}
+
+function dragOverFiles(e) {
+	e.stopPropagation();
+	e.preventDefault();
+	e.dataTransfer.dropEffect = 'copy';
+
+	var dropTarget = document.getElementById('drop-target');
+	dropTarget.style.display = 'block';
+	dropTarget.addEventListener('dragleave', dragLeaveFiles);
+}
+
+function dragLeaveFiles() {
+	var dropTarget = document.getElementById('drop-target');
+	dropTarget.removeEventListener('dragleave', dragLeaveFiles);
+	dropTarget.style.display = 'none';
+}
+
+function dropFiles(e) {
+	e.stopPropagation();
+	e.preventDefault();
+	dragLeaveFiles();
+
+	var files = e.dataTransfer.files;
+	readFiles(files);
+}
+
+function readFiles(files) {
+	for (var i = 0; i < files.length; i++)
+		(file => {
+			var reader = new FileReader();
+			reader.onload = () => {
+				encodeFile(file.type, file.name, new Uint8Array(reader.result));
+			};
+			reader.readAsArrayBuffer(file);
+		})(files[i]);
+}
+
+// Convert file header and byte array to encoding characters and push to output queue
+function encodeFile(type, name, bytes) {
+	var head = new TextEncoder().encode(type + '\0' + name + '\0');
+	var pack = new Uint8Array(head.length + bytes.length);
+	pack.set(head, 0);
+	pack.set(bytes, head.length);
+	// 0x44 0x0 == 'D\u0000' protocol signature and version
+	encQueue.push(encodeBytes(0x44, 0x0, crc32(pack), 0x2, encodeLength(pack.length), pack));
+	console.info('File:', name, type, bytes.length, 'bytes');
 }
 
 // Encode data length as variable length quantity in byte array
@@ -323,22 +399,20 @@ function numToBytes(num, size) {
 	return Uint8Array.from(bytes);
 }
 
-function dragOverFile(e) {
-	e.stopPropagation();
-	e.preventDefault();
-	e.dataTransfer.dropEffect = 'copy';
+function outputError(msg) {
+	console.error(msg);
+	textDiv.classList.add('error');
+	var errorDiv = document.createElement('div');
+	errorDiv.className = 'notify error-div';
+	errorDiv.textContent = msg.toUpperCase();
+	textarea[6].appendChild(errorDiv);
 }
 
-function dropFile(e) {
-	e.stopPropagation();
-	e.preventDefault();
-
-	var file = e.dataTransfer.files[0];
-	var reader = new FileReader();
-	reader.onload = function () {
-		console.log(new Uint8Array(reader.result));
-	};
-	reader.readAsArrayBuffer(file);
+function flashBorder(el, style, ms) {
+	el.classList.add(style);
+	setTimeout(() => {
+		el.classList.remove(style);
+	}, ms);
 }
 
 function selectText(el) {
@@ -350,6 +424,7 @@ function selectText(el) {
 }
 
 function clearOutPlain() {
+	encQueue = [];
 	textarea[2].value = '';
 	resizeTextarea(textarea[2]);
 	textarea[2].focus();

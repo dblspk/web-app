@@ -4,7 +4,7 @@
 	<meta charset='UTF-8'>
 	<title>Doublespeak</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1'>
-	<meta name='description' content='Embeds/extracts messages as zero width Unicode characters in text, as a casual form of steganography. UI is optimized for real time chat.'>
+	<meta name='description' content='Embeds/extracts messages as zero width Unicode characters in text, as a casual form of steganography. Optimized for real time chat.'>
 	<meta name='author' content='Joshua Fan'>
 	<meta name='theme-color' content='#222'>
 	<meta property='og:title' content='Doublespeak'>
@@ -14,7 +14,7 @@
 	<meta name='twitter:card' content='summary'>
 	<meta name='twitter:site' content='@joshuaptfan'>
 	<meta name='twitter:title' content='Doublespeak'>
-	<meta name='twitter:description' content='Embeds/extracts messages as zero width Unicode characters in text, as a casual form of steganography. UI is optimized for real time chat.'>
+	<meta name='twitter:description' content='Embeds/extracts messages as zero width Unicode characters in text, as a casual form of steganography. Optimized for real time chat.'>
 	<meta name='twitter:image' content='https://joshuaptfan.github.io/doublespeak/images/icon-192.png'>
 	<link rel='icon' type='image/icon' href='favicon.ico'>
 	<link rel='icon' sizes='192x192' href='images/icon-192.png'>
@@ -40,6 +40,8 @@
 			<div class='row'>
 				<textarea id='out-prepend' onfocus='this.select()' placeholder='Prepend text' tabindex='-1'></textarea>
 				<textarea id='out-append' onfocus='this.select()' placeholder='Append text' tabindex='-1'></textarea>
+				<input type='file' id='files' multiple='true' onchange='readFiles(this.files)'>
+				<label for='files'>FILES</label>
 			</div>
 		</div>
 		<div class='row'>
@@ -69,19 +71,21 @@
 		<div id='tab-loop'>
 			<button onfocus='textarea[2].select()'></button>
 		</div>
+		<div id='drop-target'></div>
 	</section>
 	<section id='faq'>
 		<h1>What is this?</h1>
-		<p>Doublespeak embeds/extracts messages as zero width Unicode characters in text, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank'>steganography</a>. UI is optimized for real time chat.</p>
+		<p>Doublespeak embeds/extracts messages as zero width Unicode characters in text, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank'>steganography</a>. Optimized for real time chat.</p>
 		<p>TL;DR: It hides secret messages in text.</p>
 		<h1>Usage</h1>
 		<p><strong>Tab</strong> / <strong>Shift+Tab</strong> &mdash; cycle through fields</p>
+		<p>Drag and drop files onto page to encode.</p>
 		<h1>Possible uses</h1>
 		<p>What can be hidden:</p>
 		<ul>
 			<li>Text</li>
 			<li>URLs (similar use to <a href='https://en.wikipedia.org/wiki/QR_code' target=_blank>QR codes</a>)</li>
-			<li>Files (coming soon&trade;)</li>
+			<li>Files</li>
 			<li>Watermarks</li>
 			<li>Pre-shared keys for encryption</li>
 		</ul>

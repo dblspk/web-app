@@ -1,6 +1,6 @@
 # Doublespeak
 
-Embeds/extracts messages as zero width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). UI is optimized for real time chat.
+Embeds/extracts messages as zero width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). Optimized for real time chat.
 
 TL;DR: It hides secret messages in text.
 
@@ -14,8 +14,11 @@ __Tab__ / __Shift+Tab__ &mdash; cycle through fields
 
 Output ciphertext is automatically copied by tabbing to or clicking on the field.
 
+Drag and drop files onto page to encode.
+
 ## Features
 
+* File transmission
 * [CRC-32](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) error checking
 * Multi-message decoding
 * Linkifies URLs, emails, phone numbers, and Twitter hashtags
@@ -28,7 +31,7 @@ What can be hidden:
 
 * Text
 * URLs (similar use to [QR codes](https://en.wikipedia.org/wiki/QR_code))
-* Files (coming soon&trade;)
+* Files
 * Watermarks
 * Pre-shared keys for encryption
 
@@ -85,9 +88,8 @@ Each invisible character represents 4 bits, while taking 3 bytes (24 bits) to st
 
 ## Roadmap
 
-The following features are defined in the [protocol specification](https://docs.google.com/spreadsheets/d/1sx-kw7LFz4f7Qrtmo68lRi8_msIRVGsvGhiQuWppR4A/):
+The following planned features are defined in the [protocol specification](https://docs.google.com/spreadsheets/d/1sx-kw7LFz4f7Qrtmo68lRi8_msIRVGsvGhiQuWppR4A/):
 
-* Encoding and decoding of files
 * Optional built-in encryption for convenience (message can be encrypted before encoding even without this feature)
 
 [To-do list](https://github.com/joshuaptfan/doublespeak/projects/1)
