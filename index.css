@@ -50,8 +50,7 @@ ul {
 }
 
 nav > label,
-nav > a,
-nav > a:visited {
+nav > a {
 	float: right;
 	line-height: 1.4rem;
 	margin-left: 1rem;
@@ -161,33 +160,36 @@ label[for=send-options-button]:hover {
 	margin: 0.5rem auto;
 }
 
-button,
+button {
+	padding: 0;
+	font-family: sans-serif;
+	border: none;
+}
+
+.button,
 label[for=files] {
 	float: right;
 	height: 1.8rem;
 	line-height: 1.8rem;
 	width: 4rem;
-	padding: 0;
-	font-family: sans-serif;
 	font-size: 1rem;
 	font-weight: bold;
 	text-align: center;
 	color: #CCC;
 	background-color: #444;
-	border: none;
 	border-radius: 0.2rem;
 	box-shadow: 0 0 0.2rem black;
 	cursor: pointer;
 }
 
-button:hover,
+.button:hover,
 label[for=files]:hover,
 .embed-img-container.blocked:hover::after {
 	color: white;
 	background-color: #777;
 }
 
-button:active,
+.button:active,
 label[for=files]:active,
 .embed-img-container.blocked:active::after {
 	color: #888;
@@ -217,13 +219,16 @@ textarea {
 }
 
 .text-div {
-	display: inline-block;
 	min-height: 1.8rem;
 	margin-top: 0.5rem;
 	word-wrap: break-word;
 	white-space: pre-wrap;
 	border-style: dashed;
 	cursor: text;
+}
+
+#out-plain ~ .text-div {
+	position: relative;
 }
 
 .embed-div {
@@ -291,7 +296,7 @@ textarea.copied {
 	background-color: #0B0;
 }
 
-.copied-div.copied {
+textarea.copied + .copied-div {
 	visibility: visible;
 }
 
@@ -322,13 +327,8 @@ a {
 	color: #49F;
 }
 
-a:visited {
-	color: #36A;
-}
-
 a:hover {
 	text-decoration: underline;
-	color: #49F;
 }
 
 .file-info {
@@ -338,7 +338,29 @@ a:hover {
 	color: #AAA;
 }
 
-.file-button {
+.file-remove {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 1rem;
+	line-height: 1rem;
+	width: 1rem;
+	font-size: 150%;
+	color: #AAA;
+	background-color: transparent;
+	outline: none;
+	cursor: pointer;
+}
+
+.file-remove:hover {
+	color: #C00;
+}
+
+.file-remove:active {
+	color: #800;
+}
+
+.file-download {
 	display: inline-block;
 	padding: 0.2rem;
 	margin: 0.2rem;
@@ -348,10 +370,14 @@ a:hover {
 	box-shadow: 0 0 0.2rem black;
 }
 
-.file-button:hover {
+.file-download:hover {
 	text-decoration: none;
-	color: white;
 	background-color: #08F;
+}
+
+.file-download:active {
+	color: #AAA;
+	background-color: #04A;
 }
 
 .embed {

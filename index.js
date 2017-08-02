@@ -43,7 +43,6 @@ document.onreadystatechange = function () {
 
 	resizeBody();
 	document.addEventListener('dragover', dragOverFiles, false);
-	document.getElementById('drop-target').addEventListener('drop', dropFiles, false);
 
 	// Service worker caches page for offline use
 	if ('serviceWorker' in navigator)
@@ -114,6 +113,7 @@ function extractData(str) {
 	var dataType = header[4];
 	// Get end position of data field
 	var dataEnd = dataStart + decodeLength(header.slice(5)) * 2;
+	// Get data field
 	var data = decodeBytes(str.slice(dataStart, dataEnd));
 	console.info('Original size:', data.length, 'bytes',
 		'\nEncoded size:', dataEnd * 3, 'bytes,', dataEnd, 'characters');
@@ -182,8 +182,10 @@ function outputText(bytes, crcMatch) {
 	// Output text
 	textDiv.innerHTML = outputStr;
 
-	if (!crcMatch)
+	if (!crcMatch) {
+		textDiv.classList.add('error');
 		outputError('CRC mismatch');
+	}
 
 	if (embeds[0]) {
 		// Generate embed container
@@ -254,17 +256,19 @@ function outputFile(bytes, crcMatch) {
 	textDiv.textContent = name;
 	var info = document.createElement('p');
 	info.className = 'file-info';
-	info.textContent = type + ', ' + blob.size + ' bytes';
+	info.textContent = (type || 'unknown') + ', ' + blob.size + ' bytes';
 	textDiv.appendChild(info);
 	var link = document.createElement('a');
-	link.className = 'file-button';
+	link.className = 'file-download';
 	link.href = window.URL.createObjectURL(blob);
 	link.download = name;
 	link.textContent = 'Download';
 	textDiv.appendChild(link);
 
-	if (!crcMatch)
+	if (!crcMatch) {
+		textDiv.classList.add('error');
 		outputError('CRC mismatch');
+	}
 
 	flashBorder(textDiv, 'decoded', 1000);
 }
@@ -286,11 +290,13 @@ function getTextDiv() {
 function dragOverFiles(e) {
 	e.stopPropagation();
 	e.preventDefault();
-	e.dataTransfer.dropEffect = 'copy';
 
-	var dropTarget = document.getElementById('drop-target');
-	dropTarget.style.display = 'block';
-	dropTarget.addEventListener('dragleave', dragLeaveFiles);
+	if (e.dataTransfer.types[0] === 'Files') {
+		e.dataTransfer.dropEffect = 'copy';
+		var dropTarget = document.getElementById('drop-target');
+		dropTarget.style.display = 'block';
+		dropTarget.addEventListener('dragleave', dragLeaveFiles);
+	}
 }
 
 function dragLeaveFiles() {
@@ -313,21 +319,46 @@ function readFiles(files) {
 		(file => {
 			var reader = new FileReader();
 			reader.onload = () => {
-				encodeFile(file.type, file.name, new Uint8Array(reader.result));
+				encodeFile(new Uint8Array(reader.result), file.type, file.name);
 			};
 			reader.readAsArrayBuffer(file);
 		})(files[i]);
 }
 
 // Convert file header and byte array to encoding characters and push to output queue
-function encodeFile(type, name, bytes) {
+function encodeFile(bytes, type, name) {
 	var head = new TextEncoder().encode(type + '\0' + name + '\0');
 	var pack = new Uint8Array(head.length + bytes.length);
-	pack.set(head, 0);
+	pack.set(head);
 	pack.set(bytes, head.length);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
 	encQueue.push(encodeBytes(0x44, 0x0, crc32(pack), 0x2, encodeLength(pack.length), pack));
-	console.info('File:', name, type, bytes.length, 'bytes');
+	console.info('File:', name + ',', type,
+		'\nOriginal size:', bytes.length, 'bytes',
+		'\nEncoded size:', pack.length * 3, 'bytes');
+
+	var textDiv = document.createElement('div');
+	textDiv.className = 'text-div';
+	textDiv.textContent = name;
+	var info = document.createElement('p');
+	info.className = 'file-info';
+	info.textContent = (type || 'unknown') + ', ' + bytes.length + ' bytes';
+	textDiv.appendChild(info);
+	var remove = document.createElement('button');
+	remove.className = 'file-remove';
+	remove.onclick = function () { removeFile(this); };
+	remove.tabIndex = -1;
+	remove.innerHTML = '&times;';
+	textDiv.appendChild(remove);
+	textarea[2].parentElement.appendChild(textDiv);
+}
+
+function removeFile(el) {
+	var textDiv = el.parentElement;
+	var parent = textDiv.parentElement;
+	var index = Array.prototype.indexOf.call(parent.children, textDiv) - 1;
+	encQueue.splice(index, 1);
+	parent.removeChild(textDiv);
 }
 
 // Encode data length as variable length quantity in byte array
@@ -401,7 +432,6 @@ function numToBytes(num, size) {
 
 function outputError(msg) {
 	console.error(msg);
-	textDiv.classList.add('error');
 	var errorDiv = document.createElement('div');
 	errorDiv.className = 'notify error-div';
 	errorDiv.textContent = msg.toUpperCase();
@@ -425,6 +455,9 @@ function selectText(el) {
 
 function clearOutPlain() {
 	encQueue = [];
+	var outPlainBox = textarea[2].parentElement;
+	while (outPlainBox.childNodes.length > 1)
+		outPlainBox.removeChild(outPlainBox.lastChild);
 	textarea[2].value = '';
 	resizeTextarea(textarea[2]);
 	textarea[2].focus();
@@ -454,12 +487,9 @@ function clearInPlain() {
 }
 
 function notifyCopy() {
-	copied = document.getElementById('out-copied');
 	textarea[4].classList.add('copied');
-	copied.classList.add('copied');
 	setTimeout(() => {
 		textarea[4].classList.remove('copied');
-		copied.classList.remove('copied');
 	}, 800);
 }
 

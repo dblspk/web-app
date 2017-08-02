@@ -40,38 +40,37 @@
 			<div class='row'>
 				<textarea id='out-prepend' onfocus='this.select()' placeholder='Prepend text' tabindex='-1'></textarea>
 				<textarea id='out-append' onfocus='this.select()' placeholder='Append text' tabindex='-1'></textarea>
-				<input type='file' id='files' multiple='true' onchange='readFiles(this.files)'>
+				<input type='file' multiple id='files' onchange='readFiles(this.files)'>
 				<label for='files'>FILES</label>
 			</div>
 		</div>
 		<div class='row'>
-			<textarea id='out-plain' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Type secret message' autofocus></textarea>
-			<button onclick='clearOutPlain()' tabindex='-1'>CLEAR</button>
+			<div style='display: inline-block'><textarea id='out-plain' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Type secret message' autofocus></textarea></div>
+			<button class='button' onclick='clearOutPlain()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>
 			<textarea id='out-cover' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Type cover message'></textarea>
-			<button onclick='clearOut()' tabindex='-1'>CLEAR</button>
+			<button class='button' onclick='clearOut()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>
 			<div style='display: inline-block'>
 				<textarea id='out-cipher' oncopy='notifyCopy()' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
-				<div id='out-copied' class='notify copied-div'>COPIED</div>
+				<div class='notify copied-div'>COPIED</div>
 			</div>
-			<button id='out-copy' onclick='embedData()' tabindex='-1' data-clipboard-target='#out-cipher'>COPY</button>
+			<button class='button' id='out-copy' onclick='embedData()' tabindex='-1'>COPY</button>
 		</div>
 		<h1>RECEIVE</h1>
 		<div class='row'>
 			<textarea id='in-cipher' onpaste='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
-			<button onclick='clearIn()' tabindex='-1'>CLEAR</button>
+			<button class='button' onclick='clearIn()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>
-			<div id='in-plain' style='display: inline-block'><div class='text-div' style='margin-top: 0' onfocus='selectText(this)' tabindex='-1'></div></div>
+			<div id='in-plain'><div class='text-div' style='margin-top: 0' onfocus='selectText(this)' tabindex='-1'></div></div>
 		</div>
 		<div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
 		<div id='tab-loop'>
-			<button onfocus='textarea[2].select()'></button>
+			<button class='button' onfocus='textarea[2].select()'></button>
 		</div>
-		<div id='drop-target'></div>
 	</section>
 	<section id='faq'>
 		<h1>What is this?</h1>
@@ -125,6 +124,7 @@
 		<p>As with any method of communication, security is only as good as the encryption applied. This only provides a casual level
 		of security through obscurity.</p>
 	</section>
+	<div id='drop-target' ondrop='dropFiles(event)' onclick='dragLeaveFiles()'></div>
 	<script type='text/javascript'>
 		try {
 			eval('"use strict"; var test = () => 0');
