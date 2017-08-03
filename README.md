@@ -31,8 +31,8 @@ What can be hidden:
 
 * Text
 * URLs (similar use to [QR codes](https://en.wikipedia.org/wiki/QR_code))
-* Files
 * Watermarks
+* Small files
 
 Possible places for storage:
 

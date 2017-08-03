@@ -17,7 +17,6 @@ var encVals = {
 	'\uFEFF': 0xF  // zero width non-breaking space
 };
 var encChars = Object.keys(encVals);
-var encRegex = /[\u200C\u200D\u2060-\u2064\u206A-\u206F\uFE00\uFE01\uFEFF]{8,}/g;
 var encQueue = [];
 var textarea = [];
 var crcTable = makeCRCTable();
@@ -69,13 +68,13 @@ function mirrorCover(el) {
 // Embed plaintext in cover text
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
-	var plainStr = ((v => v ? v + ' ' : '')(textarea[0].value) + textarea[2].value +
-		(v => v ? ' ' + v : '')(textarea[1].value)).replace(encRegex, '');
+	var plainStr = filterStr((v => v ? v + ' ' : '')(textarea[0].value) +
+		textarea[2].value + (v => v ? ' ' + v : '')(textarea[1].value));
 	var bytes = new TextEncoder().encode(plainStr);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
 	var encodedStr = (bytes.length > 0 ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
 		encodeLength(bytes.length), bytes) : '').concat(...encQueue);
-	var coverStr = textarea[3].value.replace(encRegex, '');
+	var coverStr = filterStr(textarea[3].value);
 	// Select random position in cover text to insert encoded text
 	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
@@ -90,35 +89,35 @@ function initExtractData() {
 	textarea[5].maxLength = 0x7FFFFFFF;
 	clearInPlain();
 	setTimeout(() => {
-		// Discard cover text
-		extractData((m => m && m.join(''))(textarea[5].value.match(encRegex)));
+		extractData(decodeBytes(textarea[5].value));
 	}, 0);
 }
 
-function extractData(str) {
+function extractData(bytes) {
 	// Check protocol signature and version
-	if (!str || str.slice(0, 4) !== '\u2062\u2062\u200C\u200C') {
+	if (!bytes.length || (bytes[0] != 0x44 && bytes[1] != 0x0)) {
 		textarea[6].lastChild.classList.add('error');
-		outputError(!str ? 'No message detected' : 'Protocol mismatch');
-		if (str)
-			console.error('Data:', new TextDecoder().decode(decodeBytes(str)));
+		if (!bytes.length)
+			outputError('No message detected');
+		else
+			outputError('Protocol mismatch', '\nData: ' + new TextDecoder().decode(bytes));
 		return;
 	}
-	// Get length of variable length quantity data length field by checking
-	// the first bit of each byte from VLQ start position in its encoded form
+	// Get length of variable length quantity data length field
+	// by checking the first bit of each byte from VLQ start position
 	var VLQLen = 0;
-	while (encVals[str[12 + ++VLQLen * 2]] > 7) {}
+	while (bytes[6 + ++VLQLen] & 0x80) {}
 	// Get start position of data field
-	var dataStart = 14 + VLQLen * 2;
-	var header = decodeBytes(str.slice(4, dataStart));
+	var dataStart = 7 + VLQLen;
+	var header = bytes.slice(2, dataStart);
 	// Get data type field
 	var dataType = header[4];
 	// Get end position of data field
-	var dataEnd = dataStart + decodeLength(header.slice(5)) * 2;
+	var dataEnd = dataStart + decodeLength(header.slice(5));
 	// Get data field
-	var data = decodeBytes(str.slice(dataStart, dataEnd));
+	var data = bytes.slice(dataStart, dataEnd);
 	console.info('Original size:', data.length, 'bytes',
-		'\nEncoded size:', dataEnd * 3, 'bytes,', dataEnd, 'characters');
+		'\nEncoded size:', dataEnd * 6, 'bytes,', dataEnd * 2, 'characters');
 	// Check CRC-32
 	var crcMatch = crc32(data).every((v, i) => v === header[i]);
 
@@ -135,8 +134,8 @@ function extractData(str) {
 	}
 
 	// Recurse until all messages extracted
-	if (str.length > dataEnd)
-		extractData(str.slice(dataEnd));
+	if (bytes.length > dataEnd)
+		extractData(bytes.slice(dataEnd));
 }
 
 var autolinker = new Autolinker({
@@ -254,6 +253,7 @@ function outputFile(bytes, crcMatch) {
 	var name = new TextDecoder().decode(bytes.slice(nullPos[0] + 1, nullPos[1]));
 	var blob = new Blob([bytes.slice(nullPos[1] + 1)], { type });
 
+	// Generate file details UI
 	var textDiv = getTextDiv();
 	textDiv.textContent = name;
 	var info = document.createElement('p');
@@ -335,10 +335,11 @@ function encodeFile(bytes, type, name) {
 	pack.set(bytes, head.length);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
 	encQueue.push(encodeBytes(0x44, 0x0, crc32(pack), 0x2, encodeLength(pack.length), pack));
-	console.info('File:', name + ',', type,
+	console.info('File:', name + ',', (type || 'unknown'),
 		'\nOriginal size:', bytes.length, 'bytes',
 		'\nEncoded size:', pack.length * 3, 'bytes');
 
+	// Generate file details UI
 	var textDiv = document.createElement('div');
 	textDiv.className = 'text-div';
 	textDiv.textContent = name;
@@ -383,8 +384,8 @@ function decodeLength(bytes) {
 
 // Convert byte arrays to encoding characters
 function encodeBytes(...args) {
-	var out = '';
 	var encChars = window.encChars;
+	var out = '';
 	for (var i = 0; i < args.length; i++) {
 		if (!(args[i] instanceof Uint8Array))
 			args[i] = Uint8Array.of(args[i]);
@@ -394,13 +395,39 @@ function encodeBytes(...args) {
 	return out;
 }
 
-// Convert encoding characters to byte array
+// Convert encoding characters in string to byte array
 function decodeBytes(str) {
-	var bytes = [];
 	var encVals = window.encVals;
-	for (var i = 0, sLen = str.length; i < sLen; i += 2)
-		bytes.push(encVals[str[i]] << 4 | encVals[str[i + 1]]);
+	// Collect encoding characters and translate to half-bytes
+	var nybles = [];
+	for (var i = 0, sLen = str.length; i < sLen;) {
+		var val = encVals[str[i++]];
+		if (val !== undefined) {
+			var stream = [];
+			do {
+				stream.push(val);
+				val = encVals[str[i++]];
+			} while (val !== undefined);
+			// Ignore short sequences of encoding characters
+			if (stream.length >= 8)
+				nybles = nybles.concat(stream);
+		}
+	}
+	// Convert half-bytes to bytes
+	var bytes = [];
+	for (i = 0, nLen = nybles.length; i < nLen; i += 2)
+		bytes.push(nybles[i] << 4 | nybles[i + 1]);
 	return Uint8Array.from(bytes);
+}
+
+// Filter encoding characters out of string
+function filterStr(str) {
+	var encVals = window.encVals;
+	var out = '';
+	for (var i = 0, sLen = str.length; i < sLen; i++)
+		if (encVals[str[i]] === undefined)
+			out += str[i];
+	return out;
 }
 
 function makeCRCTable() {
@@ -432,8 +459,8 @@ function numToBytes(num, size) {
 	return Uint8Array.from(bytes);
 }
 
-function outputError(msg) {
-	console.error(msg);
+function outputError(msg, details) {
+	console.error(msg, details || '');
 	var errorDiv = document.createElement('div');
 	errorDiv.className = 'notify error-div';
 	errorDiv.textContent = msg.toUpperCase();
