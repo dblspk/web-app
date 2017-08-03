@@ -98,7 +98,7 @@ function initExtractData() {
 function extractData(str) {
 	// Check protocol signature and version
 	if (!str || str.slice(0, 4) !== '\u2062\u2062\u200C\u200C') {
-		textarea[6].firstChild.classList.add('error');
+		textarea[6].lastChild.classList.add('error');
 		outputError(!str ? 'No message detected' : 'Protocol mismatch');
 		if (str)
 			console.error('Data:', new TextDecoder().decode(decodeBytes(str)));
@@ -293,7 +293,7 @@ function dragOverFiles(e) {
 	e.stopPropagation();
 	e.preventDefault();
 
-	if (e.dataTransfer.types[0] === 'Files') {
+	if ((a => a[a.length - 1])(e.dataTransfer.types) === 'Files') {
 		e.dataTransfer.dropEffect = 'copy';
 		var dropTarget = document.getElementById('drop-target');
 		dropTarget.style.display = 'block';
