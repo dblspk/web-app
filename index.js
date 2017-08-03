@@ -291,10 +291,10 @@ function getTextDiv() {
 
 function dragOverFiles(e) {
 	e.stopPropagation();
-	e.preventDefault();
+	e.dataTransfer.dropEffect = 'copy';
 
 	if ((a => a[a.length - 1])(e.dataTransfer.types) === 'Files') {
-		e.dataTransfer.dropEffect = 'copy';
+		e.preventDefault();
 		var dropTarget = document.getElementById('drop-target');
 		dropTarget.style.display = 'block';
 		dropTarget.addEventListener('dragleave', dragLeaveFiles);

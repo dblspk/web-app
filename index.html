@@ -61,7 +61,7 @@
 		</div>
 		<h1>RECEIVE</h1>
 		<div class='row'>
-			<textarea id='in-cipher' onpaste='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
+			<textarea id='in-cipher' onpaste='initExtractData()' ondrop='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
 			<button class='button' onclick='clearIn()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>
@@ -86,7 +86,6 @@
 			<li>URLs (similar use to <a href='https://en.wikipedia.org/wiki/QR_code' target=_blank>QR codes</a>)</li>
 			<li>Files</li>
 			<li>Watermarks</li>
-			<li>Pre-shared keys for encryption</li>
 		</ul>
 		<p>Possible places for storage:</p>
 		<ul>

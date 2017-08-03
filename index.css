@@ -229,6 +229,7 @@ textarea {
 
 #out-plain ~ .text-div {
 	position: relative;
+	padding-right: 1rem;
 }
 
 .embed-div {
@@ -342,7 +343,6 @@ a:hover {
 	position: absolute;
 	top: 0;
 	right: 0;
-	height: 1rem;
 	line-height: 1rem;
 	width: 1rem;
 	font-size: 150%;

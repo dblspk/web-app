@@ -33,7 +33,6 @@ What can be hidden:
 * URLs (similar use to [QR codes](https://en.wikipedia.org/wiki/QR_code))
 * Files
 * Watermarks
-* Pre-shared keys for encryption
 
 Possible places for storage:
 
