@@ -1,4 +1,4 @@
-var encVals = {
+var encVals = Object.freeze({
 	'\u200C': 0x0, // zero width non-joiner
 	'\u200D': 0x1, // zero width joiner
 	'\u2060': 0x2, // word joiner
@@ -15,20 +15,20 @@ var encVals = {
 	'\uFE00': 0xD, // variation selector-1
 	'\uFE01': 0xE, // variation selector-2
 	'\uFEFF': 0xF  // zero width non-breaking space
-};
-var encChars = Object.keys(encVals);
+});
+var encChars = Object.freeze(Object.keys(encVals));
 var encQueue = [];
 var textarea = [];
-var crcTable = makeCRCTable();
+var crcTable = Object.freeze(makeCRCTable());
 
 document.onreadystatechange = function () {
 	if (!window.TextEncoder) {
-		var script = document.createElement('script');
+		const script = document.createElement('script');
 		script.src = 'polyfills/text-encoding.js';
 		document.head.appendChild(script);
 	}
 
-	var textareas = [
+	const textareas = [
 		'out-prepend',
 		'out-append',
 		'out-plain',
@@ -68,15 +68,15 @@ function mirrorCover(el) {
 // Embed plaintext in cover text
 function embedData() {
 	// Filter out ciphertext to prevent double encoding
-	var plainStr = filterStr((v => v ? v + ' ' : '')(textarea[0].value) +
+	const plainStr = filterStr((v => v ? v + ' ' : '')(textarea[0].value) +
 		textarea[2].value + (v => v ? ' ' + v : '')(textarea[1].value));
-	var bytes = new TextEncoder().encode(plainStr);
+	const bytes = new TextEncoder().encode(plainStr);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
-	var encodedStr = (bytes.length > 0 ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
+	const encodedStr = (bytes.length > 0 ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
 		encodeLength(bytes.length), bytes) : '').concat(...encQueue);
-	var coverStr = filterStr(textarea[3].value);
+	const coverStr = filterStr(textarea[3].value);
 	// Select random position in cover text to insert encoded text
-	var insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
+	const insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
 	textarea[4].select();
 	document.execCommand('copy');
@@ -105,21 +105,21 @@ function extractData(bytes) {
 	}
 	// Get length of variable length quantity data length field
 	// by checking the first bit of each byte from VLQ start position
-	var VLQLen = 0;
+	let VLQLen = 0;
 	while (bytes[6 + ++VLQLen] & 0x80) {}
 	// Get start position of data field
-	var dataStart = 7 + VLQLen;
-	var header = bytes.slice(2, dataStart);
+	const dataStart = 7 + VLQLen;
+	const header = bytes.slice(2, dataStart);
 	// Get data type field
-	var dataType = header[4];
+	const dataType = header[4];
 	// Get end position of data field
-	var dataEnd = dataStart + decodeLength(header.slice(5));
+	const dataEnd = dataStart + decodeLength(header.slice(5));
 	// Get data field
-	var data = bytes.slice(dataStart, dataEnd);
+	const data = bytes.slice(dataStart, dataEnd);
 	console.info('Original size:', data.length, 'bytes',
 		'\nEncoded size:', dataEnd * 6, 'bytes,', dataEnd * 2, 'characters');
 	// Check CRC-32
-	var crcMatch = crc32(data).every((v, i) => v === header[i]);
+	const crcMatch = crc32(data).every((v, i) => v === header[i]);
 
 	switch (dataType) {
 		case 0x1:
@@ -138,15 +138,15 @@ function extractData(bytes) {
 		extractData(bytes.slice(dataEnd));
 }
 
-var autolinker = new Autolinker({
+const autolinker = new Autolinker({
 	stripPrefix: false,
 	stripTrailingSlash: false,
 	hashtag: 'twitter',
 	replaceFn: function (match) {
 		if (match.getType() === 'url') {
 			// Collect embeddable URLs
-			var url = match.getUrl();
-			var ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
+			const url = match.getUrl();
+			const ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
 			if (ext) {
 				if (/^(jpe?g|gif|png|bmp|svg)$/i.test(ext))
 					embeds.push({ type: 'image', url });
@@ -156,10 +156,10 @@ var autolinker = new Autolinker({
 					embeds.push({ type: 'audio', url });
 			} else {
 				// Extract ID and timestamp components
-				var youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
+				const youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
 				if (youtube)
 					embeds.push({ type: 'youtube', id: youtube[1], h: youtube[3] || 0, m: youtube[4] || 0, s: youtube[5] || youtube[2] || 0 });
-				var vimeo = /vimeo\.com\/(?:video\/)?(\d+)/.exec(url);
+				const vimeo = /vimeo\.com\/(?:video\/)?(\d+)/.exec(url);
 				if (vimeo)
 					embeds.push({ type: 'vimeo', id: vimeo[1] });
 			}
@@ -170,18 +170,16 @@ var autolinker = new Autolinker({
 
 function outputText(bytes, crcMatch) {
 	window.embeds = [];
-	var references = {
+	const references = {
 		'&': '&amp;',
 		'<': '&lt;',
 		'>': '&gt;'
 	};
+	const textDiv = getTextDiv();
 	// 1. Decode byte array to UTF-8
 	// 2. Sanitize unsafe HTML characters
 	// 3. Linkify URLs
-	var outputStr = autolinker.link(new TextDecoder().decode(bytes).replace(/[&<>]/g, c => references[c]));
-	var textDiv = getTextDiv();
-	// Output text
-	textDiv.innerHTML = outputStr;
+	textDiv.innerHTML = autolinker.link(new TextDecoder().decode(bytes).replace(/[&<>]/g, c => references[c]));;
 
 	if (!crcMatch) {
 		textDiv.classList.add('error');
@@ -190,15 +188,15 @@ function outputText(bytes, crcMatch) {
 
 	if (embeds[0]) {
 		// Generate embed container
-		var embedDiv = document.createElement('div');
+		const embedDiv = document.createElement('div');
 		embedDiv.className = 'embed-div';
 		// Embed media
 		for (var i = 0; i < embeds.length; i++) {
 			switch (embeds[i].type) {
 				case 'image':
-					var div = document.createElement('div');
+					const div = document.createElement('div');
 					div.className = 'embed-img-container blocked';
-					var img = document.createElement('img');
+					const img = document.createElement('img');
 					img.className = 'embed';
 					img.onerror = function () { this.style.display = 'none'; };
 					img.onload = function () { checkZoomable(this); };
@@ -209,7 +207,7 @@ function outputText(bytes, crcMatch) {
 					break;
 				case 'video':
 				case 'audio':
-					var media = document.createElement(embeds[i].type);
+					const media = document.createElement(embeds[i].type);
 					media.className = 'embed';
 					media.src = embeds[i].url.replace(/gifv$/i, 'mp4');
 					media.loop = /gifv$/i.test(embeds[i].url) && true;
@@ -220,7 +218,7 @@ function outputText(bytes, crcMatch) {
 					break;
 				case 'youtube':
 				case 'vimeo':
-					var iframe = document.createElement('iframe');
+					const iframe = document.createElement('iframe');
 					iframe.className = 'embed';
 					if (embeds[i].type === 'youtube')
 						iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id +
@@ -241,7 +239,7 @@ function outputText(bytes, crcMatch) {
 
 function outputFile(bytes, crcMatch) {
 	// Slice byte array by null terminators
-	var nullPos = [];
+	let nullPos = [];
 	for (var i = 0, bLen = bytes.length; i < bLen; i++) {
 		if (!bytes[i]) {
 			nullPos.push(i);
@@ -249,18 +247,18 @@ function outputFile(bytes, crcMatch) {
 				break;
 		}
 	}
-	var type = new TextDecoder().decode(bytes.slice(0, nullPos[0]));
-	var name = new TextDecoder().decode(bytes.slice(nullPos[0] + 1, nullPos[1]));
-	var blob = new Blob([bytes.slice(nullPos[1] + 1)], { type });
+	const type = new TextDecoder().decode(bytes.slice(0, nullPos[0]));
+	const name = new TextDecoder().decode(bytes.slice(nullPos[0] + 1, nullPos[1]));
+	const blob = new Blob([bytes.slice(nullPos[1] + 1)], { type });
 
 	// Generate file details UI
-	var textDiv = getTextDiv();
+	const textDiv = getTextDiv();
 	textDiv.textContent = name;
-	var info = document.createElement('p');
+	const info = document.createElement('p');
 	info.className = 'file-info';
 	info.textContent = (type || 'unknown') + ', ' + blob.size + ' bytes';
 	textDiv.appendChild(info);
-	var link = document.createElement('a');
+	const link = document.createElement('a');
 	link.className = 'file-download';
 	link.href = window.URL.createObjectURL(blob);
 	link.download = name;
@@ -276,7 +274,7 @@ function outputFile(bytes, crcMatch) {
 }
 
 function getTextDiv() {
-	var textDiv;
+	let textDiv;
 	if (textarea[6].lastChild.innerHTML) {
 		// Generate pseudo-textarea
 		textDiv = document.createElement('div');
@@ -295,14 +293,14 @@ function dragOverFiles(e) {
 
 	if ((a => a[a.length - 1])(e.dataTransfer.types) === 'Files') {
 		e.preventDefault();
-		var dropTarget = document.getElementById('drop-target');
+		const dropTarget = document.getElementById('drop-target');
 		dropTarget.style.display = 'block';
 		dropTarget.addEventListener('dragleave', dragLeaveFiles);
 	}
 }
 
 function dragLeaveFiles() {
-	var dropTarget = document.getElementById('drop-target');
+	const dropTarget = document.getElementById('drop-target');
 	dropTarget.removeEventListener('dragleave', dragLeaveFiles);
 	dropTarget.style.display = 'none';
 }
@@ -312,14 +310,14 @@ function dropFiles(e) {
 	e.preventDefault();
 	dragLeaveFiles();
 
-	var files = e.dataTransfer.files;
+	const files = e.dataTransfer.files;
 	readFiles(files);
 }
 
 function readFiles(files) {
 	for (var i = 0; i < files.length; i++)
 		(file => {
-			var reader = new FileReader();
+			const reader = new FileReader();
 			reader.onload = () => {
 				encodeFile(new Uint8Array(reader.result), file.type, file.name);
 			};
@@ -329,8 +327,8 @@ function readFiles(files) {
 
 // Convert file header and byte array to encoding characters and push to output queue
 function encodeFile(bytes, type, name) {
-	var head = new TextEncoder().encode(type + '\0' + name + '\0');
-	var pack = new Uint8Array(head.length + bytes.length);
+	const head = new TextEncoder().encode(type + '\0' + name + '\0');
+	let pack = new Uint8Array(head.length + bytes.length);
 	pack.set(head);
 	pack.set(bytes, head.length);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
@@ -340,14 +338,14 @@ function encodeFile(bytes, type, name) {
 		'\nEncoded size:', pack.length * 3, 'bytes');
 
 	// Generate file details UI
-	var textDiv = document.createElement('div');
+	const textDiv = document.createElement('div');
 	textDiv.className = 'text-div';
 	textDiv.textContent = name;
-	var info = document.createElement('p');
+	const info = document.createElement('p');
 	info.className = 'file-info';
 	info.textContent = (type || 'unknown') + ', ' + bytes.length + ' bytes';
 	textDiv.appendChild(info);
-	var remove = document.createElement('button');
+	const remove = document.createElement('button');
 	remove.className = 'file-remove';
 	remove.onclick = function () { removeFile(this); };
 	remove.tabIndex = -1;
@@ -357,16 +355,16 @@ function encodeFile(bytes, type, name) {
 }
 
 function removeFile(el) {
-	var textDiv = el.parentElement;
-	var parent = textDiv.parentElement;
-	var index = Array.prototype.indexOf.call(parent.children, textDiv) - 1;
+	const textDiv = el.parentElement;
+	const parent = textDiv.parentElement;
+	const index = Array.prototype.indexOf.call(parent.children, textDiv) - 1;
 	encQueue.splice(index, 1);
 	parent.removeChild(textDiv);
 }
 
 // Encode data length as variable length quantity in byte array
 function encodeLength(n) {
-	var bytes = [n & 0x7F];
+	let bytes = [n & 0x7F];
 	while (n > 127) {
 		n >>= 7;
 		bytes.unshift(n & 0x7F | 0x80);
@@ -376,7 +374,7 @@ function encodeLength(n) {
 
 // Decode VLQ to integer
 function decodeLength(bytes) {
-	var len = 0;
+	let len = 0;
 	for (var i = 0; i < bytes.length; i++)
 		len = len << 7 | bytes[i] & 0x7F;
 	return len;
@@ -384,8 +382,8 @@ function decodeLength(bytes) {
 
 // Convert byte arrays to encoding characters
 function encodeBytes(...args) {
-	var encChars = window.encChars;
-	var out = '';
+	const encChars = window.encChars;
+	let out = '';
 	for (var i = 0; i < args.length; i++) {
 		if (!(args[i] instanceof Uint8Array))
 			args[i] = Uint8Array.of(args[i]);
@@ -397,24 +395,24 @@ function encodeBytes(...args) {
 
 // Convert encoding characters in string to byte array
 function decodeBytes(str) {
-	var encVals = window.encVals;
+	const encVals = window.encVals;
 	// Collect encoding characters and translate to half-bytes
-	var nybles = [];
+	let nybles = [];
 	for (var i = 0, sLen = str.length; i < sLen;) {
 		var val = encVals[str[i++]];
 		if (val !== undefined) {
-			var stream = [];
+			var seq = [];
 			do {
-				stream.push(val);
+				seq.push(val);
 				val = encVals[str[i++]];
 			} while (val !== undefined);
 			// Ignore short sequences of encoding characters
-			if (stream.length >= 8)
-				nybles = nybles.concat(stream);
+			if (seq.length >= 8)
+				nybles = nybles.concat(seq);
 		}
 	}
 	// Convert half-bytes to bytes
-	var bytes = [];
+	let bytes = [];
 	for (i = 0, nLen = nybles.length; i < nLen; i += 2)
 		bytes.push(nybles[i] << 4 | nybles[i + 1]);
 	return Uint8Array.from(bytes);
@@ -422,8 +420,8 @@ function decodeBytes(str) {
 
 // Filter encoding characters out of string
 function filterStr(str) {
-	var encVals = window.encVals;
-	var out = '';
+	const encVals = window.encVals;
+	let out = '';
 	for (var i = 0, sLen = str.length; i < sLen; i++)
 		if (encVals[str[i]] === undefined)
 			out += str[i];
@@ -431,8 +429,8 @@ function filterStr(str) {
 }
 
 function makeCRCTable() {
-	var c;
-	var crcTable = [];
+	let crcTable = [];
+	let c;
 	for (var n = 0; n < 256; n++) {
 		c = n;
 		for (var k = 0; k < 8; k++)
@@ -443,8 +441,8 @@ function makeCRCTable() {
 }
 
 function crc32(bytes) {
-	var crcTable = window.crcTable;
-	var crc = -1;
+	const crcTable = window.crcTable;
+	let crc = -1;
 	for (var i = 0, bLen = bytes.length; i < bLen; i++)
 		crc = (crc >>> 8) ^ crcTable[(crc ^ bytes[i]) & 0xFF];
 	crc = (crc ^ -1) >>> 0;
@@ -453,7 +451,7 @@ function crc32(bytes) {
 }
 
 function numToBytes(num, size) {
-	var bytes = [];
+	let bytes = [];
 	for (var i = (size - 1) * 8; i >= 0; i -= 8)
 		bytes.push(num >> i & 0xFF);
 	return Uint8Array.from(bytes);
@@ -461,7 +459,7 @@ function numToBytes(num, size) {
 
 function outputError(msg, details) {
 	console.error(msg, details || '');
-	var errorDiv = document.createElement('div');
+	const errorDiv = document.createElement('div');
 	errorDiv.className = 'notify error-div';
 	errorDiv.textContent = msg.toUpperCase();
 	textarea[6].appendChild(errorDiv);
@@ -475,8 +473,8 @@ function flashBorder(el, style, ms) {
 }
 
 function selectText(el) {
-	var range = document.createRange();
-	var selection = window.getSelection();
+	const range = document.createRange();
+	const selection = window.getSelection();
 	range.selectNodeContents(el);
 	selection.removeAllRanges();
 	selection.addRange(range);
@@ -484,9 +482,9 @@ function selectText(el) {
 
 function clearOutPlain() {
 	encQueue = [];
-	var outPlainBox = textarea[2].parentElement;
-	while (outPlainBox.childNodes.length > 1)
-		outPlainBox.removeChild(outPlainBox.lastChild);
+	const outPlainParent = textarea[2].parentElement;
+	while (outPlainParent.childNodes.length > 1)
+		outPlainParent.removeChild(outPlainParent.lastChild);
 	textarea[2].value = '';
 	resizeTextarea(textarea[2]);
 	textarea[2].focus();
@@ -508,7 +506,7 @@ function clearIn() {
 }
 
 function clearInPlain() {
-	var inPlain = textarea[6];
+	const inPlain = textarea[6];
 	inPlain.firstChild.innerHTML = '';
 	inPlain.firstChild.className = 'text-div';
 	while (inPlain.childNodes.length > 1)
@@ -523,18 +521,18 @@ function notifyCopy() {
 }
 
 function clickImage(el) {
-	var parent = el.parentElement;
+	const parent = el.parentElement;
 	if (parent.classList.contains('blocked'))
 		parent.classList.remove('blocked');
 	else if (el.classList.contains('zoomable')) {
-		var fontSize = parseFloat(document.documentElement.style.fontSize);
+		const fontSize = parseFloat(document.documentElement.style.fontSize);
 		// Clone clicked image at same position
-		var zoom = el.cloneNode();
+		const zoom = el.cloneNode();
 		zoom.id = 'zoom';
 		zoom.style.top = el.height * 0.5 + fontSize * 0.1 + parent.offsetTop + parent.offsetParent.offsetTop - document.body.scrollTop + 'px';
 		zoom.style.left = el.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + 'px';
 		zoom.onclick = function () { unzoomImage(); };
-		var bg = document.createElement('div');
+		const bg = document.createElement('div');
 		bg.id = 'background';
 		bg.className = 'fade-in';
 		bg.onclick = function () { unzoomImage(); };
@@ -550,15 +548,15 @@ function clickImage(el) {
 }
 
 function unzoomImage() {
-	var fontSize = parseFloat(document.documentElement.style.fontSize);
-	var parent = zoomedImage.parentElement;
-	var zoom = document.getElementById('zoom');
+	const fontSize = parseFloat(document.documentElement.style.fontSize);
+	const parent = zoomedImage.parentElement;
+	const zoom = document.getElementById('zoom');
 	// Unzoom image
 	zoom.style.top = zoomedImage.height * 0.5 + fontSize * 0.1 + parent.offsetTop + parent.offsetParent.offsetTop - document.body.scrollTop + 'px';
 	zoom.style.left = zoomedImage.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + 'px';
 	zoom.style.width = zoomedImage.width + 'px';
 	window.zoomedImage = null;
-	var bg = document.getElementById('background');
+	const bg = document.getElementById('background');
 	bg.style.animationDirection = 'reverse';
 	bg.className = '';
 	// Force element reflow to restart animation
@@ -572,13 +570,13 @@ function unzoomImage() {
 }
 
 function checkZoomable(el) {
-	var embedWidth = textarea[6].scrollWidth;
+	const embedWidth = textarea[6].scrollWidth;
 	if (el) {
 		if (el.naturalWidth > embedWidth)
 			el.classList.add('zoomable');
 		return;
 	}
-	var images = textarea[6].getElementsByTagName('img');
+	const images = textarea[6].getElementsByTagName('img');
 	for (var i = 0; i < images.length; i++) {
 		if (images[i].naturalWidth > embedWidth)
 			images[i].classList.add('zoomable');
@@ -588,7 +586,7 @@ function checkZoomable(el) {
 }
 
 function clickNav(el) {
-	var labels = document.getElementsByTagName('label');
+	const labels = document.getElementsByTagName('label');
 	for (var i = 0; i < 2; i++)
 		labels[i].classList.remove('selected');
 	el.classList.add('selected');
@@ -609,7 +607,7 @@ function resizeBody() {
 
 // Scale textarea according to font size
 function resizeTextarea(el) {
-	var fontSize = parseFloat(document.documentElement.style.fontSize);
+	const fontSize = parseFloat(document.documentElement.style.fontSize);
 	el.style.height = '';
 	el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
 }
