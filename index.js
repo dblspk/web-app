@@ -179,7 +179,7 @@ function outputText(bytes, crcMatch) {
 	// 1. Decode byte array to UTF-8
 	// 2. Sanitize unsafe HTML characters
 	// 3. Linkify URLs
-	textDiv.innerHTML = autolinker.link(new TextDecoder().decode(bytes).replace(/[&<>]/g, c => references[c]));;
+	textDiv.innerHTML = autolinker.link(new TextDecoder().decode(bytes).replace(/[&<>]/g, c => references[c]));
 
 	if (!crcMatch) {
 		textDiv.classList.add('error');
@@ -341,16 +341,16 @@ function encodeFile(bytes, type, name) {
 	const textDiv = document.createElement('div');
 	textDiv.className = 'text-div';
 	textDiv.textContent = name;
-	const info = document.createElement('p');
-	info.className = 'file-info';
-	info.textContent = (type || 'unknown') + ', ' + bytes.length + ' bytes';
-	textDiv.appendChild(info);
 	const remove = document.createElement('button');
 	remove.className = 'file-remove';
 	remove.onclick = function () { removeFile(this); };
 	remove.tabIndex = -1;
 	remove.innerHTML = '&times;';
 	textDiv.appendChild(remove);
+	const info = document.createElement('p');
+	info.className = 'file-info';
+	info.textContent = (type || 'unknown') + ', ' + bytes.length + ' bytes';
+	textDiv.appendChild(info);
 	textarea[2].parentElement.appendChild(textDiv);
 }
 
@@ -407,13 +407,13 @@ function decodeBytes(str) {
 				val = encVals[str[i++]];
 			} while (val !== undefined);
 			// Ignore short sequences of encoding characters
-			if (seq.length >= 8)
+			if (seq.length >= 16)
 				nybles = nybles.concat(seq);
 		}
 	}
 	// Convert half-bytes to bytes
 	let bytes = [];
-	for (i = 0, nLen = nybles.length; i < nLen; i += 2)
+	for (var i = 0, nLen = nybles.length; i < nLen; i += 2)
 		bytes.push(nybles[i] << 4 | nybles[i + 1]);
 	return Uint8Array.from(bytes);
 }
@@ -447,13 +447,9 @@ function crc32(bytes) {
 		crc = (crc >>> 8) ^ crcTable[(crc ^ bytes[i]) & 0xFF];
 	crc = (crc ^ -1) >>> 0;
 	console.info('CRC-32: 0x' + ('0000000' + crc.toString(16)).slice(-8));
-	return numToBytes(crc, 4);
-}
-
-function numToBytes(num, size) {
-	let bytes = [];
-	for (var i = (size - 1) * 8; i >= 0; i -= 8)
-		bytes.push(num >> i & 0xFF);
+	bytes = [];
+	for (i = 24; i >= 0; i -= 8)
+		bytes.push(crc >> i & 0xFF);
 	return Uint8Array.from(bytes);
 }
 
@@ -511,13 +507,6 @@ function clearInPlain() {
 	inPlain.firstChild.className = 'text-div';
 	while (inPlain.childNodes.length > 1)
 		inPlain.removeChild(inPlain.lastChild);
-}
-
-function notifyCopy() {
-	textarea[4].classList.add('copied');
-	setTimeout(() => {
-		textarea[4].classList.remove('copied');
-	}, 800);
 }
 
 function clickImage(el) {

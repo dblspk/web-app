@@ -1,6 +1,6 @@
 # Doublespeak
 
-Embeds/extracts messages as zero width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). Optimized for real time chat.
+Encodes/decodes messages as zero width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). Optimized for real time chat.
 
 TL;DR: It hides secret messages in text.
 
@@ -100,7 +100,7 @@ To suggest a feature, please [create an issue](https://github.com/joshuaptfan/do
 ### Pros
 
 * Produces no visible alteration in the text.
-* Can store a near-unlimited amount of data regardless of length of the cover text.
+* Can theoretically store a near-unlimited amount of data regardless of length of the cover text.
 * Can be used with applications that do not support file transfers.
 * Reduces suspicion by not requiring the frequent transfer of large files during communication.
 

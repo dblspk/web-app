@@ -4,7 +4,7 @@
 	<meta charset='UTF-8'>
 	<title>Doublespeak</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1'>
-	<meta name='description' content='Embeds/extracts messages as zero width Unicode characters in text, as a casual form of steganography. Optimized for real time chat.'>
+	<meta name='description' content='Encodes/decodes messages as zero width Unicode characters in text, as a casual form of steganography. Optimized for real time chat.'>
 	<meta name='author' content='Joshua Fan'>
 	<meta name='theme-color' content='#222'>
 	<meta property='og:title' content='Doublespeak'>
@@ -14,7 +14,7 @@
 	<meta name='twitter:card' content='summary'>
 	<meta name='twitter:site' content='@joshuaptfan'>
 	<meta name='twitter:title' content='Doublespeak'>
-	<meta name='twitter:description' content='Embeds/extracts messages as zero width Unicode characters in text, as a casual form of steganography. Optimized for real time chat.'>
+	<meta name='twitter:description' content='Encodes/decodes messages as zero width Unicode characters in text, as a casual form of steganography. Optimized for real time chat.'>
 	<meta name='twitter:image' content='https://joshuaptfan.github.io/doublespeak/images/icon-192.png'>
 	<link rel='icon' type='image/icon' href='favicon.ico'>
 	<link rel='icon' sizes='192x192' href='images/icon-192.png'>
@@ -54,7 +54,7 @@
 		</div>
 		<div class='row'>
 			<div style='display: inline-block'>
-				<textarea id='out-cipher' oncopy='notifyCopy()' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+				<textarea id='out-cipher' oncopy='flashBorder(this, "copied", 800)' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div class='notify copied-div'>COPIED</div>
 			</div>
 			<button class='button' id='out-copy' onclick='embedData()' tabindex='-1'>COPY</button>
@@ -74,7 +74,7 @@
 	</section>
 	<section id='faq'>
 		<h1>What is this?</h1>
-		<p>Doublespeak embeds/extracts messages as zero width Unicode characters in text, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank'>steganography</a>. Optimized for real time chat.</p>
+		<p>Doublespeak encodes/decodes messages as zero width Unicode characters in text, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank'>steganography</a>. Optimized for real time chat.</p>
 		<p>TL;DR: It hides secret messages in text.</p>
 		<h1>Usage</h1>
 		<p><strong>Tab</strong> / <strong>Shift+Tab</strong> &mdash; cycle through fields</p>
@@ -109,7 +109,7 @@
 		<p>Pros</p>
 		<ul>
 			<li>Produces no visible alteration in the text.</li>
-			<li>Can store a near-unlimited amount of data regardless of length of the cover text.</li>
+			<li>Can theoretically store a near-unlimited amount of data regardless of length of the cover text.</li>
 			<li>Can be used with applications that do not support file transfers.</li>
 			<li>Reduces suspicion by not requiring the frequent transfer of large files during communication.</li>
 		</ul>
