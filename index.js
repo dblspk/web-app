@@ -99,8 +99,11 @@ function extractData(bytes) {
 		textarea[6].lastChild.classList.add('error');
 		if (!bytes.length)
 			outputError('No message detected');
-		else
+		else {
 			outputError('Protocol mismatch', '\nData: ' + new TextDecoder().decode(bytes));
+			if (seqLens.length)
+				extractData(bytes.slice(seqLens.shift()));
+		}
 		return;
 	}
 	// Get length of variable length quantity data length field
@@ -133,9 +136,18 @@ function extractData(bytes) {
 			console.error('Unsupported data type');
 	}
 
+	if (crcMatch) {
+		if (dataEnd < seqLens[0])
+			// Update sequence length for concatenated messages
+			seqLens[0] -= dataEnd;
+		else
+			// Discard sequence length if no concatenation
+			seqLens.shift();
+	}
 	// Recurse until all messages extracted
 	if (bytes.length > dataEnd)
-		extractData(bytes.slice(dataEnd));
+		// If CRC mismatch, discard current sequence
+		extractData(bytes.slice(crcMatch ? dataEnd : seqLens.shift()));
 }
 
 const autolinker = new Autolinker({
@@ -186,7 +198,7 @@ function outputText(bytes, crcMatch) {
 		outputError('CRC mismatch');
 	}
 
-	if (embeds[0]) {
+	if (embeds.length) {
 		// Generate embed container
 		const embedDiv = document.createElement('div');
 		embedDiv.className = 'embed-div';
@@ -397,6 +409,7 @@ function encodeBytes(...args) {
 function decodeBytes(str) {
 	const encVals = window.encVals;
 	// Collect encoding characters and translate to half-bytes
+	window.seqLens = [];
 	let nybles = [];
 	for (var i = 0, sLen = str.length; i < sLen;) {
 		var val = encVals[str[i++]];
@@ -407,8 +420,13 @@ function decodeBytes(str) {
 				val = encVals[str[i++]];
 			} while (val !== undefined);
 			// Ignore short sequences of encoding characters
-			if (seq.length >= 16)
+			if (seq.length >= 16) {
+				// If sequence is truncated by an odd number of half-bytes,
+				// drop last half-byte to preserve byte alignment
+				if (seq.length & 1) seq.pop();
 				nybles = nybles.concat(seq);
+				seqLens.push(seq.length >> 1);
+			}
 		}
 	}
 	// Convert half-bytes to bytes
@@ -455,6 +473,7 @@ function crc32(bytes) {
 
 function outputError(msg, details) {
 	console.error(msg, details || '');
+	if (textarea[6].lastChild.classList.contains('error-div')) return;
 	const errorDiv = document.createElement('div');
 	errorDiv.className = 'notify error-div';
 	errorDiv.textContent = msg.toUpperCase();
