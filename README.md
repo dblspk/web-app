@@ -76,7 +76,7 @@ A header, encoded in the same way, is prepended:
 | 1 byte | Protocol version | 0x00 |
 | 4 bytes | CRC-32 | Calculated on decoded data field |
 | 1 byte | Data type | 0x00: Encryption wrapper<br>0x01: UTF-8 text<br>0x02: File |
-| 1+ bytes | Data length | [Variable length quantity](https://en.wikipedia.org/wiki/Variable-length_quantity), representing length of the data field<br>Needed to allow decoding of multiple concatenated messages |
+| 1+ bytes | Data length | [Variable length quantity](https://en.wikipedia.org/wiki/Variable-length_quantity), representing length of the data field |
 | Varies | Data | Depends on data type |
 
 The resulting string of invisible characters is then inserted at a random location in the cover text.
@@ -85,11 +85,28 @@ The resulting string of invisible characters is then inserted at a random locati
 
 Each invisible character represents 4 bits, while taking 3 bytes (24 bits) to store. Thus, the hidden data consumes 6 times as much memory as the original data, not including header data and cover text.
 
+## Robustness
+
+### Multiple/split messages
+
+When decoding, input is treated as a stream of an arbitrary number of messages. This allows users to paste in any text and decode all messages within at once. This also allows messages that have been split into chunks to be decoded, as long each chunk contains an even number of encoding characters, to maintain byte alignment.
+
+### Concatenated messages
+
+Each message header stores the length of the data field, to allow decoding of multiple concatenated messages.
+
+### Corrupted and uncorrupted messages mixed together
+
+During parsing, the decoder keeps track of consecutive sequences of encoding characters in the cover text. If some encoding characters have been corrupted or truncated, the CRC fails and the remainder of a sequence must be discarded. However, decoding will resume from the next sequence. This prevents one corrupted message from making all following messages undecodable.
+
+Sequences of insufficient length, such as might occur naturally when encoding characters are used for their original purpose, are discarded.
+
 ## Roadmap
 
 The following planned features are defined in the [protocol specification](https://docs.google.com/spreadsheets/d/1sx-kw7LFz4f7Qrtmo68lRi8_msIRVGsvGhiQuWppR4A/):
 
-* Optional built-in encryption for convenience (message can be encrypted before encoding even without this feature)
+* Automatic compression, only when size will be reduced
+* Optional built-in encryption for convenience (users can still provide own encryption without this feature)
 
 [To-do list](https://github.com/joshuaptfan/doublespeak/projects/1)
 
