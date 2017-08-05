@@ -21,7 +21,7 @@ var encQueue = [];
 var textarea = [];
 var crcTable = Object.freeze(makeCRCTable());
 
-document.onreadystatechange = function () {
+document.onreadystatechange = () => {
 	if (!window.TextEncoder) {
 		const script = document.createElement('script');
 		script.src = 'polyfills/text-encoding.js';
@@ -72,12 +72,13 @@ function embedData() {
 		textarea[2].value + (v => v ? ' ' + v : '')(textarea[1].value));
 	const bytes = new TextEncoder().encode(plainStr);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
-	const encodedStr = (bytes.length > 0 ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
+	const encodedStr = (bytes.length ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
 		encodeLength(bytes.length), bytes) : '').concat(...encQueue);
 	const coverStr = filterStr(textarea[3].value);
 	// Select random position in cover text to insert encoded text
 	const insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+	// Select and copy text to clipboard
 	textarea[4].select();
 	document.execCommand('copy');
 	console.info('Original size:', bytes.length, 'bytes,', plainStr.length, 'characters',
@@ -255,8 +256,7 @@ function outputFile(bytes, crcMatch) {
 	for (var i = 0, bLen = bytes.length; i < bLen; i++) {
 		if (!bytes[i]) {
 			nullPos.push(i);
-			if (nullPos.length > 1)
-				break;
+			if (nullPos.length > 1) break;
 		}
 	}
 	const type = new TextDecoder().decode(bytes.slice(0, nullPos[0]));
@@ -414,19 +414,18 @@ function decodeBytes(str) {
 	for (var i = 0, sLen = str.length; i < sLen;) {
 		var val = encVals[str[i++]];
 		if (val !== undefined) {
-			var seq = [];
+			let seq = [];
 			do {
 				seq.push(val);
 				val = encVals[str[i++]];
 			} while (val !== undefined);
 			// Ignore short sequences of encoding characters
-			if (seq.length >= 16) {
-				// If sequence is truncated by an odd number of half-bytes,
-				// drop last half-byte to preserve byte alignment
-				if (seq.length & 1) seq.pop();
-				nybles = nybles.concat(seq);
-				seqLens.push(seq.length >> 1);
-			}
+			if (seq.length < 16) continue;
+			// If sequence is truncated by an odd number of half-bytes,
+			// drop last half-byte to preserve byte alignment
+			if (seq.length & 1) seq.pop();
+			nybles = nybles.concat(seq);
+			seqLens.push(seq.length >> 1);
 		}
 	}
 	// Convert half-bytes to bytes
@@ -440,9 +439,17 @@ function decodeBytes(str) {
 function filterStr(str) {
 	const encVals = window.encVals;
 	let out = '';
-	for (var i = 0, sLen = str.length; i < sLen; i++)
+	for (var i = 0, sLen = str.length; i < sLen;) {
 		if (encVals[str[i]] === undefined)
-			out += str[i];
+			out += str[i++];
+		else {
+			let seq = str[i];
+			while (encVals[str[++i]] !== undefined)
+				seq += str[i];
+			if (seq.length < 16)
+				out += seq;
+		}
+	}
 	return out;
 }
 
@@ -599,7 +606,9 @@ function clickNav(el) {
 		labels[i].classList.remove('selected');
 	el.classList.add('selected');
 	if (el.getAttribute('for') === 'nav-main')
-		setTimeout(() => { resizeBody(); }, 0);
+		setTimeout(() => {
+			resizeBody();
+		}, 0);
 }
 
 // Scale elements according to viewport size

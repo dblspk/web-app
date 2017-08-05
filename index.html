@@ -24,11 +24,11 @@
 	<script src='index.js' defer></script>
 </head>
 <body onresize='resizeBody()'>
-	<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank'>update your browser</a> to use this site.</div>
+	<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank' rel='noopener'>update your browser</a> to use this site.</div>
 	<noscript id='noscript'>Please enable JavaScript to use this site.</noscript>
 	<nav>
 		<label for='nav-main' class='selected' onclick='clickNav(this)'>Doublespeak</label>
-		<a href='https://github.com/joshuaptfan/doublespeak' target='_blank' tabindex='-1'>GitHub</a>
+		<a href='https://github.com/joshuaptfan/doublespeak' target='_blank' rel='noopener' tabindex='-1'>GitHub</a>
 		<label for='nav-faq' onclick='clickNav(this)'>FAQ</label>
 	</nav>
 	<input type='radio' name='nav' id='nav-main' checked>
@@ -74,7 +74,7 @@
 	</section>
 	<section id='faq'>
 		<h1>What is this?</h1>
-		<p>Doublespeak encodes/decodes messages as zero width Unicode characters in text, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank'>steganography</a>. Optimized for real time chat.</p>
+		<p>Doublespeak encodes/decodes messages as zero width Unicode characters in text, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank' rel='noopener'>steganography</a>. Optimized for real time chat.</p>
 		<p>TL;DR: It hides secret messages in text.</p>
 		<h1>Usage</h1>
 		<p><strong>Tab</strong> / <strong>Shift+Tab</strong> &mdash; cycle through fields</p>
@@ -83,7 +83,7 @@
 		<p>What can be hidden:</p>
 		<ul>
 			<li>Text</li>
-			<li>URLs (similar use to <a href='https://en.wikipedia.org/wiki/QR_code' target=_blank>QR codes</a>)</li>
+			<li>URLs (similar use to <a href='https://en.wikipedia.org/wiki/QR_code' target='_blank' rel='noopener'>QR codes</a>)</li>
 			<li>Watermarks</li>
 			<li>Small files</li>
 		</ul>
@@ -99,8 +99,8 @@
 			<li>File names (very short messages only)</li>
 		</ul>
 		<h1>How does it work?</h1>
-		<p><a href='https://en.wikipedia.org/wiki/Unicode' target='_blank'>Unicode</a> contains some zero width, unprintable characters. We use 16 of them to encode any data in hexadecimal, using our
-		<a href='https://github.com/joshuaptfan/doublespeak#how-it-works' target='_blank'>arbitrary encoding scheme</a>.</p>
+		<p><a href='https://en.wikipedia.org/wiki/Unicode' target='_blank' rel='noopener'>Unicode</a> contains some zero width, unprintable characters. We use 16 of them to encode any data in hexadecimal, using our
+		<a href='https://github.com/joshuaptfan/doublespeak#how-it-works' target='_blank' rel='noopener'>arbitrary encoding scheme</a>.</p>
 		<p>The resulting string of invisible characters is then inserted at a random location in the cover text.</p>
 		<h1>Efficiency</h1>
 		<p>Each invisible character represents 4 bits, while taking 3 bytes (24 bits) to store. Thus, the hidden data consumes 6 times
