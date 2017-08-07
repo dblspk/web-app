@@ -138,6 +138,12 @@ This project began at [Cal Hacks 3.0](https://calhacks3.devpost.com/) by [a much
 * [Samuel Arnold](https://github.com/Grond66) &mdash; encoding algorithm and Python app
 * [Nitzan Orr](https://github.com/orrblue) &mdash; decoding algorithm
 
+### Services used
+
+Cross-browser testing courtesy of [BrowserStack](https://www.browserstack.com/).
+
+<a href='https://www.browserstack.com/'><img src='https://camo.githubusercontent.com/88e99a34e43758df088c657ab8b8c87f2950004c/68747470733a2f2f7261776769746875622e636f6d2f45452f6b61726d612d6e672d6a736f6e326a732d70726570726f636573736f722f6d61737465722f62726f77736572737461636b2d6c6f676f2e737667' alt='BrowserStack' height='60px'></a>
+
 ## License
 
 [MIT License](https://joshuaptfan.mit-license.org/)
