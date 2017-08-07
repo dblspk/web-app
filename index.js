@@ -77,7 +77,11 @@ function embedData() {
 	const coverStr = filterStr(textarea[3].value);
 	// Select random position in cover text to insert encoded text
 	const insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
-	textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+	try {
+		textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+	} catch (ex) {
+		textarea[4].classList.add('out-of-memory');
+	}
 	// Select and copy text to clipboard
 	textarea[4].select();
 	document.execCommand('copy');
@@ -91,17 +95,18 @@ function initExtractData() {
 	clearInPlain();
 	setTimeout(() => {
 		extractData(decodeBytes(textarea[5].value));
+		window.seqLens = null;
 	}, 0);
 }
 
 function extractData(bytes) {
 	// Check protocol signature and version
 	if (!bytes.length || (bytes[0] != 0x44 && bytes[1] != 0x0)) {
-		textarea[6].lastChild.classList.add('error');
+		const textDiv = getTextDiv();
 		if (!bytes.length)
-			outputError('No message detected');
+			outputError(textDiv, 'No message detected');
 		else {
-			outputError('Protocol mismatch', '\nData: ' + new TextDecoder().decode(bytes));
+			outputError(textDiv, 'Protocol mismatch', '\nData: ' + new TextDecoder().decode(bytes));
 			if (seqLens.length)
 				extractData(bytes.slice(seqLens.shift()));
 		}
@@ -194,10 +199,8 @@ function outputText(bytes, crcMatch) {
 	// 3. Linkify URLs
 	textDiv.innerHTML = autolinker.link(new TextDecoder().decode(bytes).replace(/[&<>]/g, c => references[c]));
 
-	if (!crcMatch) {
-		textDiv.classList.add('error');
-		outputError('CRC mismatch');
-	}
+	if (!crcMatch)
+		outputError(textDiv, 'CRC mismatch');
 
 	if (embeds.length) {
 		// Generate embed container
@@ -277,10 +280,8 @@ function outputFile(bytes, crcMatch) {
 	link.textContent = 'Download';
 	textDiv.appendChild(link);
 
-	if (!crcMatch) {
-		textDiv.classList.add('error');
-		outputError('CRC mismatch');
-	}
+	if (!crcMatch)
+		outputError(textDiv, 'CRC mismatch');
 
 	flashBorder(textDiv, 'decoded', 1000);
 }
@@ -295,8 +296,7 @@ function getTextDiv() {
 		textDiv.tabIndex = -1;
 		textarea[6].appendChild(textDiv);
 	}
-	textDiv = textarea[6].lastChild;
-	return textDiv;
+	return textDiv || textarea[6].lastChild;
 }
 
 function dragOverFiles(e) {
@@ -322,8 +322,7 @@ function dropFiles(e) {
 	e.preventDefault();
 	dragLeaveFiles();
 
-	const files = e.dataTransfer.files;
-	readFiles(files);
+	readFiles(e.dataTransfer.files);
 }
 
 function readFiles(files) {
@@ -478,13 +477,13 @@ function crc32(bytes) {
 	return Uint8Array.from(bytes);
 }
 
-function outputError(msg, details) {
+function outputError(el, msg, details) {
 	console.error(msg, details || '');
-	if (textarea[6].lastChild.classList.contains('error-div')) return;
+	el.classList.add('error');
 	const errorDiv = document.createElement('div');
 	errorDiv.className = 'notify error-div';
 	errorDiv.textContent = msg.toUpperCase();
-	textarea[6].appendChild(errorDiv);
+	el.parentElement.appendChild(errorDiv);
 }
 
 function flashBorder(el, style, ms) {
@@ -515,6 +514,7 @@ function clearOutPlain() {
 function clearOut() {
 	textarea[3].value = '';
 	textarea[4].value = '';
+	textarea[4].className = '';
 	resizeTextarea(textarea[3]);
 	resizeTextarea(textarea[4]);
 	textarea[3].focus();

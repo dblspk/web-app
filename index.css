@@ -265,8 +265,45 @@ textarea.copied {
 	border-color: #0B0;
 }
 
+textarea.out-of-memory,
 .text-div.error {
 	border-color: #C00;
+}
+
+.notify {
+	overflow: hidden;
+	height: 1.1rem;
+	width: 25.5rem;
+	margin-top: -1px;
+	text-align: center;
+	font-weight: bold;
+	color: white;
+}
+
+.notify-div {
+	visibility: hidden;
+}
+
+textarea.copied + .notify-div {
+	visibility: visible;
+	background-color: #0B0;
+}
+
+textarea.copied + .notify-div::before {
+	content: 'COPIED';
+}
+
+textarea.out-of-memory + .notify-div {
+	visibility: visible;
+	background-color: #C00;
+}
+
+textarea.out-of-memory + .notify-div::before {
+	content: 'OUT OF MEMORY';
+}
+
+.error-div {
+	background-color: #C00;
 }
 
 ::-webkit-input-placeholder {
@@ -281,28 +318,6 @@ textarea.copied {
 .text-div:empty::before {
 	color: #777;
 	content: 'Read secret message';
-}
-
-.notify {
-	height: 1.1rem;
-	width: 25.5rem;
-	margin-top: -1px;
-	text-align: center;
-	font-weight: bold;
-	color: white;
-}
-
-.copied-div {
-	visibility: hidden;
-	background-color: #0B0;
-}
-
-textarea.copied + .copied-div {
-	visibility: visible;
-}
-
-.error-div {
-	background-color: #C00;
 }
 
 ::-webkit-scrollbar {
