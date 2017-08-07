@@ -156,36 +156,6 @@ function extractData(bytes) {
 		extractData(bytes.slice(crcMatch ? dataEnd : seqLens.shift()));
 }
 
-const autolinker = new Autolinker({
-	stripPrefix: false,
-	stripTrailingSlash: false,
-	hashtag: 'twitter',
-	replaceFn: function (match) {
-		if (match.getType() === 'url') {
-			// Collect embeddable URLs
-			const url = match.getUrl();
-			const ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(url));
-			if (ext) {
-				if (/^(jpe?g|gif|png|bmp|svg)$/i.test(ext))
-					embeds.push({ type: 'image', url });
-				else if (/^(mp4|webm|gifv|ogv)$/i.test(ext))
-					embeds.push({ type: 'video', url });
-				else if (/^(mp3|wav|ogg)$/i.test(ext))
-					embeds.push({ type: 'audio', url });
-			} else {
-				// Extract ID and timestamp components
-				const youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
-				if (youtube)
-					embeds.push({ type: 'youtube', id: youtube[1], h: youtube[3] || 0, m: youtube[4] || 0, s: youtube[5] || youtube[2] || 0 });
-				const vimeo = /vimeo\.com\/(?:video\/)?(\d+)/.exec(url);
-				if (vimeo)
-					embeds.push({ type: 'vimeo', id: vimeo[1] });
-			}
-		}
-		return match.buildTag().setAttr('tabindex', -1);
-	}
-});
-
 function outputText(bytes, crcMatch) {
 	window.embeds = [];
 	const references = {
@@ -202,52 +172,7 @@ function outputText(bytes, crcMatch) {
 	if (!crcMatch)
 		outputError(textDiv, 'CRC mismatch');
 
-	if (embeds.length) {
-		// Generate embed container
-		const embedDiv = document.createElement('div');
-		embedDiv.className = 'embed-div';
-		// Embed media
-		for (var i = 0; i < embeds.length; i++) {
-			switch (embeds[i].type) {
-				case 'image':
-					const div = document.createElement('div');
-					div.className = 'embed-img-container blocked';
-					const img = document.createElement('img');
-					img.className = 'embed';
-					img.onerror = function () { this.style.display = 'none'; };
-					img.onload = function () { checkZoomable(this); };
-					img.onclick = function () { clickImage(this); };
-					img.src = embeds[i].url;
-					div.appendChild(img);
-					embedDiv.appendChild(div);
-					break;
-				case 'video':
-				case 'audio':
-					const media = document.createElement(embeds[i].type);
-					media.className = 'embed';
-					media.src = embeds[i].url.replace(/gifv$/i, 'mp4');
-					media.loop = /gifv$/i.test(embeds[i].url) && true;
-					media.controls = true;
-					media.preload = 'metadata';
-					media.tabIndex = -1;
-					embedDiv.appendChild(media);
-					break;
-				case 'youtube':
-				case 'vimeo':
-					const iframe = document.createElement('iframe');
-					iframe.className = 'embed';
-					if (embeds[i].type === 'youtube')
-						iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id +
-							'?start=' + (embeds[i].h * 3600 + embeds[i].m * 60 + parseInt(embeds[i].s));
-					else
-						iframe.src = 'https://player.vimeo.com/video/' + embeds[i].id;
-					iframe.allowFullscreen = true;
-					iframe.tabIndex = -1;
-					embedDiv.appendChild(iframe);
-			}
-		}
-		textarea[6].appendChild(embedDiv);
-	}
+	embedMedia();
 	window.embeds = null;
 
 	flashBorder(textDiv, 'decoded', 1000);
@@ -283,7 +208,92 @@ function outputFile(bytes, crcMatch) {
 	if (!crcMatch)
 		outputError(textDiv, 'CRC mismatch');
 
+	window.embeds = [];
+	collectEmbed(link.href, name);
+	embedMedia();
+	window.embeds = null;
+
 	flashBorder(textDiv, 'decoded', 1000);
+}
+
+const autolinker = new Autolinker({
+	stripPrefix: false,
+	stripTrailingSlash: false,
+	hashtag: 'twitter',
+	replaceFn: function (match) {
+		if (match.getType() === 'url')
+			collectEmbed(match.getUrl());
+		return match.buildTag().setAttr('tabindex', -1);
+	}
+});
+
+// Collect embeddable URL
+function collectEmbed(url, name) {
+	const ext = (m => m && m[1])(/\.(\w{3,4})$/.exec(name || url));
+	if (ext) {
+		if (/^(jpe?g|gif|png|bmp|svg)$/i.test(ext))
+			embeds.push({ type: 'image', url });
+		else if (/^(mp4|webm|gifv|ogv)$/i.test(ext))
+			embeds.push({ type: 'video', url });
+		else if (/^(mp3|wav|ogg)$/i.test(ext))
+			embeds.push({ type: 'audio', url });
+	} else {
+		// Extract ID and timestamp components
+		const youtube = /youtu(?:\.be\/|be\.com\/(?:embed\/|.*v=))([\w-]+)(?:.*start=(\d+)|.*t=(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?)?/.exec(url);
+		if (youtube)
+			embeds.push({ type: 'youtube', id: youtube[1], h: youtube[3] || 0, m: youtube[4] || 0, s: youtube[5] || youtube[2] || 0 });
+		const vimeo = /vimeo\.com\/(?:video\/)?(\d+)/.exec(url);
+		if (vimeo)
+			embeds.push({ type: 'vimeo', id: vimeo[1] });
+	}
+}
+
+function embedMedia() {
+	if (!embeds.length) return;
+	// Generate embed container
+	const embedDiv = document.createElement('div');
+	embedDiv.className = 'embed-div';
+	// Embed media
+	for (var i = 0; i < embeds.length; i++) {
+		switch (embeds[i].type) {
+			case 'image':
+				const div = document.createElement('div');
+				div.className = 'embed-img-container blocked';
+				const img = document.createElement('img');
+				img.className = 'embed';
+				img.onerror = function () { this.style.display = 'none'; };
+				img.onload = function () { checkZoomable(this); };
+				img.onclick = function () { clickImage(this); };
+				img.src = embeds[i].url;
+				div.appendChild(img);
+				embedDiv.appendChild(div);
+				break;
+			case 'video':
+			case 'audio':
+				const media = document.createElement(embeds[i].type);
+				media.className = 'embed';
+				media.src = embeds[i].url.replace(/gifv$/i, 'mp4');
+				media.loop = /gifv$/i.test(embeds[i].url) && true;
+				media.controls = true;
+				media.preload = 'metadata';
+				media.tabIndex = -1;
+				embedDiv.appendChild(media);
+				break;
+			case 'youtube':
+			case 'vimeo':
+				const iframe = document.createElement('iframe');
+				iframe.className = 'embed';
+				if (embeds[i].type === 'youtube')
+					iframe.src = 'https://www.youtube.com/embed/' + embeds[i].id +
+						'?start=' + (embeds[i].h * 3600 + embeds[i].m * 60 + parseInt(embeds[i].s));
+				else
+					iframe.src = 'https://player.vimeo.com/video/' + embeds[i].id;
+				iframe.allowFullscreen = true;
+				iframe.tabIndex = -1;
+				embedDiv.appendChild(iframe);
+		}
+	}
+	textarea[6].appendChild(embedDiv);
 }
 
 function getTextDiv() {
@@ -365,6 +375,7 @@ function encodeFile(bytes, type, name) {
 	textarea[2].parentElement.appendChild(textDiv);
 }
 
+// Remove file in output ciphertext embed queue
 function removeFile(el) {
 	const textDiv = el.parentElement;
 	const parent = textDiv.parentElement;
