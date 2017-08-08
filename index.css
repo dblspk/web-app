@@ -201,12 +201,12 @@ textarea,
 .embed-div {
 	height: auto;
 	width: 25.5rem;
-	padding: 0.1rem;
+	padding: 0.12rem;
 	margin: 0;
 	box-sizing: border-box;
 	font-size: 1rem;
 	color: white;
-	border: 0.15rem solid #444;
+	border: 0.12rem solid #444;
 }
 
 textarea {
@@ -223,6 +223,7 @@ textarea {
 	margin-top: 0.5rem;
 	word-wrap: break-word;
 	white-space: pre-wrap;
+	background-color: #111;
 	border-style: dashed;
 	cursor: text;
 }
@@ -230,6 +231,13 @@ textarea {
 #out-plain ~ .text-div {
 	position: relative;
 	padding-right: 1rem;
+}
+
+#out-cover,
+#in-cipher {
+	color: black;
+	background-color: #DDD;
+	box-shadow: 0 0 0.4rem #888 inset, 0 0 0.2rem black;
 }
 
 .embed-div {

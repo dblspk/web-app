@@ -21,7 +21,7 @@ var encQueue = [];
 var textarea = [];
 var crcTable = Object.freeze(makeCRCTable());
 
-document.onreadystatechange = () => {
+document.onreadystatechange = function () {
 	if (!window.TextEncoder) {
 		const script = document.createElement('script');
 		script.src = 'polyfills/text-encoding.js';
@@ -628,7 +628,7 @@ function resizeBody() {
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.03 + 'px';
 	else
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04 + 'px';
-	for (var i = 0; i < 6; i++)
+	for (var i = 2; i < 6; i++)
 		resizeTextarea(textarea[i]);
 	checkZoomable();
 }
@@ -637,5 +637,5 @@ function resizeBody() {
 function resizeTextarea(el) {
 	const fontSize = parseFloat(document.documentElement.style.fontSize);
 	el.style.height = '';
-	el.style.height = Math.min(el.scrollHeight + fontSize * 0.3, fontSize * 12) + 'px';
+	el.style.height = Math.min(el.scrollHeight + fontSize * 0.24, fontSize * 12) + 'px';
 }
