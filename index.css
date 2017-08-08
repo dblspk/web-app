@@ -273,7 +273,6 @@ textarea.copied {
 	border-color: #0B0;
 }
 
-textarea.out-of-memory,
 .text-div.error {
 	border-color: #C00;
 }
@@ -288,26 +287,13 @@ textarea.out-of-memory,
 	color: white;
 }
 
-.notify-div {
+.copied-div {
 	visibility: hidden;
-}
-
-textarea.copied + .notify-div {
-	visibility: visible;
 	background-color: #0B0;
 }
 
-textarea.copied + .notify-div::before {
-	content: 'COPIED';
-}
-
-textarea.out-of-memory + .notify-div {
+textarea.copied + .copied-div {
 	visibility: visible;
-	background-color: #C00;
-}
-
-textarea.out-of-memory + .notify-div::before {
-	content: 'OUT OF MEMORY';
 }
 
 .error-div {

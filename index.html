@@ -54,14 +54,14 @@
 		</div>
 		<div class='row'>
 			<div style='display: inline-block'>
-				<textarea id='out-cipher' oncopy='flashBorder(this, "copied", 800)' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
-				<div class='notify notify-div'></div>
+				<textarea id='out-cipher' oncopy='embedData(event)' ondragstart='embedData(event)' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+				<div class='notify copied-div'>COPIED</div>
 			</div>
-			<button class='button' id='out-copy' onclick='embedData()' tabindex='-1'>COPY</button>
+			<button class='button' id='out-copy' onclick='initEmbedData()' tabindex='-1'>COPY</button>
 		</div>
 		<h1>RECEIVE</h1>
 		<div class='row'>
-			<textarea id='in-cipher' onpaste='initExtractData()' ondrop='initExtractData()' onfocus='this.select()' oninput='this.maxLength = 0; resizeTextarea(this)' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
+			<textarea id='in-cipher' onpaste='initExtractData(event)' ondrop='initExtractData(event)' onfocus='this.select()' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
 			<button class='button' onclick='clearIn()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>

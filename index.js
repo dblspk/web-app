@@ -65,8 +65,14 @@ function mirrorCover(el) {
 	flashBorder(textarea[4], 'encoded', 200);
 }
 
-// Embed plaintext in cover text
-function embedData() {
+function initEmbedData() {
+	// Select and copy text to clipboard
+	textarea[4].select();
+	document.execCommand('copy');
+}
+
+// Embed ciphertext in cover text
+function embedData(e) {
 	// Filter out ciphertext to prevent double encoding
 	const plainStr = filterStr((v => v ? v + ' ' : '')(textarea[0].value) +
 		textarea[2].value + (v => v ? ' ' + v : '')(textarea[1].value));
@@ -75,28 +81,34 @@ function embedData() {
 	const encodedStr = (bytes.length ? encodeBytes(0x44, 0x0, crc32(bytes), 0x1,
 		encodeLength(bytes.length), bytes) : '').concat(...encQueue);
 	const coverStr = filterStr(textarea[3].value);
-	// Select random position in cover text to insert encoded text
+	// Select random position in cover text to insert ciphertext
 	const insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
-	try {
-		textarea[4].value = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
-	} catch (ex) {
-		textarea[4].classList.add('out-of-memory');
-	}
-	// Select and copy text to clipboard
-	textarea[4].select();
-	document.execCommand('copy');
+	const embeddedStr = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+	// Hijack copy/drag event to embed ciphertext
+	if (e.type == 'copy') {
+		e.preventDefault();
+		e.clipboardData.setData('text/plain', embeddedStr);
+	} else
+		e.dataTransfer.setData('text/plain', embeddedStr);
+	flashBorder(textarea[4], 'copied', 800);
 	console.info('Original size:', bytes.length, 'bytes,', plainStr.length, 'characters',
 		'\nEncoded size:', encodedStr.length * 3, 'bytes,', encodedStr.length, 'characters');
 }
 
 // Extract received ciphertext
-function initExtractData() {
-	textarea[5].maxLength = 0x7FFFFFFF;
+function initExtractData(e) {
+	e.preventDefault();
+	// Hijack paste/drop event to extract clipboard contents
+	const str = e.type == 'paste' ?
+		e.clipboardData.getData('text/plain') :
+		e.dataTransfer.getData('text/plain');
 	clearInPlain();
-	setTimeout(() => {
-		extractData(decodeBytes(textarea[5].value));
-		window.seqLens = null;
-	}, 0);
+	// Filter out ciphertext before "pasting" to avert
+	// reflow performance penalty with large messages
+	textarea[5].value = filterStr(str);
+	resizeTextarea(textarea[5]);
+	extractData(decodeBytes(str));
+	window.seqLens = null;
 }
 
 function extractData(bytes) {
@@ -525,7 +537,6 @@ function clearOutPlain() {
 function clearOut() {
 	textarea[3].value = '';
 	textarea[4].value = '';
-	textarea[4].className = '';
 	resizeTextarea(textarea[3]);
 	resizeTextarea(textarea[4]);
 	textarea[3].focus();
