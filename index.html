@@ -21,6 +21,7 @@
 	<link rel='stylesheet' type='text/css' href='index.css'>
 	<link rel='manifest' href='manifest.json'>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/autolinker/1.4.3/Autolinker.min.js' defer></script>
+	<script src='libs/doublespeak.js' defer></script>
 	<script src='index.js' defer></script>
 </head>
 <body onresize='resizeBody()'>
@@ -57,11 +58,11 @@
 				<textarea id='out-cipher' oncopy='embedData(event)' ondragstart='embedData(event)' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div class='notify copied-div'>COPIED</div>
 			</div>
-			<button class='button' id='out-copy' onclick='initEmbedData()' tabindex='-1'>COPY</button>
+			<button class='button' id='out-copy' onclick='copyText()' tabindex='-1'>COPY</button>
 		</div>
 		<h1>RECEIVE</h1>
 		<div class='row'>
-			<textarea id='in-cipher' onpaste='initExtractData(event)' ondrop='initExtractData(event)' onfocus='this.select()' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
+			<textarea id='in-cipher' onpaste='extractData(event)' ondrop='extractData(event)' onfocus='this.select()' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
 			<button class='button' onclick='clearIn()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>
