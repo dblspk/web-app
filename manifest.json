@@ -2,6 +2,7 @@
 	"name": "Doublespeak",
 	"short_name": "Doublespeak",
 	"start_url": ".",
+	"scope": "/",
 	"icons": [
 		{
 			"src": "images/icon-192.png",
@@ -11,6 +12,5 @@
 	],
 	"theme_color": "#222",
 	"background_color": "#222",
-	"display": "standalone",
-	"scope": "/"
+	"display": "standalone"
 }

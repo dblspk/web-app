@@ -1,6 +1,6 @@
 # Doublespeak
 
-Encodes/decodes messages as zero width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). Optimized for real time chat.
+Encodes/decodes messages as zero-width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). Optimized for real time chat.
 
 TL;DR: It hides secret messages in text.
 
@@ -47,12 +47,12 @@ Possible places for storage:
 
 ## How it works
 
-[Unicode](https://en.wikipedia.org/wiki/Unicode) contains some zero width, unprintable characters. We use 16 of them to encode any data in [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal), using our arbitrary encoding scheme:
+[Unicode](https://en.wikipedia.org/wiki/Unicode) contains some zero-width, unprintable characters. We use 16 of them to encode any data in [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal), using our arbitrary encoding scheme:
 
 | Decimal | Hex | Binary | Character | Description |
 | -------:| ---:| ------:| --------- | ----------- |
-|    0    |  0  |  0000  | `U+200C`  | [zero width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) |
-|    1    |  1  |  0001  | `U+200D`  | [zero width joiner](https://en.wikipedia.org/wiki/Zero-width_joiner) |
+|    0    |  0  |  0000  | `U+200C`  | [zero-width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) |
+|    1    |  1  |  0001  | `U+200D`  | [zero-width joiner](https://en.wikipedia.org/wiki/Zero-width_joiner) |
 |    2    |  2  |  0010  | `U+2060`  | [word joiner](https://en.wikipedia.org/wiki/Word_joiner) |
 |    3    |  3  |  0011  | `U+2061`  | [function application](https://codepoints.net/U+2061) |
 |    4    |  4  |  0100  | `U+2062`  | [invisible times](https://codepoints.net/U+2062) |
@@ -66,7 +66,7 @@ Possible places for storage:
 |   12    |  C  |  1100  | `U+206F`  | [nominal digit shapes](https://codepoints.net/U+206F) |
 |   13    |  D  |  1101  | `U+FE00`  | [variation selector-1](https://en.wikipedia.org/wiki/Variation_Selectors_(Unicode_block)) |
 |   14    |  E  |  1110  | `U+FE01`  | [variation selector-2](https://en.wikipedia.org/wiki/Variation_Selectors_(Unicode_block)) |
-|   15    |  F  |  1111  | `U+FEFF`  | [zero width non-breaking space](https://en.wikipedia.org/wiki/Byte_order_mark) |
+|   15    |  F  |  1111  | `U+FEFF`  | [zero-width non-breaking space](https://en.wikipedia.org/wiki/Byte_order_mark) |
 
 A header, encoded in the same way, is prepended:
 
