@@ -7,7 +7,7 @@ self.addEventListener('install', e => {
 				'/doublespeak/index.html',
 				'/doublespeak/index.css',
 				'/doublespeak/index.js',
-				'/doublespeak/libs/doublespeak.js'
+				'/doublespeak/lib/doublespeak.js'
 			]).then(() => self.skipWaiting());
 		})
 	);

@@ -1,3 +1,4 @@
+var doublespeak = new Doublespeak();
 var encQueue = [];
 var textarea = [];
 
@@ -54,11 +55,11 @@ function copyText() {
 // Embed ciphertext in cover text
 function embedData(e) {
 	// Filter out ciphertext to prevent double encoding
-	const plainStr = filterStr((v => v ? v + ' ' : '')(textarea[0].value) +
+	const plainStr = doublespeak.filterStr((v => v ? v + ' ' : '')(textarea[0].value) +
 		textarea[2].value + (v => v ? ' ' + v : '')(textarea[1].value));
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
-	const encodedStr = encodeText(plainStr).concat(...encQueue);
-	const coverStr = filterStr(textarea[3].value);
+	const encodedStr = doublespeak.encodeText(plainStr).concat(...encQueue);
+	const coverStr = doublespeak.filterStr(textarea[3].value);
 	// Select random position in cover text to insert ciphertext
 	const insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	const embeddedStr = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
@@ -81,9 +82,9 @@ function extractData(e) {
 	clearInPlain();
 	// Filter out ciphertext before "pasting" to avert
 	// reflow performance penalty with large messages
-	textarea[5].value = filterStr(str);
+	textarea[5].value = doublespeak.filterStr(str);
 	resizeTextarea(textarea[5]);
-	const dataObjs = decodeData(str);
+	const dataObjs = doublespeak.decodeData(str);
 
 	for (var obj of dataObjs) {
 		switch (obj.dataType) {
@@ -111,7 +112,7 @@ function outputText(bytes, crcMatch) {
 	// 1. Decode byte array to UTF-8
 	// 2. Sanitize unsafe HTML characters
 	// 3. Linkify URLs
-	textDiv.innerHTML = autolinker.link(extractText(bytes).replace(/[&<>]/g, c => references[c]));
+	textDiv.innerHTML = autolinker.link(doublespeak.extractText(bytes).replace(/[&<>]/g, c => references[c]));
 
 	if (!crcMatch)
 		outputError(textDiv, 'CRC mismatch');
@@ -122,7 +123,7 @@ function outputText(bytes, crcMatch) {
 }
 
 function outputFile(bytes, crcMatch) {
-	const { type, name, blob } = extractFile(bytes);
+	const { type, name, blob } = doublespeak.extractFile(bytes);
 
 	// Generate file details UI
 	const textDiv = getTextDiv();
@@ -280,7 +281,7 @@ function readFiles(files) {
 
 // Convert file header and byte array to encoding characters and push to output queue
 function enqueueFile(type, name, bytes) {
-	encQueue.push(encodeFile(type, name, bytes));
+	encQueue.push(doublespeak.encodeFile(type, name, bytes));
 
 	// Generate file details UI
 	const textDiv = document.createElement('div');
