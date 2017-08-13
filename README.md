@@ -4,7 +4,7 @@ Encodes/decodes messages as zero-width Unicode characters in text, as a casual f
 
 TL;DR: It hides secret messages in text.
 
-Web app: __https://joshuaptfan.github.io/doublespeak/__
+Web app: __http://dblspk.io/__
 
 ## Usage
 

@@ -3,11 +3,11 @@ self.addEventListener('install', e => {
 	e.waitUntil(
 		caches.open('doublespeak').then(cache => {
 			return cache.addAll([
-				'/doublespeak/',
-				'/doublespeak/index.html',
-				'/doublespeak/index.css',
-				'/doublespeak/index.js',
-				'/doublespeak/lib/doublespeak.js'
+				'/',
+				'/index.html',
+				'/index.css',
+				'/index.js',
+				'/lib/doublespeak.js'
 			]).then(() => self.skipWaiting());
 		})
 	);

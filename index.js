@@ -26,7 +26,7 @@ document.onreadystatechange = function () {
 
 	// Service worker caches page for offline use
 	if ('serviceWorker' in navigator)
-		navigator.serviceWorker.register('/doublespeak/sw.js');
+		navigator.serviceWorker.register('/sw.js');
 
 	if (/Mac|iP(hone|od|ad)/.test(navigator.userAgent)) {
 		textarea[4].placeholder = 'Copy [Command+C] output ciphertext';
