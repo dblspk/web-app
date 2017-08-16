@@ -29,7 +29,7 @@ chrome.runtime.onConnect.addListener(port => {
 
 /**
  * Extract ciphertext from DOM string.
- * @param {String} domContent 
+ * @param {String} domContent
  */
 function extractData(domContent) {
 	if (!domContent) return;
@@ -38,8 +38,8 @@ function extractData(domContent) {
 		'<': '&lt;',
 		'>': '&gt;'
 	};
-
 	const dataObjs = doublespeak.decodeData(domContent);
+	output = [];
 
 	for (var obj of dataObjs)
 		switch (obj.dataType) {
@@ -63,7 +63,7 @@ function extractData(domContent) {
 
 /**
  * Set toolbar icon badge text.
- * @param {Number} num 
+ * @param {Number} num
  */
 function setBadgeCount(num) {
 	chrome.browserAction.setBadgeText({ text: num ? num.toString() : '' });
