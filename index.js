@@ -86,7 +86,7 @@ function extractData(e) {
 	resizeTextarea(textarea[5]);
 	const dataObjs = doublespeak.decodeData(str);
 
-	for (var obj of dataObjs) {
+	for (var obj of dataObjs)
 		switch (obj.dataType) {
 			case 0x1:
 				outputText(obj.data, obj.crcMatch);
@@ -98,7 +98,6 @@ function extractData(e) {
 			default:
 				outputError(getTextDiv(), obj.error, obj.details);
 		}
-	}
 }
 
 function outputText(bytes, crcMatch) {

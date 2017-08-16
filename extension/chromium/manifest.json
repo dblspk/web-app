@@ -1,0 +1,31 @@
+{
+	"manifest_version": 2,
+	"name": "Doublespeak",
+	"description": "Encodes/decodes messages as zero-width Unicode characters in text, as a casual form of steganography. Optimized for real time chat.",
+	"version": "2017.8.15",
+	"icons": {
+		"192": "images/icon-192.png"
+	},
+	"background": {
+		"scripts": [
+			"lib/doublespeak.min.js",
+			"background.js"
+		]
+	},
+	"content_scripts": [{
+		"matches": ["http://*/*", "https://*/*"],
+		"all_frames": true,
+		"js": ["content.js"]
+	}],
+	"browser_action": {
+		"default_icon": "images/icon-192.png",
+		"default_popup": "popup.html"
+	},
+	"optional_permissions": ["file:///*"],
+	"permissions": [
+		"activeTab",
+		"contextMenus",
+		"clipboardRead",
+		"clipboardWrite"
+	]
+}

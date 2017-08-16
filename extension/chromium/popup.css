@@ -1,23 +1,10 @@
-body {
+html {
+	max-height: 40rem;
 	margin: 0;
 	font-family: sans-serif;
+	font-size: 100%;
 	color: white;
 	background-color: #222;
-}
-
-#ES6-warn,
-#noscript {
-	display: block;
-	line-height: 2rem;
-	width: 100%;
-	font-size: 125%;
-	text-align: center;
-	background-color: #F70;
-	box-shadow: 0 0 1rem black;
-}
-
-#ES6-warn {
-	display: none;
 }
 
 label,
@@ -32,128 +19,18 @@ button,
 	        user-select: none;
 }
 
-nav,
 h1,
-.row,
-p,
-ul {
-	width: 30rem;
+.row {
+	width: 20rem;
 	margin: 0 auto;
 }
 
-p {
-	margin: 1rem auto;
-}
-
-ul {
-	width: 29rem;
-}
-
-nav > label,
-nav > a {
-	float: right;
-	line-height: 1.4rem;
-	margin-left: 1rem;
-	text-shadow: 0 0 0.2rem black;
-	color: #AAA;
-	border-top: 0.2rem solid transparent;
-	cursor: pointer;
-}
-
-nav > label[for=nav-main] {
-	display: inline-block;
-	float: none;
-	margin: 0;
-}
-
-nav > label.selected {
-	color: #EEE;
-	border-color: #444;
-}
-
-nav > label:hover,
-nav > a:hover {
-	text-decoration: none;
-	color: white !important;
-	border-color: #777;
-}
-
-input {
-	display: none;
-}
-
-section {
-	position: relative;
-}
-
-#nav-main:checked ~ #main,
-#nav-faq:checked ~ #faq {
-	display: block;
-	animation: fade-up 0.3s;
-}
-
-#nav-main:checked ~ #faq,
-#nav-faq:checked ~ #main {
-	display: none;
-}
-
-@keyframes fade-up {
-	from {
-		top: 2rem;
-		opacity: 0;
-	}
-	to {
-		top: 0;
-		opacity: 1;
-	}
-}
-
 h1 {
-	margin: 1.2rem auto;
+	margin: 0 auto;
 	font-size: 150%;
-	font-weight: normal;
+	font-weight: 500;
 	text-shadow: 0 0 0.2rem black;
 	color: #AAA;
-}
-
-#main > h1:first-of-type {
-	margin: 2rem auto 0.7rem auto;
-}
-
-#faq > h1 {
-	margin-top: 2rem;
-}
-
-label[for=send-options-button] {
-	float: right;
-	cursor: pointer;
-}
-
-label[for=send-options-button]:hover {
-	color: white;
-}
-
-#send-options {
-	overflow: hidden;
-	height: 0;
-	width: 100%;
-	background-color: #1A1A1A;
-	box-shadow: 0 0.4rem 0.4rem -0.4rem black inset, 0 -0.4rem 0.4rem -0.4rem black inset;
-	transition: height 0.2s;
-}
-
-#send-options-button:checked + #send-options {
-	height: 2.2rem;
-	transition: height 0.2s;
-}
-
-#send-options > div {
-	margin: 0.2rem auto;
-}
-
-#out-prepend,
-#out-append {
-	width: 12.6rem;
 }
 
 .row {
@@ -200,7 +77,7 @@ textarea,
 .text-div,
 .embed-div {
 	height: auto;
-	width: 25.5rem;
+	width: 15.5rem;
 	padding: 0.12rem;
 	margin: 0;
 	box-sizing: border-box;
@@ -284,7 +161,7 @@ textarea.copied {
 .notify {
 	overflow: hidden;
 	height: 1.1rem;
-	width: 25.5rem;
+	width: 15.5rem;
 	margin-top: -1px;
 	text-align: center;
 	font-weight: bold;
@@ -304,18 +181,13 @@ textarea.copied + .copied-div {
 	background-color: #C00;
 }
 
-::-webkit-input-placeholder {
-	color: #777;
-}
-
-::-moz-placeholder {
-	color: #777;
-	opacity: 1;
-}
-
 .text-div:empty::before {
 	color: #777;
-	content: 'Read secret message';
+	content: 'No secret message detected';
+}
+
+::-webkit-input-placeholder {
+	color: #777;
 }
 
 ::-webkit-scrollbar {
@@ -428,77 +300,9 @@ a:hover {
 	cursor: pointer;
 }
 
-img.embed.zoomable {
-	cursor: pointer;
-}
-
-#zoom {
-	position: fixed;
-	width: auto;
-	max-width: 25.3rem;
-	padding: 0.1rem;
-	box-sizing: border-box;
-	transform: translate(-50%, -50%);
-	transition: all 0.5s;
-	cursor: pointer;
-}
-
-#zoom.zoom-end {
-	top: 50%;
-	left: 50%;
-	max-width: 98vw;
-	max-height: 98vh;
-	transition: all 0.5s;
-}
-
-#background {
-	position: fixed;
-	top: 0;
-	height: 100%;
-	width: 100%;
-	background-color: rgba(0, 0, 0, 0.9);
-}
-
-#background.fade-in {
-	animation: fade-in 0.5s;
-}
-
-@keyframes fade-in {
-	from { opacity: 0 }
-	to { opacity: 1 }
-}
-
 iframe.embed {
 	height: 14.11875rem;
 	border: none;
-}
-
-#tip {
-	margin: 4rem 0 2rem 0;
-	font-size: 60%;
-	text-align: center;
-	color: #777;
-}
-
-.key {
-	color: #222;
-	background-color: #DDD;
-	border: 0.1em solid #AAA;
-	border-radius: 0.2rem;
-}
-
-#tab-loop {
-	overflow: hidden;
-	height: 0;
-}
-
-#drop-target {
-	display: none;
-	position: fixed;
-	top: 0;
-	height: 100%;
-	width: 100%;
-	background-color: rgba(0, 0, 0, 0.7);
 }
 
 #drop-target::before {
@@ -512,53 +316,4 @@ iframe.embed {
 	text-align: center;
 	border: 1rem dashed rgba(255, 255, 255, 0.5);
 	content: 'Drop files to encode';
-}
-
-@media only screen
-and (max-width: 480px) {
-	nav,
-	h1,
-	.row,
-	p,
-	ul {
-		width: 22.5rem;
-	}
-
-	nav > label,
-	nav > a {
-		line-height: 1.75rem;
-		font-size: 125%;
-	}
-
-	#main > h1:first-of-type {
-		margin-bottom: 0.2rem;
-	}
-
-	#out-prepend,
-	#out-append {
-		width: 8.64706rem;
-	}
-
-	.row {
-		margin: 1rem auto;
-	}
-
-	textarea,
-	.text-div,
-	.embed-div,
-	.notify {
-		width: 17.5rem;
-	}
-
-	.text-div {
-		margin-top: 1rem;
-	}
-
-	#zoom {
-		width: 17.3rem;
-	}
-
-	iframe.embed {
-		height: 9.61875rem;
-	}
 }
