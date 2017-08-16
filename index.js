@@ -55,8 +55,8 @@ function copyText() {
 // Embed ciphertext in cover text
 function embedData(e) {
 	// Filter out ciphertext to prevent double encoding
-	const plainStr = doublespeak.filterStr((v => v ? v + ' ' : '')(textarea[0].value) +
-		textarea[2].value + (v => v ? ' ' + v : '')(textarea[1].value));
+	const plainStr = (v => v ? v + ' ' : '')(textarea[0].value) +
+		textarea[2].value + (v => v ? ' ' + v : '')(textarea[1].value);
 	// 0x44 0x0 == 'D\u0000' protocol signature and version
 	const encodedStr = doublespeak.encodeText(plainStr).concat(...encQueue);
 	const coverStr = doublespeak.filterStr(textarea[3].value);

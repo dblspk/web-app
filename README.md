@@ -72,10 +72,10 @@ A header, encoded in the same way, is prepended:
 
 | Size | Field | Description |
 | ---- | ----- | ----------- |
-| 1 byte | Protocol signature | ASCII letter "D", or 0x44 |
-| 1 byte | Protocol version | 0x00 |
+| 1 byte | Protocol signature | ASCII letter "D", or ```0x44``` |
+| 1 byte | Protocol version | ```0x00``` |
 | 4 bytes | CRC-32 | Calculated on decoded data field |
-| 1 byte | Data type | 0x00: Encryption wrapper<br>0x01: UTF-8 text<br>0x02: File |
+| 1 byte | Data type | ```0x00```: Encryption wrapper<br>```0x01```: [UTF-8](https://en.wikipedia.org/wiki/UTF-8) text<br>```0x02```: File |
 | 1+ bytes | Data length | [Variable length quantity](https://en.wikipedia.org/wiki/Variable-length_quantity), representing length of the data field |
 | Varies | Data | Depends on data type |
 
