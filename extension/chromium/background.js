@@ -6,9 +6,9 @@ chrome.contextMenus.create({
 	title: 'Doublespeak web app',
 	contexts: ['browser_action'],
 	onclick: () => {
-		chrome.tabs.create({ url: 'http://dblspk.io/' })
+		chrome.tabs.create({ url: 'http://dblspk.io/' });
 	}
-})
+});
 
 // Listen for messages sent from content script
 chrome.runtime.onMessage.addListener(msg => {
@@ -25,7 +25,7 @@ chrome.tabs.onActivated.addListener(tab => {
 // Listen for requests from popup
 chrome.runtime.onConnect.addListener(port => {
 	port.postMessage(output);
-})
+});
 
 /**
  * Extract ciphertext from DOM string.

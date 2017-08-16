@@ -11,13 +11,13 @@ document.onreadystatechange = function () {
 				case 0x2:
 					outputFile(obj.data, obj.crcMatch);
 			}
-	})
+	});
 };
 
 function outputText(str, crcMatch) {
 	const textDiv = getTextDiv();
 
-	textDiv.innerHTML = str
+	textDiv.innerHTML = str;
 
 	if (!crcMatch)
 		outputError(textDiv, 'CRC mismatch');
