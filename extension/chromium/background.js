@@ -11,14 +11,12 @@ chrome.contextMenus.create({
 });
 
 // Listen for messages sent from content script
-chrome.runtime.onMessage.addListener(msg => {
-	extractData(msg);
+chrome.runtime.onMessage.addListener((msg, sender) => {
+	extractData(msg, sender.tab.id);
 });
 
 // Send callback to content script on tab switch
 chrome.tabs.onActivated.addListener(tab => {
-	setBadgeCount(0);
-	output = [];
 	chrome.tabs.sendMessage(tab.tabId, '', extractData);
 });
 
@@ -30,8 +28,9 @@ chrome.runtime.onConnect.addListener(port => {
 /**
  * Extract ciphertext from DOM string.
  * @param {String} domContent
+ * @param {Number} tabId
  */
-function extractData(domContent) {
+function extractData(domContent, tabId) {
 	if (!domContent) return;
 	const references = {
 		'&': '&amp;',
@@ -58,13 +57,14 @@ function extractData(domContent) {
 				});
 		}
 
-	setBadgeCount(output.length);
+	setBadgeCount(output.length, tabId);
 }
 
 /**
  * Set toolbar icon badge text.
  * @param {Number} num
+ * @param {Number} tabId
  */
-function setBadgeCount(num) {
-	chrome.browserAction.setBadgeText({ text: num ? num.toString() : '' });
+function setBadgeCount(num, tabId) {
+	chrome.browserAction.setBadgeText({ text: num ? num.toString() : '', tabId });
 }

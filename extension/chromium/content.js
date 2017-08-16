@@ -3,7 +3,7 @@ chrome.runtime.sendMessage(document.documentElement.outerHTML);
 
 // Respond to background callback with DOM string
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-	sendResponse(document.documentElement.outerHTML);
+	sendResponse(document.documentElement.outerHTML, sender.tab.id);
 });
 
 // Send DOM string on DOM change
