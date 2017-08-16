@@ -24,6 +24,8 @@ chrome.tabs.onActivated.addListener(tab => {
 // Listen for connections from popup
 chrome.runtime.onConnect.addListener(port => {
 	port.postMessage(output);
+	window.port = port;
+	port.onDisconnect.addListener(() => { window.port = null });
 });
 
 /**
@@ -59,6 +61,8 @@ function extractData(domContent, tabId) {
 		}
 
 	setBadgeCount(output.length, tabId);
+	if (window.port)
+		window.port.postMessage(output);
 }
 
 /**

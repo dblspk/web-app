@@ -21,8 +21,6 @@ function outputText(str, crcMatch) {
 
 	if (!crcMatch)
 		outputError(textDiv, 'CRC mismatch');
-
-	flashBorder(textDiv, 'decoded', 1000);
 }
 
 function outputFile(data, crcMatch) {
@@ -44,8 +42,6 @@ function outputFile(data, crcMatch) {
 
 	if (!crcMatch)
 		outputError(textDiv, 'CRC mismatch');
-
-	flashBorder(textDiv, 'decoded', 1000);
 }
 
 function getTextDiv() {
