@@ -1,6 +1,6 @@
 document.onreadystatechange = function () {
 	const port = chrome.runtime.connect();
-	port.postMessage('request');
+	port.postMessage('');
 	port.onMessage.addListener(dataObjs => {
 		clearInPlain();
 		for (var obj of dataObjs)
@@ -26,18 +26,18 @@ function outputText(str, crcMatch) {
 }
 
 function outputFile(data, crcMatch) {
-	const { type, name, blob } = data;
+	const { type, name, url, size } = data;
 
 	// Generate file details UI
 	const textDiv = getTextDiv();
 	textDiv.textContent = name;
 	const info = document.createElement('p');
 	info.className = 'file-info';
-	info.textContent = (type || 'unknown') + ', ' + blob.size + ' bytes';
+	info.textContent = (type || 'unknown') + ', ' + size + ' bytes';
 	textDiv.appendChild(info);
 	const link = document.createElement('a');
 	link.className = 'file-download';
-	link.href = window.URL.createObjectURL(blob);
+	link.href = url;
 	link.download = name;
 	link.textContent = 'Download';
 	textDiv.appendChild(link);

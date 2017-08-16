@@ -21,7 +21,7 @@ button,
 
 h1,
 .row {
-	width: 20rem;
+	width: 24rem;
 	margin: 0 auto;
 }
 
@@ -77,7 +77,7 @@ textarea,
 .text-div,
 .embed-div {
 	height: auto;
-	width: 15.5rem;
+	width: 19.5rem;
 	padding: 0.12rem;
 	margin: 0;
 	box-sizing: border-box;
@@ -161,7 +161,7 @@ textarea.copied {
 .notify {
 	overflow: hidden;
 	height: 1.1rem;
-	width: 15.5rem;
+	width: 19.5rem;
 	margin-top: -1px;
 	text-align: center;
 	font-weight: bold;

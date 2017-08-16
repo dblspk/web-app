@@ -13,7 +13,7 @@
 		]
 	},
 	"content_scripts": [{
-		"matches": ["http://*/*", "https://*/*"],
+		"matches": ["<all_urls>"],
 		"all_frames": true,
 		"js": ["content.js"]
 	}],
@@ -21,9 +21,7 @@
 		"default_icon": "images/icon-192.png",
 		"default_popup": "popup.html"
 	},
-	"optional_permissions": ["file:///*"],
 	"permissions": [
-		"activeTab",
 		"contextMenus",
 		"clipboardRead",
 		"clipboardWrite"

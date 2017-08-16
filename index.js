@@ -122,18 +122,18 @@ function outputText(bytes, crcMatch) {
 }
 
 function outputFile(bytes, crcMatch) {
-	const { type, name, blob } = doublespeak.extractFile(bytes);
+	const { type, name, url, size } = doublespeak.extractFile(bytes);
 
 	// Generate file details UI
 	const textDiv = getTextDiv();
 	textDiv.textContent = name;
 	const info = document.createElement('p');
 	info.className = 'file-info';
-	info.textContent = (type || 'unknown') + ', ' + blob.size + ' bytes';
+	info.textContent = (type || 'unknown') + ', ' + size + ' bytes';
 	textDiv.appendChild(info);
 	const link = document.createElement('a');
 	link.className = 'file-download';
-	link.href = window.URL.createObjectURL(blob);
+	link.href = url;
 	link.download = name;
 	link.textContent = 'Download';
 	textDiv.appendChild(link);

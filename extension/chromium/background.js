@@ -10,17 +10,18 @@ chrome.contextMenus.create({
 	}
 });
 
-// Listen for messages sent from content script
+// Listen for messages from content script
 chrome.runtime.onMessage.addListener((msg, sender) => {
 	extractData(msg, sender.tab.id);
 });
 
-// Send callback to content script on tab switch
+// Ping content script on tab switch
 chrome.tabs.onActivated.addListener(tab => {
-	chrome.tabs.sendMessage(tab.tabId, '', extractData);
+	output = [];
+	chrome.tabs.sendMessage(tab.tabId, '');
 });
 
-// Listen for requests from popup
+// Listen for connections from popup
 chrome.runtime.onConnect.addListener(port => {
 	port.postMessage(output);
 });
@@ -31,6 +32,7 @@ chrome.runtime.onConnect.addListener(port => {
  * @param {Number} tabId
  */
 function extractData(domContent, tabId) {
+	output = [];
 	if (!domContent) return;
 	const references = {
 		'&': '&amp;',
@@ -38,7 +40,6 @@ function extractData(domContent, tabId) {
 		'>': '&gt;'
 	};
 	const dataObjs = doublespeak.decodeData(domContent);
-	output = [];
 
 	for (var obj of dataObjs)
 		switch (obj.dataType) {

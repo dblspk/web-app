@@ -1,9 +1,10 @@
 // Send DOM string on first load
-chrome.runtime.sendMessage(document.documentElement.outerHTML);
+if (!document.hidden)
+	chrome.runtime.sendMessage(document.documentElement.outerHTML);
 
-// Respond to background callback with DOM string
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-	sendResponse(document.documentElement.outerHTML, sender.tab.id);
+// Respond to background ping with DOM string
+chrome.runtime.onMessage.addListener(() => {
+	chrome.runtime.sendMessage(document.documentElement.outerHTML);
 });
 
 // Send DOM string on DOM change
