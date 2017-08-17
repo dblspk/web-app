@@ -34,9 +34,9 @@
 	<input type='radio' name='nav' id='nav-main' checked>
 	<input type='radio' name='nav' id='nav-faq'>
 	<section id='main'>
-		<h1>SEND<label for='send-options-button'>&#9776;</label></h1>
-		<input type='checkbox' id='send-options-button'>
-		<div id='send-options'>
+		<h1>ENCODE<label for='encode-options-button'>&#9776;</label></h1>
+		<input type='checkbox' id='encode-options-button'>
+		<div id='encode-options'>
 			<div class='row'>
 				<textarea id='out-prepend' placeholder='Prepend text' tabindex='-1'></textarea>
 				<textarea id='out-append' placeholder='Append text' tabindex='-1'></textarea>
@@ -54,14 +54,14 @@
 		</div>
 		<div class='row'>
 			<div style='display: inline-block'>
-				<textarea id='out-cipher' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+				<textarea id='out-cipher' placeholder='Copy [Ctrl+C] encoded message' readonly></textarea>
 				<div class='notify copied-div'>COPIED</div>
 			</div>
 			<button class='button' id='out-copy' onclick='copyText()' tabindex='-1'>COPY</button>
 		</div>
-		<h1>RECEIVE</h1>
+		<h1>DECODE</h1>
 		<div class='row'>
-			<textarea id='in-cipher' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
+			<textarea id='in-cipher' maxlength='0' placeholder='Paste [Ctrl+V] to decode message'></textarea>
 			<button class='button' onclick='clearIn()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>

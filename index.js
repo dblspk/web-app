@@ -44,8 +44,8 @@ document.onreadystatechange = function () {
 		navigator.serviceWorker.register('/sw.js');
 
 	if (/Mac|iP(hone|od|ad)/.test(navigator.userAgent)) {
-		textarea.outCipher.placeholder = 'Copy [Command+C] output ciphertext';
-		textarea.inCipher.placeholder = 'Paste [Command+V] input ciphertext';
+		textarea.outCipher.placeholder = 'Copy [Command+C] encoded message';
+		textarea.inCipher.placeholder = 'Paste [Command+V] to decode message';
 	}
 };
 
@@ -67,7 +67,7 @@ function copyText() {
 	document.execCommand('copy');
 }
 
-// Embed ciphertext in cover text
+// Embed output ciphertext in cover text
 function embedData(e) {
 	const plainStr = (v => v ? v + ' ' : '')(textarea.outPrepend.value) +
 		textarea.outPlain.value + (v => v ? ' ' + v : '')(textarea.outAppend.value);
@@ -87,7 +87,7 @@ function embedData(e) {
 	flashBorder(textarea.outCipher, 'copied', 800);
 }
 
-// Extract received ciphertext
+// Extract input ciphertext
 function extractData(e) {
 	e.preventDefault();
 	// Hijack paste/drop event to extract clipboard contents

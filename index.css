@@ -124,16 +124,16 @@ h1 {
 	margin-top: 2rem;
 }
 
-label[for=send-options-button] {
+label[for=encode-options-button] {
 	float: right;
 	cursor: pointer;
 }
 
-label[for=send-options-button]:hover {
+label[for=encode-options-button]:hover {
 	color: white;
 }
 
-#send-options {
+#encode-options {
 	overflow: hidden;
 	height: 0;
 	width: 100%;
@@ -142,12 +142,12 @@ label[for=send-options-button]:hover {
 	transition: height 0.2s;
 }
 
-#send-options-button:checked + #send-options {
+#encode-options-button:checked + #encode-options {
 	height: 2.2rem;
 	transition: height 0.2s;
 }
 
-#send-options > div {
+#encode-options > div {
 	margin: 0.2rem auto;
 }
 
