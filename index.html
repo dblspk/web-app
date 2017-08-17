@@ -5,7 +5,6 @@
 	<title>Doublespeak</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1'>
 	<meta name='description' content='Encodes/decodes messages as zero-width Unicode characters in text, as a casual form of steganography. Optimized for real time chat.'>
-	<meta name='author' content='Joshua Fan'>
 	<meta name='theme-color' content='#222'>
 	<meta property='og:title' content='Doublespeak'>
 	<meta property='og:type' content='website'>
@@ -24,7 +23,7 @@
 	<script src='lib/doublespeak.min.js' defer></script>
 	<script src='index.js' defer></script>
 </head>
-<body onresize='resizeBody()'>
+<body>
 	<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank' rel='noopener'>update your browser</a> to use this site.</div>
 	<noscript id='noscript'>Please enable JavaScript to use this site.</noscript>
 	<nav>
@@ -39,38 +38,38 @@
 		<input type='checkbox' id='send-options-button'>
 		<div id='send-options'>
 			<div class='row'>
-				<textarea id='out-prepend' onfocus='this.select()' placeholder='Prepend text' tabindex='-1'></textarea>
-				<textarea id='out-append' onfocus='this.select()' placeholder='Append text' tabindex='-1'></textarea>
+				<textarea id='out-prepend' placeholder='Prepend text' tabindex='-1'></textarea>
+				<textarea id='out-append' placeholder='Append text' tabindex='-1'></textarea>
 				<input type='file' multiple id='files' onchange='readFiles(this.files)'>
 				<label for='files'>FILES</label>
 			</div>
 		</div>
 		<div class='row'>
-			<div style='display: inline-block'><textarea id='out-plain' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Type secret message' autofocus></textarea></div>
+			<div style='display: inline-block'><textarea id='out-plain' placeholder='Type secret message' autofocus></textarea></div>
 			<button class='button' onclick='clearOutPlain()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>
-			<textarea id='out-cover' onfocus='this.select()' oninput='mirrorCover(this)' placeholder='Type cover message'></textarea>
+			<textarea id='out-cover' placeholder='Type cover message'></textarea>
 			<button class='button' onclick='clearOut()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>
 			<div style='display: inline-block'>
-				<textarea id='out-cipher' oncopy='embedData(event)' ondragstart='embedData(event)' onfocus='document.getElementById("out-copy").click()' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
+				<textarea id='out-cipher' placeholder='Copy [Ctrl+C] output ciphertext' readonly></textarea>
 				<div class='notify copied-div'>COPIED</div>
 			</div>
 			<button class='button' id='out-copy' onclick='copyText()' tabindex='-1'>COPY</button>
 		</div>
 		<h1>RECEIVE</h1>
 		<div class='row'>
-			<textarea id='in-cipher' onpaste='extractData(event)' ondrop='extractData(event)' onfocus='this.select()' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
+			<textarea id='in-cipher' maxlength='0' placeholder='Paste [Ctrl+V] input ciphertext'></textarea>
 			<button class='button' onclick='clearIn()' tabindex='-1'>CLEAR</button>
 		</div>
 		<div class='row'>
-			<div id='in-plain'><div class='text-div' onfocus='selectText(this)' tabindex='-1'></div></div>
+			<div id='in-plain'><div class='text-div' tabindex='-1'></div></div>
 		</div>
 		<div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
 		<div id='tab-loop'>
-			<button class='button' onfocus='textarea[2].select()'></button>
+			<button class='button' onfocus='textarea.outPlain.select()'></button>
 		</div>
 	</section>
 	<section id='faq'>

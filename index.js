@@ -18,19 +18,34 @@ document.onreadystatechange = function () {
 		'in-cipher',
 		'in-plain'
 	];
-	for (var i = 0; i < 7; i++)
-		textarea[i] = document.getElementById(textareas[i]);
+	for (var i = 0; i < 7; i++) {
+		let name = textareas[i].replace(/-([a-z])/, (m, c) => c.toUpperCase());
+		textarea[name] = document.getElementById(textareas[i]);
+		if (i < 4 || i == 5)
+			textarea[name].addEventListener('focus', function () { this.select(); });
+	}
 
 	resizeBody();
-	document.addEventListener('dragover', dragOverFiles, false);
+	document.body.onresize = () => { resizeBody(); };
+	textarea.outPlain.addEventListener('input', function () { mirrorCover(this); });
+	textarea.outCover.addEventListener('input', function () { mirrorCover(this); });
+	textarea.outCipher.addEventListener('focus', () => {
+		document.getElementById('out-copy').click();
+	});
+	textarea.outCipher.addEventListener('copy', embedData);
+	textarea.outCipher.addEventListener('dragstart', embedData);
+	textarea.inCipher.addEventListener('paste', extractData);
+	textarea.inCipher.addEventListener('drop', extractData);
+	textarea.inPlain.firstChild.addEventListener('focus', function () { selectText(this); });
+	document.addEventListener('dragover', dragOverFiles);
 
 	// Service worker caches page for offline use
 	if ('serviceWorker' in navigator)
 		navigator.serviceWorker.register('/sw.js');
 
 	if (/Mac|iP(hone|od|ad)/.test(navigator.userAgent)) {
-		textarea[4].placeholder = 'Copy [Command+C] output ciphertext';
-		textarea[5].placeholder = 'Paste [Command+V] input ciphertext';
+		textarea.outCipher.placeholder = 'Copy [Command+C] output ciphertext';
+		textarea.inCipher.placeholder = 'Paste [Command+V] input ciphertext';
 	}
 };
 
@@ -39,37 +54,37 @@ document.onreadystatechange = function () {
 // Visual cues are still important for intuitive UX
 function mirrorCover(el) {
 	resizeTextarea(el);
-	if (el === textarea[3]) {
-		textarea[4].value = textarea[3].value;
-		resizeTextarea(textarea[4]);
+	if (el === textarea.outCover) {
+		textarea.outCipher.value = textarea.outCover.value;
+		resizeTextarea(textarea.outCipher);
 	}
-	flashBorder(textarea[4], 'encoded', 200);
+	flashBorder(textarea.outCipher, 'encoded', 200);
 }
 
 // Select and copy text to clipboard
 function copyText() {
-	textarea[4].select();
+	textarea.outCipher.select();
 	document.execCommand('copy');
 }
 
 // Embed ciphertext in cover text
 function embedData(e) {
-	// Filter out ciphertext to prevent double encoding
-	const plainStr = (v => v ? v + ' ' : '')(textarea[0].value) +
-		textarea[2].value + (v => v ? ' ' + v : '')(textarea[1].value);
-	// 0x44 0x0 == 'D\u0000' protocol signature and version
+	const plainStr = (v => v ? v + ' ' : '')(textarea.outPrepend.value) +
+		textarea.outPlain.value + (v => v ? ' ' + v : '')(textarea.outAppend.value);
 	const encodedStr = doublespeak.encodeText(plainStr).concat(...encQueue);
-	const coverStr = doublespeak.filterStr(textarea[3].value);
+	const coverStr = doublespeak.filterStr(textarea.outCover.value);
 	// Select random position in cover text to insert ciphertext
 	const insertPos = Math.floor(Math.random() * (coverStr.length - 1) + 1);
 	const embeddedStr = coverStr.slice(0, insertPos) + encodedStr + coverStr.slice(insertPos);
+
 	// Hijack copy/drag event to embed ciphertext
 	if (e.type == 'copy') {
 		e.preventDefault();
 		e.clipboardData.setData('text/plain', embeddedStr);
 	} else
 		e.dataTransfer.setData('text/plain', embeddedStr);
-	flashBorder(textarea[4], 'copied', 800);
+
+	flashBorder(textarea.outCipher, 'copied', 800);
 }
 
 // Extract received ciphertext
@@ -79,13 +94,14 @@ function extractData(e) {
 	const str = e.type == 'paste' ?
 		e.clipboardData.getData('text/plain') :
 		e.dataTransfer.getData('text/plain');
+
 	clearInPlain();
 	// Filter out ciphertext before "pasting" to avert
 	// reflow performance penalty with large messages
-	textarea[5].value = doublespeak.filterStr(str);
-	resizeTextarea(textarea[5]);
-	const dataObjs = doublespeak.decodeData(str);
+	textarea.inCipher.value = doublespeak.filterStr(str);
+	resizeTextarea(textarea.inCipher);
 
+	const dataObjs = doublespeak.decodeData(str);
 	for (var obj of dataObjs)
 		switch (obj.dataType) {
 			case 0x1:
@@ -225,20 +241,20 @@ function embedMedia() {
 				embedDiv.appendChild(iframe);
 		}
 	}
-	textarea[6].appendChild(embedDiv);
+	textarea.inPlain.appendChild(embedDiv);
 }
 
 function getTextDiv() {
 	let textDiv;
-	if (textarea[6].lastChild.innerHTML) {
+	if (textarea.inPlain.lastChild.innerHTML) {
 		// Generate pseudo-textarea
 		textDiv = document.createElement('div');
 		textDiv.className = 'text-div';
 		textDiv.onfocus = function () { selectText(this); };
 		textDiv.tabIndex = -1;
-		textarea[6].appendChild(textDiv);
+		textarea.inPlain.appendChild(textDiv);
 	}
-	return textDiv || textarea[6].lastChild;
+	return textDiv || textarea.inPlain.lastChild;
 }
 
 function dragOverFiles(e) {
@@ -296,7 +312,7 @@ function enqueueFile(type, name, bytes) {
 	info.className = 'file-info';
 	info.textContent = (type || 'unknown') + ', ' + bytes.length + ' bytes';
 	textDiv.appendChild(info);
-	textarea[2].parentElement.appendChild(textDiv);
+	textarea.outPlain.parentElement.appendChild(textDiv);
 }
 
 // Remove file in output ciphertext embed queue
@@ -334,31 +350,31 @@ function selectText(el) {
 
 function clearOutPlain() {
 	encQueue = [];
-	const outPlainParent = textarea[2].parentElement;
+	const outPlainParent = textarea.outPlain.parentElement;
 	while (outPlainParent.childNodes.length > 1)
 		outPlainParent.removeChild(outPlainParent.lastChild);
-	textarea[2].value = '';
-	resizeTextarea(textarea[2]);
-	textarea[2].focus();
+	textarea.outPlain.value = '';
+	resizeTextarea(textarea.outPlain);
+	textarea.outPlain.focus();
 }
 
 function clearOut() {
-	textarea[3].value = '';
-	textarea[4].value = '';
-	resizeTextarea(textarea[3]);
-	resizeTextarea(textarea[4]);
-	textarea[3].focus();
+	textarea.outCover.value = '';
+	textarea.outCipher.value = '';
+	resizeTextarea(textarea.outCover);
+	resizeTextarea(textarea.outCipher);
+	textarea.outCover.focus();
 }
 
 function clearIn() {
 	clearInPlain();
-	textarea[5].value = '';
-	resizeTextarea(textarea[5]);
-	textarea[5].focus();
+	textarea.inCipher.value = '';
+	resizeTextarea(textarea.inCipher);
+	textarea.inCipher.focus();
 }
 
 function clearInPlain() {
-	const inPlain = textarea[6];
+	const inPlain = textarea.inPlain;
 	inPlain.firstChild.innerHTML = '';
 	inPlain.firstChild.className = 'text-div';
 	while (inPlain.childNodes.length > 1)
@@ -414,13 +430,13 @@ function unzoomImage() {
 }
 
 function checkZoomable(el) {
-	const embedWidth = textarea[6].scrollWidth;
+	const embedWidth = textarea.inPlain.scrollWidth;
 	if (el) {
 		if (el.naturalWidth > embedWidth)
 			el.classList.add('zoomable');
 		return;
 	}
-	const images = textarea[6].getElementsByTagName('img');
+	const images = textarea.inPlain.getElementsByTagName('img');
 	for (var i = 0; i < images.length; i++) {
 		if (images[i].naturalWidth > embedWidth)
 			images[i].classList.add('zoomable');
@@ -446,8 +462,8 @@ function resizeBody() {
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.03 + 'px';
 	else
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04 + 'px';
-	for (var i = 2; i < 6; i++)
-		resizeTextarea(textarea[i]);
+	for (var el in textarea)
+		resizeTextarea(textarea[el]);
 	checkZoomable();
 }
 
