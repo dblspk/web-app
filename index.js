@@ -1,4 +1,4 @@
-var doublespeak = new Doublespeak();
+const doublespeak = new Doublespeak(true);
 var encQueue = [];
 var textarea = [];
 
@@ -30,7 +30,7 @@ document.onreadystatechange = function () {
 	textarea.outPlain.addEventListener('input', function () { mirrorCover(this); });
 	textarea.outCover.addEventListener('input', function () { mirrorCover(this); });
 	textarea.outCipher.addEventListener('focus', () => {
-		document.getElementById('out-copy').click();
+		document.getElementById('copy-out').click();
 	});
 	textarea.outCipher.addEventListener('copy', embedData);
 	textarea.outCipher.addEventListener('dragstart', embedData);
@@ -151,6 +151,7 @@ function outputFile(bytes, crcMatch) {
 	link.className = 'file-download';
 	link.href = url;
 	link.download = name;
+	link.tabIndex = -1;
 	link.textContent = 'Download';
 	textDiv.appendChild(link);
 
