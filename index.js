@@ -145,7 +145,7 @@ function outputFile(bytes, crcMatch) {
 	textDiv.textContent = name;
 	const info = document.createElement('p');
 	info.className = 'file-info';
-	info.textContent = (type || 'unknown') + ', ' + size + ' bytes';
+	info.textContent = (type || 'unknown') + ', ' + (size / 1024).toFixed(2) + ' KB';
 	textDiv.appendChild(info);
 	const link = document.createElement('a');
 	link.className = 'file-download';
@@ -170,7 +170,7 @@ const autolinker = new Autolinker({
 	stripTrailingSlash: false,
 	hashtag: 'twitter',
 	replaceFn: function (match) {
-		if (match.getType() === 'url')
+		if (match.getType() == 'url')
 			collectEmbed(match.getUrl());
 		return match.buildTag().setAttr('tabindex', -1);
 	}
@@ -203,7 +203,7 @@ function embedMedia() {
 	const embedDiv = document.createElement('div');
 	embedDiv.className = 'embed-div';
 	// Embed media
-	for (var i = 0; i < autolinker.embeds.length; i++) {
+	for (var i = 0; i < autolinker.embeds.length; i++)
 		switch (autolinker.embeds[i].type) {
 			case 'image':
 				const div = document.createElement('div');
@@ -241,7 +241,6 @@ function embedMedia() {
 				iframe.tabIndex = -1;
 				embedDiv.appendChild(iframe);
 		}
-	}
 	textarea.inPlain.appendChild(embedDiv);
 }
 
@@ -262,7 +261,7 @@ function dragOverFiles(e) {
 	e.stopPropagation();
 	e.dataTransfer.dropEffect = 'copy';
 
-	if ((a => a[a.length - 1])(e.dataTransfer.types) === 'Files') {
+	if ((a => a[a.length - 1])(e.dataTransfer.types) == 'Files') {
 		e.preventDefault();
 		const dropTarget = document.getElementById('drop-target');
 		dropTarget.style.display = 'block';
@@ -298,6 +297,7 @@ function readFiles(files) {
 // Convert file header and byte array to encoding characters and push to output queue
 function enqueueFile(type, name, bytes) {
 	encQueue.push(doublespeak.encodeFile(type, name, bytes));
+	warnSize();
 
 	// Generate file details UI
 	const textDiv = document.createElement('div');
@@ -311,7 +311,7 @@ function enqueueFile(type, name, bytes) {
 	textDiv.appendChild(remove);
 	const info = document.createElement('p');
 	info.className = 'file-info';
-	info.textContent = (type || 'unknown') + ', ' + bytes.length + ' bytes';
+	info.textContent = (type || 'unknown') + ', ' + (bytes.length / 1024).toFixed(2) + ' KB';
 	textDiv.appendChild(info);
 	textarea.outPlain.parentElement.appendChild(textDiv);
 }
@@ -322,10 +322,21 @@ function removeFile(el) {
 	const parent = textDiv.parentElement;
 	const index = Array.prototype.indexOf.call(parent.children, textDiv) - 1;
 	encQueue.splice(index, 1);
+	warnSize();
 	parent.removeChild(textDiv);
 }
 
-function outputError(el, msg='Protocol mismatch', details='') {
+function warnSize() {
+	let queueSize = encQueue.reduce((size, str) => size + str.length * 3, 0);
+	let warnSize = document.getElementById('warn-size');
+	if (queueSize > 0x400000) {
+		document.getElementById('warn-size-kb').textContent = (queueSize / 1024).toFixed(2);
+		warnSize.style.display = 'block';
+	} else
+		warnSize.style.display = 'none';
+}
+
+function outputError(el, msg = 'Protocol mismatch', details = '') {
 	console.error(msg, details);
 	el.classList.add('error');
 	const errorDiv = document.createElement('div');
@@ -351,6 +362,7 @@ function selectText(el) {
 
 function clearOutPlain() {
 	encQueue = [];
+	warnSize();
 	const outPlainParent = textarea.outPlain.parentElement;
 	while (outPlainParent.childNodes.length > 1)
 		outPlainParent.removeChild(outPlainParent.lastChild);
@@ -463,8 +475,10 @@ function resizeBody() {
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.03 + 'px';
 	else
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04 + 'px';
-	for (var el in textarea)
-		resizeTextarea(textarea[el]);
+	resizeTextarea(textarea.outPlain);
+	resizeTextarea(textarea.outCover);
+	resizeTextarea(textarea.outCipher);
+	resizeTextarea(textarea.inCipher);
 	checkZoomable();
 }
 

@@ -281,6 +281,35 @@ textarea.copied {
 	border-color: #C00;
 }
 
+#warn-size {
+	display: none;
+	width: 25.5rem;
+	padding: 0.8rem 0;
+	background: repeating-linear-gradient(
+		135deg,
+		#ED0,
+		#ED0 0.5rem,
+		transparent 0.5rem,
+		transparent 1rem
+	);
+}
+
+#warn-size > p {
+	width: 100%;
+	padding: 0.12rem 0.24rem;
+	margin: 0;
+	background-color: #222;
+}
+
+#warn {
+	float: left;
+	line-height: 3.5rem;
+	margin-right: 0.5rem;
+	font-family: sans-serif, 'Segoe UI Symbol';
+	font-size: 3.5rem;
+	color: #ED0;
+}
+
 .notify {
 	overflow: hidden;
 	height: 1.1rem;
@@ -304,6 +333,11 @@ textarea.copied + .copied-div {
 	background-color: #C00;
 }
 
+.text-div:empty::before {
+	color: #777;
+	content: 'Read secret message';
+}
+
 ::-webkit-input-placeholder {
 	color: #777;
 }
@@ -311,11 +345,6 @@ textarea.copied + .copied-div {
 ::-moz-placeholder {
 	color: #777;
 	opacity: 1;
-}
-
-.text-div:empty::before {
-	color: #777;
-	content: 'Read secret message';
 }
 
 ::-webkit-scrollbar {
@@ -412,7 +441,7 @@ a:hover {
 	line-height: 3rem;
 	width: 3rem;
 	margin: -1.5rem 0 0 -1.5rem;
-	font-family: sans-serif, 'Segoe UI Symbol', EmojiSymbols;
+	font-family: sans-serif, 'Segoe UI Symbol';
 	font-size: 250%;
 	text-align: center;
 	color: #CCC;
@@ -545,6 +574,7 @@ and (max-width: 480px) {
 
 	textarea,
 	.text-div,
+	#warn-size,
 	.embed-div,
 	.notify {
 		width: 17.5rem;
