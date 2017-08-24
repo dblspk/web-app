@@ -5,7 +5,7 @@ body {
 	background-color: #222;
 }
 
-#ES6-warn,
+#warn-ES6,
 #noscript {
 	display: block;
 	line-height: 2rem;
@@ -16,7 +16,7 @@ body {
 	box-shadow: 0 0 1rem black;
 }
 
-#ES6-warn {
+#warn-ES6 {
 	display: none;
 }
 
@@ -285,8 +285,7 @@ textarea.copied {
 	display: none;
 	width: 25.5rem;
 	padding: 0.8rem 0;
-	background: repeating-linear-gradient(
-		135deg,
+	background: repeating-linear-gradient(135deg,
 		#ED0,
 		#ED0 0.5rem,
 		transparent 0.5rem,

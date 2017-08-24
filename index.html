@@ -24,7 +24,7 @@
 	<script src='index.js' defer></script>
 </head>
 <body>
-	<div id='ES6-warn'>Please <a href='http://outdatedbrowser.com/' target='_blank' rel='noopener'>update your browser</a> to use this site.</div>
+	<div id='warn-ES6'>Please <a href='http://outdatedbrowser.com/' target='_blank' rel='noopener'>update your browser</a> to use this site.</div>
 	<noscript id='noscript'>Please enable JavaScript to use this site.</noscript>
 	<nav>
 		<label for='nav-main' class='selected' onclick='clickNav(this)'>Doublespeak</label>
@@ -136,7 +136,7 @@
 		try {
 			eval('"use strict"; let test = () => 0');
 		} catch (e) {
-			document.getElementById('ES6-warn').style.display = 'block';
+			document.getElementById('warn-ES6').style.display = 'block';
 		}
 	</script>
 </body>
