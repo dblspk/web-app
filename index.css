@@ -129,10 +129,6 @@ label[for=encode-options-button] {
 	cursor: pointer;
 }
 
-label[for=encode-options-button]:hover {
-	color: white;
-}
-
 #encode-options {
 	overflow: hidden;
 	height: 0;
@@ -153,7 +149,7 @@ label[for=encode-options-button]:hover {
 
 #out-prepend,
 #out-append {
-	width: 12.6rem;
+	width: 13.5rem;
 }
 
 .row {
@@ -166,12 +162,24 @@ button {
 	border: none;
 }
 
-.button,
+.button.clear {
+	background: no-repeat center/80% url(images/backspace.svg);
+}
+
+.button.copy {
+	background: no-repeat center/70% url(images/clipboard.svg);
+}
+
+label[for=files] {
+	background: no-repeat center/80% url(images/file-upload.svg);
+}
+
+.button.svg,
 label[for=files] {
 	float: right;
 	height: 1.8rem;
 	line-height: 1.8rem;
-	width: 4rem;
+	width: 2.2rem;
 	font-size: 1rem;
 	font-weight: bold;
 	text-align: center;
@@ -182,25 +190,26 @@ label[for=files] {
 	cursor: pointer;
 }
 
-.button:hover,
+.button.svg:hover,
 label[for=files]:hover,
-.embed-img-container.blocked:hover::after {
-	color: white;
-	background-color: #777;
+.embed-img-container.blocked:hover::after,
+label[for=encode-options-button]:hover {
+	filter: brightness(1.5);
 }
 
-.button:active,
+.button.svg:active,
 label[for=files]:active,
-.embed-img-container.blocked:active::after {
-	color: #888;
-	background-color: #333;
+.embed-img-container.blocked:active::after,
+label[for=encode-options-button]:active {
+	filter: brightness(0.8);
+	outline: none;
 }
 
 textarea,
 .text-div,
 .embed-div {
 	height: auto;
-	width: 25.5rem;
+	width: 27.3rem;
 	padding: 0.12rem;
 	margin: 0;
 	box-sizing: border-box;
@@ -226,11 +235,6 @@ textarea {
 	background-color: #111;
 	border-style: dashed;
 	cursor: text;
-}
-
-#out-plain ~ .text-div {
-	position: relative;
-	padding-right: 1rem;
 }
 
 #out-cover,
@@ -282,8 +286,9 @@ textarea.copied {
 }
 
 #warn-size {
+	position: relative;
 	display: none;
-	width: 25.5rem;
+	width: 27.3rem;
 	padding: 0.8rem 0;
 	background: repeating-linear-gradient(135deg,
 		#ED0,
@@ -294,25 +299,26 @@ textarea.copied {
 }
 
 #warn-size > p {
-	width: 100%;
-	padding: 0.12rem 0.24rem;
+	width: calc(100% - 4rem);
+	padding: 0.12rem 1px 0.12rem 4rem;
 	margin: 0;
 	background-color: #222;
 }
 
-#warn {
-	float: left;
-	line-height: 3.5rem;
-	margin-right: 0.5rem;
+#warn-size::before {
+	position: absolute;
+	top: 0;
+	left: 0.5rem;
 	font-family: sans-serif, 'Segoe UI Symbol';
 	font-size: 3.5rem;
 	color: #ED0;
+	content: '\26A0\FE0E';
 }
 
 .notify {
 	overflow: hidden;
 	height: 1.1rem;
-	width: 25.5rem;
+	width: 27.3rem;
 	margin-top: -1px;
 	text-align: center;
 	font-weight: bold;
@@ -373,6 +379,12 @@ a:hover {
 	text-decoration: underline;
 }
 
+.file {
+	position: relative;
+	padding: 0 1rem 0 2rem;
+	background: no-repeat left 0.05rem/2rem url(images/file.svg) #111;
+}
+
 .file-info {
 	width: auto;
 	margin: 0;
@@ -404,11 +416,12 @@ a:hover {
 .file-download {
 	display: inline-block;
 	padding: 0.2rem;
-	margin: 0.2rem;
+	margin: 0.2rem 0;
 	color: white;
-	background-color: #06C;
+	background: no-repeat 0.1rem/1rem url(images/file-download.svg) #06C;
 	border-radius: 0.2rem;
 	box-shadow: 0 0 0.2rem black;
+	outline: none;
 }
 
 .file-download:hover {
@@ -417,8 +430,12 @@ a:hover {
 }
 
 .file-download:active {
-	color: #AAA;
 	background-color: #04A;
+}
+
+.file-download::before {
+	margin: 0 0.1rem 0 0.9rem;
+	content: 'Download';
 }
 
 .embed {
@@ -437,17 +454,13 @@ a:hover {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	line-height: 3rem;
+	height: 3rem;
 	width: 3rem;
 	margin: -1.5rem 0 0 -1.5rem;
-	font-family: sans-serif, 'Segoe UI Symbol';
-	font-size: 250%;
-	text-align: center;
-	color: #CCC;
-	background-color: #444;
+	background: no-repeat center/90% url(images/eye.svg) #444;
 	border-radius: 50%;
 	cursor: pointer;
-	content: '\1F441\FE0E';
+	content: '';
 }
 
 .embed-img-container.blocked > img.embed {
@@ -497,7 +510,7 @@ img.embed.zoomable {
 }
 
 iframe.embed {
-	height: 14.11875rem;
+	height: 15.3rem;
 	border: none;
 }
 
@@ -538,6 +551,7 @@ iframe.embed {
 	line-height: calc(100vh - 6rem);
 	font-size: 2rem;
 	text-align: center;
+	background: no-repeat center calc(50% - 4rem)/5rem url(images/file-upload.svg);
 	border: 1rem dashed rgba(255, 255, 255, 0.5);
 	content: 'Drop files to encode';
 }
@@ -564,7 +578,7 @@ and (max-width: 480px) {
 
 	#out-prepend,
 	#out-append {
-		width: 8.6rem;
+		width: 9.5rem;
 	}
 
 	.row {
@@ -576,7 +590,7 @@ and (max-width: 480px) {
 	#warn-size,
 	.embed-div,
 	.notify {
-		width: 17.5rem;
+		width: 19.3rem;
 	}
 
 	.text-div {
@@ -584,10 +598,10 @@ and (max-width: 480px) {
 	}
 
 	#zoom {
-		width: 17.3rem;
+		width: 19.1rem;
 	}
 
 	iframe.embed {
-		height: 9.61875rem;
+		height: 10.85625rem;
 	}
 }

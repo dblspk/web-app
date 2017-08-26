@@ -3,13 +3,13 @@
 	"short_name": "Doublespeak",
 	"start_url": ".",
 	"scope": "/",
-	"icons": [
-		{
-			"src": "images/icon-192.png",
-			"type": "image/png",
-			"sizes": "192x192"
-		}
-	],
+	"icons": [{
+		"src": "images/icon-192.png",
+		"type": "image/png",
+		"sizes": "192x192"
+	}, {
+		"src": "images/icon.svg"
+	}],
 	"theme_color": "#222",
 	"background_color": "#222",
 	"display": "standalone"

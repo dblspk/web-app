@@ -36,7 +36,6 @@ document.onreadystatechange = function () {
 	textarea.outCipher.addEventListener('dragstart', embedData);
 	textarea.inCipher.addEventListener('paste', extractData);
 	textarea.inCipher.addEventListener('drop', extractData);
-	textarea.inPlain.firstChild.addEventListener('focus', function () { selectText(this); });
 	document.addEventListener('dragover', dragOverFiles);
 
 	// Service worker caches page for offline use
@@ -124,6 +123,7 @@ function outputText(bytes, crcMatch) {
 		'>': '&gt;'
 	};
 	const textDiv = getTextDiv();
+	textDiv.onfocus = function () { selectText(this); };
 	// 1. Decode byte array to UTF-8
 	// 2. Sanitize unsafe HTML characters
 	// 3. Linkify URLs
@@ -142,6 +142,7 @@ function outputFile(bytes, crcMatch) {
 
 	// Generate file details UI
 	const textDiv = getTextDiv();
+	textDiv.classList.add('file');
 	textDiv.textContent = name;
 	const info = document.createElement('p');
 	info.className = 'file-info';
@@ -152,7 +153,6 @@ function outputFile(bytes, crcMatch) {
 	link.href = url;
 	link.download = name;
 	link.tabIndex = -1;
-	link.textContent = 'Download';
 	textDiv.appendChild(link);
 
 	if (!crcMatch)
@@ -250,7 +250,6 @@ function getTextDiv() {
 		// Generate pseudo-textarea
 		textDiv = document.createElement('div');
 		textDiv.className = 'text-div';
-		textDiv.onfocus = function () { selectText(this); };
 		textDiv.tabIndex = -1;
 		textarea.inPlain.appendChild(textDiv);
 	}
@@ -301,7 +300,7 @@ function enqueueFile(type, name, bytes) {
 
 	// Generate file details UI
 	const textDiv = document.createElement('div');
-	textDiv.className = 'text-div';
+	textDiv.className = 'text-div file';
 	textDiv.textContent = name;
 	const remove = document.createElement('button');
 	remove.className = 'file-remove';
@@ -390,6 +389,7 @@ function clearInPlain() {
 	const inPlain = textarea.inPlain;
 	inPlain.firstChild.innerHTML = '';
 	inPlain.firstChild.className = 'text-div';
+	inPlain.firstChild.onfocus = null;
 	while (inPlain.childNodes.length > 1)
 		inPlain.removeChild(inPlain.lastChild);
 }
