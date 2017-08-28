@@ -483,7 +483,7 @@ function resizeBody() {
 	if (window.innerWidth > 480 && screen.width > 480)
 		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.03 + 'px';
 	else
-		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.04 + 'px';
+		document.documentElement.style.fontSize = Math.min(window.innerWidth, window.innerHeight * 1.2) * 0.045 + 'px';
 	resizeTextarea(textarea.outPlain);
 	resizeTextarea(textarea.outCover);
 	resizeTextarea(textarea.outCipher);

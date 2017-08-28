@@ -563,7 +563,7 @@ and (max-width: 480px) {
 	.row,
 	p,
 	ul {
-		width: 22.5rem;
+		width: 20rem;
 	}
 
 	nav > label,
@@ -578,7 +578,7 @@ and (max-width: 480px) {
 
 	#out-prepend,
 	#out-append {
-		width: 9.5rem;
+		width: 8.25rem;
 	}
 
 	.row {
@@ -590,7 +590,7 @@ and (max-width: 480px) {
 	#warn-size,
 	.embed-div,
 	.notify {
-		width: 19.3rem;
+		width: 16.8rem;
 	}
 
 	.text-div {
@@ -598,10 +598,10 @@ and (max-width: 480px) {
 	}
 
 	#zoom {
-		width: 19.1rem;
+		width: 16.6rem;
 	}
 
 	iframe.embed {
-		height: 10.85625rem;
+		height: 9.39375rem;
 	}
 }

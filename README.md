@@ -1,8 +1,8 @@
 # Doublespeak
 
-Encodes/decodes messages as zero-width Unicode characters in text, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography). Optimized for real time chat.
+Hides/reveals secret messages in text. Optimized for instant messaging.
 
-TL;DR: It hides secret messages in text.
+Messages are encoded as zero-width Unicode characters. This is casual [steganography](https://en.wikipedia.org/wiki/Steganography).
 
 Web app: __http://dblspk.io/__
 
@@ -12,7 +12,7 @@ Web app: __http://dblspk.io/__
 
 __Tab__ / __Shift+Tab__ &mdash; cycle through fields
 
-Output ciphertext is automatically copied by tabbing to or clicking on the field.
+Encoded message is automatically copied by tabbing to or clicking on the field.
 
 Drag and drop files onto page to encode.
 
