@@ -27,6 +27,12 @@ document.onreadystatechange = function () {
 
 	resizeBody();
 	document.body.onresize = () => { resizeBody(); };
+	textarea.outPrepend.addEventListener('change', () => {
+		localStorage.setItem('outPrepend', textarea.outPrepend.value);
+	});
+	textarea.outAppend.addEventListener('change', () => {
+		localStorage.setItem('outAppend', textarea.outAppend.value);
+	});
 	textarea.outPlain.addEventListener('input', function () { mirrorCover(this); });
 	textarea.outCover.addEventListener('input', function () { mirrorCover(this); });
 	textarea.outCipher.addEventListener('focus', () => {
@@ -37,6 +43,9 @@ document.onreadystatechange = function () {
 	textarea.inCipher.addEventListener('paste', extractData);
 	textarea.inCipher.addEventListener('drop', extractData);
 	document.addEventListener('dragover', dragOverFiles);
+
+	textarea.outPrepend.value = localStorage.getItem('outPrepend');
+	textarea.outAppend.value = localStorage.getItem('outAppend');
 
 	// Service worker caches page for offline use
 	if ('serviceWorker' in navigator)
@@ -104,10 +113,10 @@ function extractData(e) {
 	for (var obj of dataObjs)
 		switch (obj.dataType) {
 			case 0x1:
-				outputText(obj.data, obj.crcMatch);
+				outputDecText(obj.data, obj.crcMatch);
 				break;
 			case 0x2:
-				outputFile(obj.data, obj.crcMatch);
+				outputDecFile(obj.data, obj.crcMatch);
 				break;
 			case 0x0:
 			default:
@@ -115,7 +124,7 @@ function extractData(e) {
 		}
 }
 
-function outputText(bytes, crcMatch) {
+function outputDecText(bytes, crcMatch) {
 	autolinker.embeds = [];
 	const references = {
 		'&': '&amp;',
@@ -137,7 +146,7 @@ function outputText(bytes, crcMatch) {
 	flashBorder(textDiv, 'decoded', 1000);
 }
 
-function outputFile(bytes, crcMatch) {
+function outputDecFile(bytes, crcMatch) {
 	const { type, name, url, size } = doublespeak.extractFile(bytes);
 
 	// Generate file details UI
@@ -169,7 +178,7 @@ const autolinker = new Autolinker({
 	stripPrefix: false,
 	stripTrailingSlash: false,
 	hashtag: 'twitter',
-	replaceFn: function (match) {
+	replaceFn: match => {
 		if (match.getType() == 'url')
 			collectEmbed(match.getUrl());
 		return match.buildTag().setAttr('tabindex', -1);
@@ -203,8 +212,8 @@ function embedMedia() {
 	const embedDiv = document.createElement('div');
 	embedDiv.className = 'embed-div';
 	// Embed media
-	for (var i = 0; i < autolinker.embeds.length; i++)
-		switch (autolinker.embeds[i].type) {
+	for (var embed of autolinker.embeds)
+		switch (embed.type) {
 			case 'image':
 				const div = document.createElement('div');
 				div.className = 'embed-img-container blocked';
@@ -213,16 +222,16 @@ function embedMedia() {
 				img.onerror = function () { this.style.display = 'none'; };
 				img.onload = function () { checkZoomable(this); };
 				img.onclick = function () { clickImage(this); };
-				img.src = autolinker.embeds[i].url;
+				img.src = embed.url;
 				div.appendChild(img);
 				embedDiv.appendChild(div);
 				break;
 			case 'video':
 			case 'audio':
-				const media = document.createElement(autolinker.embeds[i].type);
+				const media = document.createElement(embed.type);
 				media.className = 'embed';
-				media.src = autolinker.embeds[i].url.replace(/gifv$/i, 'mp4');
-				media.loop = /gifv$/i.test(autolinker.embeds[i].url) && true;
+				media.src = embed.url.replace(/gifv$/i, 'mp4');
+				media.loop = /gifv$/i.test(embed.url) && true;
 				media.controls = true;
 				media.preload = 'metadata';
 				media.tabIndex = -1;
@@ -232,11 +241,11 @@ function embedMedia() {
 			case 'vimeo':
 				const iframe = document.createElement('iframe');
 				iframe.className = 'embed';
-				if (autolinker.embeds[i].type === 'youtube')
-					iframe.src = 'https://www.youtube.com/embed/' + autolinker.embeds[i].id + '?start=' +
-						(autolinker.embeds[i].h * 3600 + autolinker.embeds[i].m * 60 + parseInt(autolinker.embeds[i].s));
+				if (embed.type === 'youtube')
+					iframe.src = 'https://www.youtube.com/embed/' + embed.id + '?start=' +
+						(embed.h * 3600 + embed.m * 60 + parseInt(embed.s));
 				else
-					iframe.src = 'https://player.vimeo.com/video/' + autolinker.embeds[i].id;
+					iframe.src = 'https://player.vimeo.com/video/' + embed.id;
 				iframe.allowFullscreen = true;
 				iframe.tabIndex = -1;
 				embedDiv.appendChild(iframe);
@@ -283,20 +292,20 @@ function dropFiles(e) {
 }
 
 function readFiles(files) {
-	for (var i = 0; i < files.length; i++)
+	for (var file of files)
 		(file => {
 			const reader = new FileReader();
 			reader.onload = () => {
-				enqueueFile(file.type, file.name, new Uint8Array(reader.result));
+				enqueueEncFile(file.type, file.name, new Uint8Array(reader.result));
 			};
 			reader.readAsArrayBuffer(file);
-		})(files[i]);
+		})(file);
 }
 
 // Convert file header and byte array to encoding characters and push to output queue
-function enqueueFile(type, name, bytes) {
+function enqueueEncFile(type, name, bytes) {
 	encQueue.push(doublespeak.encodeFile(type, name, bytes));
-	warnSize();
+	warnEncSize();
 
 	// Generate file details UI
 	const textDiv = document.createElement('div');
@@ -304,7 +313,7 @@ function enqueueFile(type, name, bytes) {
 	textDiv.textContent = name;
 	const remove = document.createElement('button');
 	remove.className = 'file-remove';
-	remove.onclick = function () { removeFile(this); };
+	remove.onclick = function () { removeEncFile(this); };
 	remove.tabIndex = -1;
 	remove.innerHTML = '&times;';
 	textDiv.appendChild(remove);
@@ -316,16 +325,16 @@ function enqueueFile(type, name, bytes) {
 }
 
 // Remove file in output ciphertext embed queue
-function removeFile(el) {
+function removeEncFile(el) {
 	const textDiv = el.parentElement;
 	const parent = textDiv.parentElement;
 	const index = Array.prototype.indexOf.call(parent.children, textDiv) - 1;
 	encQueue.splice(index, 1);
-	warnSize();
+	warnEncSize();
 	parent.removeChild(textDiv);
 }
 
-function warnSize() {
+function warnEncSize() {
 	let queueSize = encQueue.reduce((size, str) => size + str.length * 3, 0);
 	let warnSize = document.getElementById('warn-size');
 	if (queueSize > 0x400000) {
@@ -361,7 +370,7 @@ function selectText(el) {
 
 function clearOutPlain() {
 	encQueue = [];
-	warnSize();
+	warnEncSize();
 	const outPlainParent = textarea.outPlain.parentElement;
 	while (outPlainParent.childNodes.length > 1)
 		outPlainParent.removeChild(outPlainParent.lastChild);

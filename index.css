@@ -191,16 +191,16 @@ label[for=files] {
 }
 
 .button.svg:hover,
+label[for=encode-options-button]:hover,
 label[for=files]:hover,
-.embed-img-container.blocked:hover::after,
-label[for=encode-options-button]:hover {
+.embed-img-container.blocked:hover::after {
 	filter: brightness(1.5);
 }
 
 .button.svg:active,
+label[for=encode-options-button]:active,
 label[for=files]:active,
-.embed-img-container.blocked:active::after,
-label[for=encode-options-button]:active {
+.embed-img-container.blocked:active::after {
 	filter: brightness(0.8);
 	outline: none;
 }
@@ -286,8 +286,8 @@ textarea.copied {
 }
 
 #warn-size {
-	position: relative;
 	display: none;
+	position: relative;
 	width: 27.3rem;
 	padding: 0.8rem 0;
 	background: repeating-linear-gradient(135deg,
@@ -424,6 +424,11 @@ a:hover {
 	outline: none;
 }
 
+.file-download::before {
+	margin: 0 0.1rem 0 0.9rem;
+	content: 'Download';
+}
+
 .file-download:hover {
 	text-decoration: none;
 	background-color: #08F;
@@ -431,11 +436,6 @@ a:hover {
 
 .file-download:active {
 	background-color: #04A;
-}
-
-.file-download::before {
-	margin: 0 0.1rem 0 0.9rem;
-	content: 'Download';
 }
 
 .embed {
