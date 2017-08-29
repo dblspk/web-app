@@ -46,45 +46,43 @@
 			</div>
 		</div>
 		<div class='row'>
-			<div style='display: inline-block'><textarea id='out-plain' placeholder='Type secret message' autofocus></textarea></div>
-			<button class='button svg clear' onclick='clearOutPlain()' title='Clear' tabindex='-1'></button>
+			<textarea id='out-plain' placeholder='Type secret message' required autofocus></textarea>
+			<button class='button clear' onclick='clearOutPlain()' title='Clear' tabindex='-1'></button>
 		</div>
 		<div class='row'>
 			<div id='warn-size'>
 				<p>
 					<b>LARGE MESSAGE (<span id='warn-size-kb'></span> KB)</b><br>
-					May take a long time to paste,<br>freezing or crashing applications.
+					May take a long time to paste, freezing or crashing&nbsp;applications.
 				</p>
 			</div>
 		</div>
 		<div class='row'>
-			<textarea id='out-cover' placeholder='Type cover message'></textarea>
-			<button class='button svg clear' onclick='clearOut()' title='Clear' tabindex='-1'></button>
+			<textarea id='out-cover' placeholder='Type cover message' required></textarea>
+			<button class='button clear' onclick='clearOut()' title='Clear' tabindex='-1'></button>
 		</div>
 		<div class='row'>
-			<div style='display: inline-block'>
-				<textarea id='out-cipher' placeholder='Copy [Ctrl+C] encoded message' readonly></textarea>
-				<div class='notify copied-div'>COPIED</div>
-			</div>
-			<button class='button svg copy' id='copy-out' onclick='copyText()' title='Copy to clipboard' tabindex='-1'></button>
+			<textarea id='out-cipher' placeholder='Copy [Ctrl+C] encoded message' readonly></textarea>
+			<button class='button copy' id='copy-out' onclick='copyText()' title='Copy to clipboard' tabindex='-1'></button>
+			<div class='notify copied-div'>COPIED</div>
 		</div>
 		<h1>DECODE</h1>
 		<div class='row'>
-			<textarea id='in-cipher' maxlength='0' placeholder='Paste [Ctrl+V] to decode message'></textarea>
-			<button class='button svg clear' onclick='clearIn()' title='Clear' tabindex='-1'></button>
+			<textarea id='in-cipher' maxlength='0' placeholder='Paste [Ctrl+V] to decode message' required></textarea>
+			<button class='button clear' onclick='clearIn()' title='Clear' tabindex='-1'></button>
 		</div>
 		<div class='row'>
 			<div id='in-plain'><div class='text-div' tabindex='-1'></div></div>
 		</div>
 		<div id='tip'>Press <span class='key'>Tab</span> to cycle through fields</div>
 		<div id='tab-loop'>
-			<button class='button' onfocus='textarea.outPlain.select()'></button>
+			<button onfocus='textarea.outPlain.select()'></button>
 		</div>
 	</section>
 	<section id='faq'>
 		<h1>What is this?</h1>
 		<p>Hides/reveals secret messages in text. Optimized for instant messaging.</p>
-		<p>Messages are encoded as zero-width Unicode characters. This is casual <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank' rel='noopener'>steganography</a>.</p>
+		<p>Messages are encoded as zero-width Unicode characters, as a casual form of <a href='https://en.wikipedia.org/wiki/Steganography' target='_blank' rel='noopener'>steganography</a>.</p>
 		<h1>Usage</h1>
 		<p><strong>Tab</strong> / <strong>Shift+Tab</strong> &mdash; cycle through fields</p>
 		<p>Drag and drop files onto page to encode.</p>

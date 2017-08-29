@@ -106,7 +106,7 @@ function extractData(e) {
 	clearInPlain();
 	// Filter out ciphertext before "pasting" to avert
 	// reflow performance penalty with large messages
-	textarea.inCipher.value = doublespeak.filterStr(str);
+	textarea.inCipher.value = doublespeak.filterStr(str) || '\uFEFF';
 	resizeTextarea(textarea.inCipher);
 
 	const dataObjs = doublespeak.decodeData(str);
@@ -328,7 +328,7 @@ function enqueueEncFile(type, name, bytes) {
 function removeEncFile(el) {
 	const textDiv = el.parentElement;
 	const parent = textDiv.parentElement;
-	const index = Array.prototype.indexOf.call(parent.children, textDiv) - 1;
+	const index = Array.prototype.indexOf.call(parent.children, textDiv) - 4;
 	encQueue.splice(index, 1);
 	warnEncSize();
 	parent.removeChild(textDiv);
@@ -372,7 +372,7 @@ function clearOutPlain() {
 	encQueue = [];
 	warnEncSize();
 	const outPlainParent = textarea.outPlain.parentElement;
-	while (outPlainParent.childNodes.length > 1)
+	while (outPlainParent.childNodes.length > 4)
 		outPlainParent.removeChild(outPlainParent.lastChild);
 	textarea.outPlain.value = '';
 	resizeTextarea(textarea.outPlain);

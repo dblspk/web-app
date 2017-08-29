@@ -1,3 +1,3 @@
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' style='fill: #CCC'>
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' style='fill: #FFF'>
 	<path d='M56,10 v15 a9,9 0 0 0 9,9 h15 v51 a5,5 0 0 1 -5,5 h-50 a5,5 0 0 1 -5,-5 v-70 a5,5 0 0 1 5,-5 Z M80,30 h-15 a5,5 0 0 1 -5,-5 v-15 Z M45,70 h10 v-15 h10 l-15,-15 l-15,15 h10 Z M35,75 v5 h30 v-5 Z'/>
 </svg>

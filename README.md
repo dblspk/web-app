@@ -2,7 +2,7 @@
 
 Hides/reveals secret messages in text. Optimized for instant messaging.
 
-Messages are encoded as zero-width Unicode characters. This is casual [steganography](https://en.wikipedia.org/wiki/Steganography).
+Messages are encoded as zero-width Unicode characters, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography).
 
 Web app: __http://dblspk.io/__
 

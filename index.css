@@ -157,52 +157,68 @@ label[for=encode-options-button] {
 }
 
 button {
+	position: relative;
 	padding: 0;
 	font-family: sans-serif;
 	border: none;
 }
 
-.button.clear {
-	background: no-repeat center/80% url(images/backspace.svg);
-}
-
-.button.copy {
-	background: no-repeat center/70% url(images/clipboard.svg);
-}
-
-label[for=files] {
-	background: no-repeat center/80% url(images/file-upload.svg);
-}
-
-.button.svg,
+.button,
 label[for=files] {
 	float: right;
 	height: 1.8rem;
 	line-height: 1.8rem;
 	width: 2.2rem;
-	font-size: 1rem;
-	font-weight: bold;
-	text-align: center;
-	color: #CCC;
 	background-color: #444;
 	border-radius: 0.2rem;
 	box-shadow: 0 0 0.2rem black;
 	cursor: pointer;
 }
 
-.button.svg:hover,
+.button:hover,
 label[for=encode-options-button]:hover,
 label[for=files]:hover,
 .embed-img-container.blocked:hover::after {
 	filter: brightness(1.5);
 }
 
-.button.svg:active,
+.button:active,
 label[for=encode-options-button]:active,
 label[for=files]:active,
 .embed-img-container.blocked:active::after {
 	filter: brightness(0.8);
 	outline: none;
+}
+
+label[for=files] {
+	background: no-repeat center/80% url(images/file-upload.svg) #444;
+}
+
+.button::before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1.8rem;
+	width: 2.2rem;
+	filter: invert(1);
+	content: '';
+}
+
+.button.clear::before {
+	background: no-repeat center/80% url(images/backspace.svg);
+}
+
+.button.copy::before {
+	background: no-repeat center/70% url(images/clipboard.svg);
+}
+
+/* MS Edge fallback */
+textarea:invalid + .button::before {
+	filter: invert(1) brightness(0.6);
+}
+
+textarea:placeholder-shown + .button::before {
+	filter: invert(1) brightness(0.6);
 }
 
 textarea,
@@ -330,7 +346,7 @@ textarea.copied {
 	background-color: #0B0;
 }
 
-textarea.copied + .copied-div {
+textarea.copied ~ .copied-div {
 	visibility: visible;
 }
 
