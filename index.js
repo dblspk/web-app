@@ -103,13 +103,13 @@ function extractData(e) {
 		e.clipboardData.getData('text/plain') :
 		e.dataTransfer.getData('text/plain');
 
-	clearInPlain();
 	// Filter out ciphertext before "pasting" to avert
 	// reflow performance penalty with large messages
-	textarea.inCipher.value = doublespeak.filterStr(str) || '\uFEFF';
+	const { cover, dataObjs } = doublespeak.decodeData(str);
+	clearInPlain();
+	textarea.inCipher.value = cover || '\uFEFF';
 	resizeTextarea(textarea.inCipher);
 
-	const dataObjs = doublespeak.decodeData(str);
 	for (var obj of dataObjs)
 		switch (obj.dataType) {
 			case 0x1:
