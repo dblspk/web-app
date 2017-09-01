@@ -1,3 +1,5 @@
+[![Gitter chat](https://badges.gitter.im/dblspk.png)](https://gitter.im/dblspk/dev)
+
 # Doublespeak
 
 Hides/reveals secret messages in text. Optimized for instant messaging.
