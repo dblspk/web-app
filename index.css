@@ -1,4 +1,5 @@
 body {
+	padding-left: calc(100vw - 100%);
 	margin: 0;
 	font-family: sans-serif;
 	color: white;

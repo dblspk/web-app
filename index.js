@@ -42,6 +42,7 @@ document.onreadystatechange = function () {
 	textarea.outCipher.addEventListener('dragstart', embedData);
 	textarea.inCipher.addEventListener('paste', extractData);
 	textarea.inCipher.addEventListener('drop', extractData);
+	textarea.inCipher.addEventListener('input', checkEmpty);
 	document.addEventListener('dragover', dragOverFiles);
 
 	textarea.outPrepend.value = localStorage.getItem('outPrepend');
@@ -104,7 +105,7 @@ function extractData(e) {
 		e.dataTransfer.getData('text/plain');
 
 	// Filter out ciphertext before "pasting" to avert
-	// reflow performance penalty with large messages
+	// reflow performance cost with large messages
 	const { cover, dataObjs } = doublespeak.decodeData(str);
 	clearInPlain();
 	textarea.inCipher.value = cover || '\uFEFF';
@@ -118,7 +119,6 @@ function extractData(e) {
 			case 0x2:
 				outputDecFile(obj.data, obj.crcMatch);
 				break;
-			case 0x0:
 			default:
 				outputError(getTextDiv(), obj.error, obj.details);
 		}
@@ -302,7 +302,7 @@ function readFiles(files) {
 		})(file);
 }
 
-// Convert file header and byte array to encoding characters and push to output queue
+// Convert file header and byte array to encoding characters and push to output file queue
 function enqueueEncFile(type, name, bytes) {
 	encQueue.push(doublespeak.encodeFile(type, name, bytes));
 	warnEncSize();
@@ -324,7 +324,7 @@ function enqueueEncFile(type, name, bytes) {
 	textarea.outPlain.parentElement.appendChild(textDiv);
 }
 
-// Remove file in output ciphertext embed queue
+// Remove file from output file queue
 function removeEncFile(el) {
 	const textDiv = el.parentElement;
 	const parent = textDiv.parentElement;
@@ -337,6 +337,7 @@ function removeEncFile(el) {
 function warnEncSize() {
 	let queueSize = encQueue.reduce((size, str) => size + str.length * 3, 0);
 	let warnSize = document.getElementById('warn-size');
+	// Warn if output file queue is over 4 MB
 	if (queueSize > 0x400000) {
 		document.getElementById('warn-size-kb').textContent = (queueSize / 1024).toFixed(2);
 		warnSize.style.display = 'block';
@@ -358,6 +359,11 @@ function flashBorder(el, style, ms) {
 	setTimeout(() => {
 		el.classList.remove(style);
 	}, ms);
+}
+
+function checkEmpty() {
+	if (textarea.inCipher.value == '')
+		clearIn();
 }
 
 function selectText(el) {
