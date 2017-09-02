@@ -141,7 +141,6 @@ label[for=encode-options-button] {
 
 #encode-options-button:checked + #encode-options {
 	height: 2.2rem;
-	transition: height 0.2s;
 }
 
 #encode-options > div {
