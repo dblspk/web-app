@@ -273,33 +273,29 @@ function dragOverFiles(e) {
 		e.preventDefault();
 		const dropTarget = document.getElementById('drop-target');
 		dropTarget.style.display = 'block';
-		dropTarget.addEventListener('dragleave', dragLeaveFiles);
+		dropTarget.addEventListener('dragleave', () => {
+			dropTarget.style.display = 'none';
+		}, { once: true });
 	}
-}
-
-function dragLeaveFiles() {
-	const dropTarget = document.getElementById('drop-target');
-	dropTarget.removeEventListener('dragleave', dragLeaveFiles);
-	dropTarget.style.display = 'none';
 }
 
 function dropFiles(e) {
 	e.stopPropagation();
 	e.preventDefault();
-	dragLeaveFiles();
+	document.getElementById('drop-target').style.display = 'none';
 
 	readFiles(e.dataTransfer.files);
 }
 
 function readFiles(files) {
-	for (var file of files)
+	for (var i = 0; i < files.length; i++)
 		(file => {
 			const reader = new FileReader();
 			reader.onload = () => {
 				enqueueEncFile(file.type, file.name, new Uint8Array(reader.result));
 			};
 			reader.readAsArrayBuffer(file);
-		})(file);
+		})(files[i]);
 }
 
 // Convert file header and byte array to encoding characters and push to output file queue
@@ -418,12 +414,12 @@ function clickImage(el) {
 		// Clone clicked image at same position
 		const zoom = el.cloneNode();
 		zoom.id = 'zoom';
-		zoom.style.top = el.height * 0.5 + fontSize * 0.1 + parent.offsetTop + parent.offsetParent.offsetTop - document.body.scrollTop + 'px';
+		zoom.style.top = el.height * 0.5 + fontSize * 0.1 + parent.offsetTop + parent.offsetParent.offsetTop - (document.documentElement.scrollTop || document.body.scrollTop) + 'px';
 		zoom.style.left = el.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + 'px';
 		zoom.onclick = function () { unzoomImage(); };
 		const bg = document.createElement('div');
 		bg.id = 'background';
-		bg.className = 'fade-in';
+		requestAnimationFrame(() => bg.style.opacity = 0.9);
 		bg.onclick = function () { unzoomImage(); };
 		document.body.appendChild(bg);
 		document.body.appendChild(zoom);
@@ -441,20 +437,15 @@ function unzoomImage() {
 	const zoom = document.getElementById('zoom');
 	const parent = zoom.origin.parentElement;
 	// Unzoom image
-	zoom.style.top = zoom.origin.height * 0.5 + fontSize * 0.1 + parent.offsetTop + parent.offsetParent.offsetTop - document.body.scrollTop + 'px';
+	zoom.style.top = zoom.origin.height * 0.5 + fontSize * 0.1 + parent.offsetTop + parent.offsetParent.offsetTop - (document.documentElement.scrollTop || document.body.scrollTop) + 'px';
 	zoom.style.left = zoom.origin.width * 0.5 + fontSize * 0.1 + parent.offsetLeft + 'px';
 	zoom.style.width = zoom.origin.width + 'px';
 	const bg = document.getElementById('background');
-	bg.style.animationDirection = 'reverse';
-	bg.className = '';
-	// Force element reflow to restart animation
-	void bg.offsetWidth;
-	bg.className = 'fade-in';
-	zoom.addEventListener('transitionend', function removeZoom() {
-		zoom.removeEventListener('transitionend', removeZoom);
+	requestAnimationFrame(() => bg.style.opacity = 0);
+	zoom.addEventListener('transitionend', () => {
 		document.body.removeChild(zoom);
 		document.body.removeChild(bg);
-	});
+	}, { once: true });
 }
 
 function checkZoomable(el) {

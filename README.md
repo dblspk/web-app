@@ -8,7 +8,9 @@ Messages are encoded as zero-width Unicode characters, as a casual form of [steg
 
 Web app: __http://dblspk.io/__
 
-Chrome extension: __[Chrome Web Store](https://chrome.google.com/webstore/detail/doublespeak/mochgllkkbafaoombocojfenmkbijhdb)__
+Chrome extension:
+
+[![Chrome Web Store](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/doublespeak/mochgllkkbafaoombocojfenmkbijhdb)
 
 ## Usage
 

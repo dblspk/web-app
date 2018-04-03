@@ -513,16 +513,9 @@ img.embed.zoomable {
 	top: 0;
 	height: 100%;
 	width: 100%;
-	background-color: rgba(0, 0, 0, 0.9);
-}
-
-#background.fade-in {
-	animation: fade-in 0.5s;
-}
-
-@keyframes fade-in {
-	from { opacity: 0 }
-	to { opacity: 1 }
+	background-color: black;
+	opacity: 0;
+	transition: 0.5s;
 }
 
 iframe.embed {
