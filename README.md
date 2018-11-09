@@ -6,7 +6,7 @@ Hides/reveals secret messages in text. Optimized for instant messaging.
 
 Messages are encoded as zero-width Unicode characters, as a casual form of [steganography](https://en.wikipedia.org/wiki/Steganography).
 
-Web app: __http://dblspk.io/__
+Web app: __https://dblspk.io/__
 
 Chrome extension:
 
@@ -85,7 +85,7 @@ A header, encoded in the same way, is prepended:
 | 1+ bytes | Data length | [Variable length quantity](https://en.wikipedia.org/wiki/Variable-length_quantity), representing length of the data field |
 | Varies | Data | Depends on data type |
 
-The resulting string of invisible characters is then inserted at a random location in the cover text.
+The resulting string of invisible characters is then inserted at a random location in the cover text. More details in the [protocol specification](https://docs.google.com/spreadsheets/d/1sx-kw7LFz4f7Qrtmo68lRi8_msIRVGsvGhiQuWppR4A/).
 
 ## Efficiency
 
